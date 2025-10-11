@@ -1,3 +1,6 @@
+'use client';
+
+import { useState } from 'react';
 import { DashboardSidebar } from "@/components/dashboard/sidebar";
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/ui/card";
 import { courseData } from "@/app/lib/mock-data";
@@ -8,10 +11,15 @@ import { ArrowLeft } from "lucide-react";
 
 export default function CourseDetailPage({ params }: { params: { courseId: string } }) {
   const course = courseData.find(c => c.id === params.courseId);
+  const [isCompleted, setIsCompleted] = useState(false);
 
   if (!course) {
     notFound();
   }
+
+  const handleMarkAsComplete = () => {
+    setIsCompleted(true);
+  };
 
   return (
     <div className="flex min-h-screen w-full flex-col">
@@ -31,13 +39,19 @@ export default function CourseDetailPage({ params }: { params: { courseId: strin
             <Card>
               <CardHeader>
                 <CardTitle className="font-headline">Nội dung khóa học</CardTitle>
-                <CardDescription>Tiến độ hiện tại của bạn: {course.progress}%</CardDescription>
+                <CardDescription>Tiến độ hiện tại của bạn: {isCompleted ? 100 : course.progress}%</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="text-center py-12">
                   <h3 className="text-lg font-semibold">Nội dung sắp ra mắt!</h3>
                   <p className="text-muted-foreground">Các bài học và tài liệu cho khóa học này đang được xây dựng.</p>
-                  <Button className="mt-4">Đánh dấu là đã hoàn thành (Mô phỏng)</Button>
+                  <Button 
+                    className="mt-4" 
+                    onClick={handleMarkAsComplete}
+                    disabled={isCompleted}
+                  >
+                    {isCompleted ? 'Đã hoàn thành' : 'Đánh dấu là đã hoàn thành'}
+                  </Button>
                 </div>
               </CardContent>
             </Card>

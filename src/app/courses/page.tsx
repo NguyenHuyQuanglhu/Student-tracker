@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { useState, useEffect } from 'react';
 import { DashboardSidebar } from "@/components/dashboard/sidebar";
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -15,6 +16,17 @@ const statusColors: Record<CourseStatus, string> = {
 }
 
 export default function CoursesPage() {
+  const [courses, setCourses] = useState(courseData);
+
+  useEffect(() => {
+    const progressValues = [25, 50, 75, 100];
+    const randomizedCourses = courseData.map(course => ({
+      ...course,
+      progress: progressValues[Math.floor(Math.random() * progressValues.length)]
+    }));
+    setCourses(randomizedCourses);
+  }, []);
+
   return (
     <div className="flex min-h-screen w-full flex-col">
       <DashboardSidebar>
@@ -24,7 +36,7 @@ export default function CoursesPage() {
                 <p className="text-muted-foreground">Browse all your available courses below.</p>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                {courseData.map((course) => {
+                {courses.map((course) => {
                     const progress = course.progress;
                     const isFinished = progress === 100;
                     const status = isFinished ? 'Finished' : course.status;

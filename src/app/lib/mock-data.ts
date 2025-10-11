@@ -38,14 +38,12 @@ export const warnings = [
 
 export type CourseStatus = 'Active' | 'Finished' | 'Paused';
 
-const progressValues = [25, 50, 75, 100];
-
 export const courseData = [
-    { id: "it-software", name: "IT & Software", progress: progressValues[Math.floor(Math.random() * progressValues.length)], status: "Active" as CourseStatus, imageSeed: "course1" },
-    { id: "programming", name: "Programming", progress: progressValues[Math.floor(Math.random() * progressValues.length)], status: "Active" as CourseStatus, imageSeed: "course2" },
-    { id: "networking", name: "Networking", progress: progressValues[Math.floor(Math.random() * progressValues.length)], status: "Active" as CourseStatus, imageSeed: "course3" },
-    { id: "network-security", name: "Network Security", progress: progressValues[Math.floor(Math.random() * progressValues.length)], status: "Active" as CourseStatus, imageSeed: "course4" },
-    { id: "public-speaking", name: "Public Speaking", progress: progressValues[Math.floor(Math.random() * progressValues.length)], status: "Active" as CourseStatus, imageSeed: "course5" },
-    { id: "leadership", name: "Leadership", progress: progressValues[Math.floor(Math.random() * progressValues.length)], status: "Active" as CourseStatus, imageSeed: "course6" },
-    { id: "teamwork", name: "Teamwork", progress: progressValues[Math.floor(Math.random() * progressValues.length)], status: "Active" as CourseStatus, imageSeed: "course7" },
+    { id: "it-software", name: "IT & Software", progress: 25, status: "Active" as CourseStatus, imageSeed: "course1" },
+    { id: "programming", name: "Programming", progress: 75, status: "Active" as CourseStatus, imageSeed: "course2" },
+    { id: "networking", name: "Networking", progress: 50, status: "Active" as CourseStatus, imageSeed: "course3" },
+    { id: "network-security", name: "Network Security", progress: 100, status: "Finished" as CourseStatus, imageSeed: "course4" },
+    { id: "public-speaking", name: "Public Speaking", progress: 25, status: "Active" as CourseStatus, imageSeed: "course5" },
+    { id: "leadership", name: "Leadership", progress: 50, status: "Active" as CourseStatus, imageSeed: "course6" },
+    { id: "teamwork", name: "Teamwork", progress: 75, status: "Active" as CourseStatus, imageSeed: "course7" },
 ];

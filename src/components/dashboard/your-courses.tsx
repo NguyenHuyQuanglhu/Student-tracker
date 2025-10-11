@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { useState, useEffect } from 'react';
 import { Card, CardHeader, CardTitle, CardFooter, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { courseData, CourseStatus } from "@/app/lib/mock-data";
@@ -14,7 +15,18 @@ const statusColors: Record<CourseStatus, string> = {
 }
 
 export function YourCourses() {
-  const unfinishedCourses = courseData.filter(course => course.progress < 100);
+    const [courses, setCourses] = useState(courseData);
+
+    useEffect(() => {
+        const progressValues = [25, 50, 75, 100];
+        const randomizedCourses = courseData.map(course => ({
+        ...course,
+        progress: progressValues[Math.floor(Math.random() * progressValues.length)]
+        }));
+        setCourses(randomizedCourses);
+    }, []);
+
+  const unfinishedCourses = courses.filter(course => course.progress < 100);
 
   return (
     <div>

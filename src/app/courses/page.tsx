@@ -16,14 +16,18 @@ const statusColors: Record<CourseStatus, string> = {
 }
 
 export default function CoursesPage() {
-  const [courses, setCourses] = useState(courseData);
+  const [courses, setCourses] = useState(courseData.map(c => ({...c, displayProgress: c.progress})));
 
   useEffect(() => {
     const progressValues = [25, 50, 75, 100];
-    const randomizedCourses = courseData.map(course => ({
-      ...course,
-      progress: progressValues[Math.floor(Math.random() * progressValues.length)]
-    }));
+    const randomizedCourses = courseData.map(course => {
+      const isCompleted = localStorage.getItem(`course_completed_${course.id}`) === 'true';
+      const randomProgress = progressValues[Math.floor(Math.random() * progressValues.length)];
+      return {
+        ...course,
+        displayProgress: isCompleted ? 100 : randomProgress
+      }
+    });
     setCourses(randomizedCourses);
   }, []);
 
@@ -37,7 +41,7 @@ export default function CoursesPage() {
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                 {courses.map((course) => {
-                    const progress = course.progress;
+                    const progress = course.displayProgress;
                     const isFinished = progress === 100;
                     const status = isFinished ? 'Finished' : course.status;
                     return (

@@ -15,25 +15,29 @@ const statusColors: Record<CourseStatus, string> = {
 }
 
 export function YourCourses() {
-    const [courses, setCourses] = useState(courseData);
+    const [courses, setCourses] = useState(courseData.map(c => ({...c, displayProgress: c.progress})));
 
     useEffect(() => {
         const progressValues = [25, 50, 75, 100];
-        const randomizedCourses = courseData.map(course => ({
-        ...course,
-        progress: progressValues[Math.floor(Math.random() * progressValues.length)]
-        }));
+        const randomizedCourses = courseData.map(course => {
+            const isCompleted = localStorage.getItem(`course_completed_${course.id}`) === 'true';
+            const randomProgress = progressValues[Math.floor(Math.random() * progressValues.length)];
+            return {
+                ...course,
+                displayProgress: isCompleted ? 100 : randomProgress
+            }
+        });
         setCourses(randomizedCourses);
     }, []);
 
-  const unfinishedCourses = courses.filter(course => course.progress < 100);
+  const unfinishedCourses = courses.filter(course => course.displayProgress < 100);
 
   return (
     <div>
         <h3 className="text-xl font-bold mb-4">Các khóa học của bạn</h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {unfinishedCourses.map((course) => {
-                const progress = course.progress;
+                const progress = course.displayProgress;
                 return (
                     <Link href={`/courses/${course.id}`} key={course.id} className="no-underline">
                         <Card className="flex flex-col h-full overflow-hidden hover:shadow-lg transition-shadow">

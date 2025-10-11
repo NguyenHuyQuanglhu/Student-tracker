@@ -5,6 +5,7 @@ import { ChartContainer } from "@/components/ui/chart";
 import { courseData } from "@/app/lib/mock-data";
 import { BarChart, Bar, XAxis, YAxis, PieChart, Pie, Cell } from "recharts";
 import { TrendingDown, TrendingUp } from "lucide-react";
+import { useEffect, useState } from "react";
 
 const chartConfig = {
   score: {
@@ -15,26 +16,52 @@ const chartConfig = {
 
 const progressOverview = {
     courses: [
-        { name: 'Quantum Physics', score: 85 },
-        { name: 'Organic Chemistry', score: 92 },
-        { name: 'Data Structures', score: 72 },
-        { name: 'World History', score: 68 },
-        { name: 'Creative Writing', score: 88 },
+        { name: 'IT & Software', score: 95 },
+        { name: 'Programming', score: 88 },
+        { name: 'Networking', score: 72 },
+        { name: 'Network Security', score: 91 },
+        { name: 'Public Speaking', score: 68 },
+        { name: 'Leadership', score: 82 },
+        { name: 'Teamwork', score: 90 },
     ],
 };
 
 
 export function ProgressOverview() {
+  const [courseStatusData, setCourseStatusData] = useState([
+    { name: 'In Progress', value: 0, fill: 'hsl(var(--primary))' },
+    { name: 'Completed', value: 0, fill: 'hsl(var(--chart-2))' },
+    { name: 'Yet to Start', value: 0, fill: 'hsl(var(--muted))' },
+  ]);
   const totalCourses = courseData.length;
-  const completedCourses = courseData.filter(c => c.progress === 100).length;
-  const inProgressCourses = courseData.filter(c => c.progress > 0 && c.progress < 100).length;
-  const yetToStartCourses = courseData.filter(c => c.progress === 0).length;
 
-  const courseStatusData = [
-      { name: 'In Progress', value: inProgressCourses, fill: 'hsl(var(--primary))' },
-      { name: 'Completed', value: completedCourses, fill: 'hsl(var(--chart-2))' },
-      { name: 'Yet to Start', value: yetToStartCourses, fill: 'hsl(var(--muted))' },
-  ];
+  useEffect(() => {
+    const progressValues = [25, 50, 75, 100];
+    let completed = 0;
+    let inProgress = 0;
+    let yetToStart = 0;
+
+    courseData.forEach(course => {
+        const isCompleted = localStorage.getItem(`course_completed_${course.id}`) === 'true';
+        if (isCompleted) {
+            completed++;
+        } else {
+            const randomProgress = progressValues[Math.floor(Math.random() * progressValues.length)];
+            if (randomProgress > 0) {
+                inProgress++;
+            } else {
+                yetToStart++;
+            }
+        }
+    });
+
+    setCourseStatusData([
+      { name: 'In Progress', value: inProgress, fill: 'hsl(var(--primary))' },
+      { name: 'Completed', value: completed, fill: 'hsl(var(--chart-2))' },
+      { name: 'Yet to Start', value: yetToStart, fill: 'hsl(var(--muted))' },
+    ]);
+
+  }, []);
 
   return (
     <Card className="h-full">

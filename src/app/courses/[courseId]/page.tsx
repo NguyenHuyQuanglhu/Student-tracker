@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, use } from 'react';
+import { useState, useEffect, use } from 'react';
 import { DashboardSidebar } from "@/components/dashboard/sidebar";
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/ui/card";
 import { courseData } from "@/app/lib/mock-data";
@@ -10,9 +10,25 @@ import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 
 export default function CourseDetailPage({ params: paramsPromise }: { params: { courseId: string } }) {
-  const { courseId } = use(paramsPromise);
+  const params = use(paramsPromise);
+  const courseId = params.courseId;
   const course = courseData.find(c => c.id === courseId);
-  const [isCompleted, setIsCompleted] = useState(course?.progress === 100);
+  
+  const [isCompleted, setIsCompleted] = useState(false);
+  const [initialProgress, setInitialProgress] = useState(course?.progress || 0);
+
+  useEffect(() => {
+    // On component mount, check localStorage for completion status
+    const completionStatus = localStorage.getItem(`course_completed_${courseId}`);
+    if (completionStatus === 'true') {
+      setIsCompleted(true);
+    } else {
+        const progressValues = [25, 50, 75, 100];
+        const randomProgress = progressValues[Math.floor(Math.random() * progressValues.length)];
+        setInitialProgress(randomProgress);
+    }
+  }, [courseId]);
+
 
   if (!course) {
     notFound();
@@ -20,9 +36,10 @@ export default function CourseDetailPage({ params: paramsPromise }: { params: { 
 
   const handleMarkAsComplete = () => {
     setIsCompleted(true);
+    localStorage.setItem(`course_completed_${courseId}`, 'true');
   };
 
-  const progress = isCompleted ? 100 : course.progress;
+  const progress = isCompleted ? 100 : initialProgress;
 
   return (
     <div className="flex min-h-screen w-full flex-col">

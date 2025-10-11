@@ -1,5 +1,6 @@
 "use client";
 
+import { usePathname } from 'next/navigation';
 import {
   Sidebar,
   SidebarProvider,
@@ -19,6 +20,15 @@ import {
 import { DashboardHeader } from "@/components/dashboard/header";
 
 export function DashboardSidebar({ children }: { children: React.ReactNode }) {
+  const pathname = usePathname();
+
+  const menuItems = [
+    { href: '/', label: 'Dashboard', icon: LayoutDashboard },
+    { href: '/courses', label: 'Courses', icon: Book },
+    { href: '/profile', label: 'Profile', icon: User },
+    { href: '/settings', label: 'Settings', icon: Settings },
+  ];
+
   return (
     <SidebarProvider>
       <Sidebar>
@@ -48,30 +58,14 @@ export function DashboardSidebar({ children }: { children: React.ReactNode }) {
         </SidebarHeader>
         <SidebarContent>
           <SidebarMenu>
-            <SidebarMenuItem>
-              <SidebarMenuButton href="#" isActive>
-                <LayoutDashboard />
-                Dashboard
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-            <SidebarMenuItem>
-              <SidebarMenuButton href="#">
-                <Book />
-                Courses
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-            <SidebarMenuItem>
-              <SidebarMenuButton href="#">
-                <User />
-                Profile
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-            <SidebarMenuItem>
-              <SidebarMenuButton href="#">
-                <Settings />
-                Settings
-              </SidebarMenuButton>
-            </SidebarMenuItem>
+            {menuItems.map((item) => (
+              <SidebarMenuItem key={item.href}>
+                <SidebarMenuButton href={item.href} isActive={pathname === item.href}>
+                  <item.icon />
+                  {item.label}
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            ))}
           </SidebarMenu>
         </SidebarContent>
       </Sidebar>

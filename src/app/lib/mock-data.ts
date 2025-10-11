@@ -24,13 +24,13 @@ export const softSkills = [
 ];
 
 export const todoList = [
-  { id: '1', task: 'Submit Quantum Mechanics paper', course: 'Quantum Physics', dueDate: '3 days', completed: false },
-  { id: '2', task: 'Lab report #5', course: 'Organic Chemistry', dueDate: '5 days', completed: false },
-  { id: '3', task: 'Final Project Proposal', course: 'Data Structures', dueDate: '1 week', completed: false },
-  { id: '4', task: 'Read Chapter 12', course: 'World History', dueDate: '2 weeks', completed: true },
+  { id: '1', task: 'Nộp bài Cơ học lượng tử', course: 'Quantum Physics', dueDate: '3 ngày', completed: false },
+  { id: '2', task: 'Báo cáo lab số 5', course: 'Organic Chemistry', dueDate: '5 ngày', completed: false },
+  { id: '3', task: 'Đề xuất dự án cuối kỳ', course: 'Data Structures', dueDate: '1 tuần', completed: false },
+  { id: '4', task: 'Đọc chương 12', course: 'World History', dueDate: '2 tuần', completed: true },
 ];
 
 export const warnings = [
-  { id: '1', message: 'You are at risk of failing World History. Your current score is 68%.' },
-  { id: '2', message: 'Quantum Mechanics paper is due in 3 days.' },
+  { id: '1', message: 'Bạn có nguy cơ trượt môn Lịch sử thế giới. Điểm hiện tại của bạn là 68%.' },
+  { id: '2', message: 'Bài Cơ học lượng tử sẽ hết hạn trong 3 ngày nữa.' },
 ];

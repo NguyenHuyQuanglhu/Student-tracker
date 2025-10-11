@@ -18,8 +18,8 @@ export default function CoursesPage() {
           <div className="mx-auto max-w-7xl space-y-6">
             <div className="space-y-4">
                 <div className="mb-6">
-                    <h1 className="text-3xl font-bold font-headline">Your Courses</h1>
-                    <p className="text-muted-foreground">Here are the exercises and assignments for your enrolled courses.</p>
+                    <h1 className="text-3xl font-bold font-headline">Các khóa học của bạn</h1>
+                    <p className="text-muted-foreground">Đây là các bài tập và nhiệm vụ cho các khóa học bạn đã đăng ký.</p>
                 </div>
 
                 {Object.entries(courses).map(([courseName, exercises]) => (
@@ -49,7 +49,7 @@ export default function CoursesPage() {
                             </div>
                             <div className="flex items-center space-x-4">
                                 <Badge variant={exercise.completed ? "secondary" : "outline"}>
-                                Due in {exercise.dueDate}
+                                Hạn trong {exercise.dueDate}
                                 </Badge>
                             </div>
                             </li>

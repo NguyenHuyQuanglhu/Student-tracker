@@ -27,8 +27,8 @@ export function ExerciseSuggestions() {
       console.error(e);
       toast({
         variant: "destructive",
-        title: "Error",
-        description: "Failed to load AI suggestions. Please try again later.",
+        title: "Lỗi",
+        description: "Không thể tải các đề xuất AI. Vui lòng thử lại sau.",
       });
     } finally {
       setLoading(false);
@@ -46,12 +46,12 @@ export function ExerciseSuggestions() {
             <div>
                 <CardTitle className="font-headline flex items-center">
                     <Lightbulb className="w-5 h-5 mr-2 text-yellow-500" />
-                    Personalized Exercise Suggestions
+                    Đề xuất bài tập được cá nhân hóa
                 </CardTitle>
-                <CardDescription>AI-powered recommendations to help you improve.</CardDescription>
+                <CardDescription>Các đề xuất do AI cung cấp để giúp bạn cải thiện.</CardDescription>
             </div>
             <Button variant="outline" size="sm" onClick={getSuggestions} disabled={loading}>
-                Refresh
+                Làm mới
             </Button>
         </div>
       </CardHeader>

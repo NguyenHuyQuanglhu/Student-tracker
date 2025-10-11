@@ -9,13 +9,13 @@ export default function ProfilePage() {
           <div className="mx-auto max-w-7xl space-y-6">
             <Card>
               <CardHeader>
-                <CardTitle className="font-headline">Profile</CardTitle>
-                <CardDescription>View and manage your personal information.</CardDescription>
+                <CardTitle className="font-headline">Hồ sơ</CardTitle>
+                <CardDescription>Xem và quản lý thông tin cá nhân của bạn.</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="text-center py-12">
-                  <h3 className="text-lg font-semibold">Coming Soon!</h3>
-                  <p className="text-muted-foreground">This page is under construction. You'll be able to manage your profile here soon.</p>
+                  <h3 className="text-lg font-semibold">Sắp có!</h3>
+                  <p className="text-muted-foreground">Trang này đang được xây dựng. Bạn sẽ sớm có thể quản lý hồ sơ của mình tại đây.</p>
                 </div>
               </CardContent>
             </Card>

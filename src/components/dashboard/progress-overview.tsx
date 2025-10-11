@@ -17,19 +17,19 @@ export function ProgressOverview() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="font-headline">Personal Progress</CardTitle>
-        <CardDescription>Your academic performance at a glance.</CardDescription>
+        <CardTitle className="font-headline">Tiến độ cá nhân</CardTitle>
+        <CardDescription>Sơ lược về kết quả học tập của bạn.</CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
         <div>
           <div className="flex justify-between items-center mb-2">
-            <h3 className="text-sm font-medium">Overall Completion</h3>
+            <h3 className="text-sm font-medium">Hoàn thành tổng thể</h3>
             <span className="text-sm font-bold text-primary">{progressOverview.overallCompletion}%</span>
           </div>
           <Progress value={progressOverview.overallCompletion} aria-label="Overall course completion" />
         </div>
         <div>
-          <h3 className="text-sm font-medium mb-4">Course Scores</h3>
+          <h3 className="text-sm font-medium mb-4">Điểm khóa học</h3>
           <ChartContainer config={chartConfig} className="min-h-[200px] w-full">
             <BarChart accessibilityLayer data={progressOverview.courses}>
               <XAxis

@@ -16,8 +16,8 @@ export function SoftSkillsDashboard() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="font-headline">Soft Skills</CardTitle>
-        <CardDescription>Your development in key professional areas.</CardDescription>
+        <CardTitle className="font-headline">Kỹ năng mềm</CardTitle>
+        <CardDescription>Sự phát triển của bạn trong các lĩnh vực chuyên môn chính.</CardDescription>
       </CardHeader>
       <CardContent>
         <ChartContainer config={chartConfig} className="mx-auto aspect-square max-h-[250px]">

@@ -15,17 +15,17 @@ export function TodoList() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="font-headline">To-Do List</CardTitle>
-        <CardDescription>Upcoming and incomplete assignments.</CardDescription>
+        <CardTitle className="font-headline">Danh sách công việc</CardTitle>
+        <CardDescription>Các bài tập sắp tới và chưa hoàn thành.</CardDescription>
       </CardHeader>
       <CardContent>
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead className="w-[50px]">Status</TableHead>
-              <TableHead>Task</TableHead>
-              <TableHead>Course</TableHead>
-              <TableHead className="text-right">Due</TableHead>
+              <TableHead className="w-[50px]">Trạng thái</TableHead>
+              <TableHead>Nhiệm vụ</TableHead>
+              <TableHead>Khóa học</TableHead>
+              <TableHead className="text-right">Hạn nộp</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>

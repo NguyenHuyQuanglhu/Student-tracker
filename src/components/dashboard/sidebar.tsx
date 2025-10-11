@@ -24,10 +24,10 @@ export function DashboardSidebar({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
 
   const menuItems = [
-    { href: '/', label: 'Dashboard', icon: LayoutDashboard },
-    { href: '/courses', label: 'Courses', icon: Book },
-    { href: '/profile', label: 'Profile', icon: User },
-    { href: '/settings', label: 'Settings', icon: Settings },
+    { href: '/', label: 'Bảng điều khiển', icon: LayoutDashboard },
+    { href: '/courses', label: 'Các khóa học', icon: Book },
+    { href: '/profile', label: 'Hồ sơ', icon: User },
+    { href: '/settings', label: 'Cài đặt', icon: Settings },
   ];
 
   return (
@@ -54,7 +54,7 @@ export function DashboardSidebar({ children }: { children: React.ReactNode }) {
                       <path d="M6 18h12" />
                     </svg>
                 </div>
-                <span className="text-lg font-semibold">Student Hub</span>
+                <span className="text-lg font-semibold">Góc học tập</span>
             </div>
         </SidebarHeader>
         <SidebarContent>

@@ -9,13 +9,13 @@ export default function SettingsPage() {
           <div className="mx-auto max-w-7xl space-y-6">
             <Card>
               <CardHeader>
-                <CardTitle className="font-headline">Settings</CardTitle>
-                <CardDescription>Configure your application preferences.</CardDescription>
+                <CardTitle className="font-headline">Cài đặt</CardTitle>
+                <CardDescription>Định cấu hình tùy chọn ứng dụng của bạn.</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="text-center py-12">
-                  <h3 className="text-lg font-semibold">Coming Soon!</h3>
-                  <p className="text-muted-foreground">This page is under construction. You'll be able to adjust your settings here soon.</p>
+                  <h3 className="text-lg font-semibold">Sắp có!</h3>
+                  <p className="text-muted-foreground">Trang này đang được xây dựng. Bạn sẽ sớm có thể điều chỉnh cài đặt của mình tại đây.</p>
                 </div>
               </CardContent>
             </Card>

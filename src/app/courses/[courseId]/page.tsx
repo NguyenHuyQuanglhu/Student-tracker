@@ -10,7 +10,7 @@ import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 
 export default function CourseDetailPage({ params }: { params: { courseId: string } }) {
-  const { courseId } = params;
+  const { courseId } = use(params);
   
   const initialCourse = courseData.find(c => c.id === courseId);
   const [course, setCourse] = useState(initialCourse);

@@ -15,7 +15,7 @@ const statusColors: Record<CourseStatus, string> = {
     Paused: "bg-yellow-100 text-yellow-800",
 }
 
-const randomProgressValues = [25, 50, 75, 100];
+const randomProgressValues = [25, 50, 75];
 
 export default function CoursesPage() {
   const [courses, setCourses] = useState(courseData);

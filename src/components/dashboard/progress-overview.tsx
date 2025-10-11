@@ -14,7 +14,7 @@ const chartConfig = {
   },
 };
 
-const randomProgressValues = [25, 50, 75, 100];
+const randomProgressValues = [25, 50, 75];
 
 export function ProgressOverview() {
   const [internalCourseData, setInternalCourseData] = useState(courseData);

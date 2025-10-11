@@ -1,5 +1,6 @@
 "use client";
 
+import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import {
   Sidebar,
@@ -60,10 +61,14 @@ export function DashboardSidebar({ children }: { children: React.ReactNode }) {
           <SidebarMenu>
             {menuItems.map((item) => (
               <SidebarMenuItem key={item.href}>
-                <SidebarMenuButton href={item.href} isActive={pathname === item.href}>
-                  <item.icon />
-                  {item.label}
-                </SidebarMenuButton>
+                <Link href={item.href} passHref>
+                    <SidebarMenuButton asChild isActive={pathname === item.href}>
+                      <div>
+                        <item.icon />
+                        {item.label}
+                      </div>
+                    </SidebarMenuButton>
+                </Link>
               </SidebarMenuItem>
             ))}
           </SidebarMenu>

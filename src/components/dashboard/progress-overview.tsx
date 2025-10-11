@@ -62,7 +62,7 @@ export function ProgressOverview() {
                 </span>
             </div>
             <ChartContainer config={chartConfig} className="min-h-[200px] w-full mt-4">
-                <BarChart accessibilityLayer data={progressOverview.courses.slice(0, 7)} margin={{ top: 20, right: 0, left: -20, bottom: 0 }}>
+                <BarChart accessibilityLayer data={progressOverview.courses} margin={{ top: 20, right: 0, left: -20, bottom: 0 }}>
                 <XAxis
                     dataKey="name"
                     tickLine={false}

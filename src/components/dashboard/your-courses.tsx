@@ -1,8 +1,7 @@
 'use client';
 
-import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
+import { Card, CardHeader, CardTitle, CardFooter, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { courseData, CourseStatus } from "@/app/lib/mock-data";
 import { Progress } from "@/components/ui/progress";
@@ -14,41 +13,15 @@ const statusColors: Record<CourseStatus, string> = {
     Paused: "bg-yellow-100 text-yellow-800",
 }
 
-type DisplayCourse = (typeof courseData)[0] & { displayProgress: number };
-
 export function YourCourses() {
-  const [unfinishedCourses, setUnfinishedCourses] = useState<DisplayCourse[]>([]);
-
-  useEffect(() => {
-    const updateCourses = () => {
-      const updated = courseData
-        .map(course => {
-          const isCompleted = localStorage.getItem(`course_completed_${course.id}`) === 'true';
-          return {
-            ...course,
-            displayProgress: isCompleted ? 100 : course.progress,
-          };
-        })
-        .filter(course => course.displayProgress < 100);
-      setUnfinishedCourses(updated);
-    };
-
-    updateCourses();
-    
-    // Listen for custom event to re-check progress
-    window.addEventListener('courseUpdated', updateCourses);
-
-    return () => {
-      window.removeEventListener('courseUpdated', updateCourses);
-    };
-  }, []);
+  const unfinishedCourses = courseData.filter(course => course.progress < 100);
 
   return (
     <div>
         <h3 className="text-xl font-bold mb-4">Các khóa học của bạn</h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {unfinishedCourses.map((course) => {
-                const progress = course.displayProgress;
+                const progress = course.progress;
                 return (
                     <Link href={`/courses/${course.id}`} key={course.id} className="no-underline">
                         <Card className="flex flex-col h-full overflow-hidden hover:shadow-lg transition-shadow">

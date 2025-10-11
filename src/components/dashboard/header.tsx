@@ -9,7 +9,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { SidebarTrigger } from "@/components/ui/sidebar";
-import { Download, GraduationCap } from "lucide-react";
+import { ArrowUpFromLine } from "lucide-react";
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { user } from "@/app/lib/mock-data";
 
@@ -21,8 +21,8 @@ export function DashboardHeader() {
       <SidebarTrigger className="sm:hidden" />
       <div className="flex flex-1 items-center justify-end space-x-4">
         <Button>
-          <Download className="mr-2 h-4 w-4" />
-          Export to Spreadsheet
+          <ArrowUpFromLine className="mr-2 h-4 w-4" />
+          Nộp bài
         </Button>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>

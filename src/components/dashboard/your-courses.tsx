@@ -1,16 +1,10 @@
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import Link from 'next/link';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { todoList } from "@/app/lib/mock-data";
+import { courseData, CourseStatus } from "@/app/lib/mock-data";
 import Image from "next/image";
-
-type CourseStatus = 'Active' | 'Finished' | 'Paused';
-
-const courseData = [
-    { name: "IT & Software", daysLeft: "45 Days Left", status: "Active" as CourseStatus, imageSeed: "course1" },
-    { name: "Programming", daysLeft: "1 Days Left", status: "Finished" as CourseStatus, imageSeed: "course2" },
-    { name: "Networking", daysLeft: "15 Days Left", status: "Active" as CourseStatus, imageSeed: "course3" },
-    { name: "Network Security", daysLeft: "21 Days Left", status: "Paused" as CourseStatus, imageSeed: "course4" },
-];
+import { Progress } from "@/components/ui/progress";
+import { Button } from "@/components/ui/button";
 
 const statusColors: Record<CourseStatus, string> = {
     Active: "bg-blue-100 text-blue-800",
@@ -24,23 +18,23 @@ export function YourCourses() {
         <h3 className="text-xl font-bold mb-4">Các khóa học của bạn</h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {courseData.map((course) => (
-                <Card key={course.name} className="relative overflow-hidden">
-                    <CardHeader>
-                        <Badge className={`w-fit ${statusColors[course.status]}`}>{course.status}</Badge>
-                        <CardTitle className="pt-2">{course.name}</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                        <CardDescription>{course.daysLeft}</CardDescription>
-                    </CardContent>
-                    <Image 
-                        src={`https://picsum.photos/seed/${course.imageSeed}/100/100`} 
-                        alt="Course Illustration"
-                        width={80}
-                        height={100}
-                        className="absolute bottom-0 right-4"
-                        data-ai-hint="person graduation"
-                    />
-                </Card>
+                <Link href={`/courses/${course.id}`} key={course.id} className="no-underline">
+                    <Card className="flex flex-col h-full overflow-hidden hover:shadow-lg transition-shadow">
+                        <CardHeader>
+                            <Badge className={`w-fit ${statusColors[course.status]}`}>{course.status}</Badge>
+                            <CardTitle className="pt-2">{course.name}</CardTitle>
+                        </CardHeader>
+                        <CardContent className="flex-grow">
+                            <p className="text-sm text-muted-foreground mb-2">{course.progress}% Hoàn thành</p>
+                            <Progress value={course.progress} className="h-2" />
+                        </CardContent>
+                        <CardFooter>
+                           <Button variant="outline" className="w-full">
+                            {course.progress === 100 ? 'Xem lại' : course.progress > 0 ? 'Tiếp tục học' : 'Bắt đầu học'}
+                           </Button>
+                        </CardFooter>
+                    </Card>
+                </Link>
             ))}
         </div>
     </div>

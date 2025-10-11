@@ -34,3 +34,12 @@ export const warnings = [
   { id: '1', message: 'Bạn có nguy cơ trượt môn Lịch sử thế giới. Điểm hiện tại của bạn là 68%.' },
   { id: '2', message: 'Bài Cơ học lượng tử sẽ hết hạn trong 3 ngày nữa.' },
 ];
+
+export type CourseStatus = 'Active' | 'Finished' | 'Paused';
+
+export const courseData = [
+    { id: "it-software", name: "IT & Software", progress: 60, status: "Active" as CourseStatus, imageSeed: "course1" },
+    { id: "programming", name: "Programming", progress: 100, status: "Finished" as CourseStatus, imageSeed: "course2" },
+    { id: "networking", name: "Networking", progress: 25, status: "Active" as CourseStatus, imageSeed: "course3" },
+    { id: "network-security", name: "Network Security", progress: 10, status: "Paused" as CourseStatus, imageSeed: "course4" },
+];

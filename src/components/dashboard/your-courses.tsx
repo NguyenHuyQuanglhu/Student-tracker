@@ -30,11 +30,13 @@ export function YourCourses() {
     setCourses(updatedCourses);
   }, []);
 
+  const unfinishedCourses = courses.filter(course => course.progress < 100);
+
   return (
     <div>
         <h3 className="text-xl font-bold mb-4">Các khóa học của bạn</h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {courses.map((course) => {
+            {unfinishedCourses.map((course) => {
                 const progress = course.progress;
                 return (
                     <Link href={`/courses/${course.id}`} key={course.id} className="no-underline">

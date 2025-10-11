@@ -39,10 +39,10 @@ export const warnings = [
 export type CourseStatus = 'Active' | 'Finished' | 'Paused';
 
 export const courseData = [
-    { id: "it-software", name: "IT & Software", progress: 100, status: "Finished" as CourseStatus, imageSeed: "course1" },
-    { id: "programming", name: "Programming", progress: 100, status: "Finished" as CourseStatus, imageSeed: "course2" },
+    { id: "it-software", name: "IT & Software", progress: 20, status: "Active" as CourseStatus, imageSeed: "course1" },
+    { id: "programming", name: "Programming", progress: 60, status: "Active" as CourseStatus, imageSeed: "course2" },
     { id: "networking", name: "Networking", progress: 25, status: "Active" as CourseStatus, imageSeed: "course3" },
-    { id: "network-security", name: "Network Security", progress: 100, status: "Finished" as CourseStatus, imageSeed: "course4" },
+    { id: "network-security", name: "Network Security", progress: 80, status: "Active" as CourseStatus, imageSeed: "course4" },
     { id: "public-speaking", name: "Public Speaking", progress: 50, status: "Active" as CourseStatus, imageSeed: "course5" },
     { id: "leadership", name: "Leadership", progress: 75, status: "Active" as CourseStatus, imageSeed: "course6" },
     { id: "teamwork", name: "Teamwork", progress: 0, status: "Active" as CourseStatus, imageSeed: "course7" },

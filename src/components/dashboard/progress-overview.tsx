@@ -28,6 +28,7 @@ const progressOverview = {
 
 
 export function ProgressOverview() {
+  const [internalCourseData, setInternalCourseData] = useState(courseData);
   const [courseStatusData, setCourseStatusData] = useState([
     { name: 'In Progress', value: 0, fill: 'hsl(var(--primary))' },
     { name: 'Completed', value: 0, fill: 'hsl(var(--chart-2))' },
@@ -35,14 +36,13 @@ export function ProgressOverview() {
   ]);
   const [totalCourses, setTotalCourses] = useState(0);
 
-  const updateStats = () => {
+  const updateStats = (currentCourses: typeof courseData) => {
     let completed = 0;
     let inProgress = 0;
     let yetToStart = 0;
 
-    courseData.forEach(course => {
-        const isCompleted = localStorage.getItem(`course_completed_${course.id}`) === 'true';
-        if (isCompleted || course.progress === 100) {
+    currentCourses.forEach(course => {
+        if (course.progress === 100) {
             completed++;
         } else if (course.progress > 0) {
             inProgress++;
@@ -56,16 +56,28 @@ export function ProgressOverview() {
       { name: 'Hoàn thành', value: completed, fill: 'hsl(var(--chart-2))' },
       { name: 'Chưa bắt đầu', value: yetToStart, fill: 'hsl(var(--muted))' },
     ]);
-    setTotalCourses(courseData.length);
+    setTotalCourses(currentCourses.length);
   }
 
   useEffect(() => {
-    updateStats();
-    
-    window.addEventListener('storage', updateStats);
+    updateStats(internalCourseData);
+  }, [internalCourseData]);
+
+  useEffect(() => {
+    const handleCourseCompletion = (event: Event) => {
+        const customEvent = event as CustomEvent;
+        const { courseId } = customEvent.detail;
+        setInternalCourseData(prevCourses =>
+            prevCourses.map(course =>
+                course.id === courseId ? { ...course, progress: 100 } : course
+            )
+        );
+    };
+
+    window.addEventListener('courseCompleted', handleCourseCompletion);
 
     return () => {
-      window.removeEventListener('storage', updateStats);
+        window.removeEventListener('courseCompleted', handleCourseCompletion);
     };
   }, []);
 

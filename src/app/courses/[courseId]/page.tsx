@@ -20,17 +20,9 @@ export default function CourseDetailPage({ params: paramsPromise }: { params: { 
   useEffect(() => {
     const course = courseData.find(c => c.id === courseId);
     if(course) {
-        // Check localStorage for completion status
-        const completionStatus = localStorage.getItem(`course_completed_${params.courseId}`);
-        if (completionStatus === 'true') {
-          setIsCompleted(true);
-          setCurrentProgress(100);
-        } else {
-            setIsCompleted(false);
-            setCurrentProgress(course.progress);
-        }
+        setCurrentProgress(course.progress);
     }
-  }, [courseId, params.courseId]);
+  }, [courseId]);
 
 
   if (!course) {
@@ -40,9 +32,8 @@ export default function CourseDetailPage({ params: paramsPromise }: { params: { 
   const handleMarkAsComplete = () => {
     setIsCompleted(true);
     setCurrentProgress(100);
-    localStorage.setItem(`course_completed_${courseId}`, 'true');
-    // We can dispatch a custom event to notify other components
-    window.dispatchEvent(new Event('storage'));
+    // Dispatch a custom event to notify other components
+    window.dispatchEvent(new CustomEvent('courseCompleted', { detail: { courseId } }));
   };
 
   const progress = isCompleted ? 100 : currentProgress;
@@ -66,7 +57,7 @@ export default function CourseDetailPage({ params: paramsPromise }: { params: { 
               <CardHeader>
                 <CardTitle className="font-headline">Nội dung khóa học</CardTitle>
                 <CardDescription>Tiến độ hiện tại của bạn: {progress}%</CardDescription>
-              </CardHeader>
+              </Header>
               <CardContent>
                 <div className="text-center py-12">
                   <h3 className="text-lg font-semibold">Nội dung sắp ra mắt!</h3>

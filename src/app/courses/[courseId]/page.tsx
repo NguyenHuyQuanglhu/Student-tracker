@@ -9,12 +9,12 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 
-export default function CourseDetailPage({ params: paramsPromise }: { params: { courseId: string } }) {
-  const params = use(paramsPromise);
-  const courseId = params.courseId;
+export default function CourseDetailPage({ params }: { params: { courseId: string } }) {
+  const { courseId } = params;
   
-  const [course, setCourse] = useState(() => courseData.find(c => c.id === courseId));
-  
+  const initialCourse = courseData.find(c => c.id === courseId);
+  const [course, setCourse] = useState(initialCourse);
+
   useEffect(() => {
     const handleCourseCompletion = (event: Event) => {
       const customEvent = event as CustomEvent;
@@ -31,7 +31,6 @@ export default function CourseDetailPage({ params: paramsPromise }: { params: { 
     };
   }, [courseId]);
 
-
   if (!course) {
     notFound();
   }
@@ -39,7 +38,6 @@ export default function CourseDetailPage({ params: paramsPromise }: { params: { 
   const isCompleted = course.progress === 100;
 
   const handleMarkAsComplete = () => {
-    // Dispatch a custom event to notify other components
     window.dispatchEvent(new CustomEvent('courseCompleted', { detail: { courseId } }));
   };
 

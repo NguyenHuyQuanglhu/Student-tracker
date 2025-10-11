@@ -26,9 +26,21 @@ const progressOverview = {
     ],
 };
 
+const randomProgressValues = [25, 50, 75, 100];
+const randomizedCourses = courseData.map(course => {
+    if (course.progress !== 100) {
+        const randomProgress = randomProgressValues[Math.floor(Math.random() * randomProgressValues.length)];
+        return {
+            ...course,
+            progress: randomProgress,
+        };
+    }
+    return course;
+});
+
 
 export function ProgressOverview() {
-  const [internalCourseData, setInternalCourseData] = useState(courseData);
+  const [internalCourseData, setInternalCourseData] = useState(randomizedCourses);
   const [courseStatusData, setCourseStatusData] = useState([
     { name: 'In Progress', value: 0, fill: 'hsl(var(--primary))' },
     { name: 'Completed', value: 0, fill: 'hsl(var(--chart-2))' },

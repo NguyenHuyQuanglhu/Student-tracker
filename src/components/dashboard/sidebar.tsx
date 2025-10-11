@@ -17,6 +17,7 @@ import {
   Book,
   User,
   Settings,
+  ClipboardList,
 } from 'lucide-react';
 import { DashboardHeader } from "@/components/dashboard/header";
 
@@ -24,10 +25,11 @@ export function DashboardSidebar({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
 
   const menuItems = [
-    { href: '/', label: 'Bảng điều khiển', icon: LayoutDashboard },
-    { href: '/courses', label: 'Các khóa học', icon: Book },
-    { href: '/profile', label: 'Hồ sơ', icon: User },
-    { href: '/settings', label: 'Cài đặt', icon: Settings },
+    { href: '/', label: 'Dashboard', icon: LayoutDashboard },
+    { href: '/courses', label: 'Courses', icon: Book },
+    { href: '/exercises', label: 'Bài tập', icon: ClipboardList },
+    { href: '/profile', label: 'Profile', icon: User },
+    { href: '/settings', label: 'Settings', icon: Settings },
   ];
 
   return (

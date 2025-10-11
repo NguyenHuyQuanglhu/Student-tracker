@@ -13,12 +13,9 @@ export default function CourseDetailPage({ params: paramsPromise }: { params: { 
   const params = use(paramsPromise);
   const courseId = params.courseId;
   
-  const [course, setCourse] = useState(courseData.find(c => c.id === courseId));
+  const [course, setCourse] = useState(() => courseData.find(c => c.id === courseId));
   
   useEffect(() => {
-    const initialCourse = courseData.find(c => c.id === courseId);
-    setCourse(initialCourse);
-
     const handleCourseCompletion = (event: Event) => {
       const customEvent = event as CustomEvent;
       const { courseId: completedCourseId } = customEvent.detail;
@@ -67,7 +64,7 @@ export default function CourseDetailPage({ params: paramsPromise }: { params: { 
               <CardHeader>
                 <CardTitle className="font-headline">Nội dung khóa học</CardTitle>
                 <CardDescription>Tiến độ hiện tại của bạn: {progress}%</CardDescription>
-              </Header>
+              </CardHeader>
               <CardContent>
                 <div className="text-center py-12">
                   <h3 className="text-lg font-semibold">Nội dung sắp ra mắt!</h3>

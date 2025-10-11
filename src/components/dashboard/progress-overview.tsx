@@ -24,7 +24,7 @@ export function ProgressOverview() {
         <div>
           <div className="flex justify-between items-center mb-2">
             <h3 className="text-sm font-medium">Overall Completion</h3>
-            <span className="text-sm font-bold" style={{ color: 'hsl(var(--primary))' }}>{progressOverview.overallCompletion}%</span>
+            <span className="text-sm font-bold text-primary">{progressOverview.overallCompletion}%</span>
           </div>
           <Progress value={progressOverview.overallCompletion} aria-label="Overall course completion" />
         </div>

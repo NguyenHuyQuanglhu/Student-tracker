@@ -8,7 +8,6 @@ import {
   SidebarMenu,
   SidebarMenuItem,
   SidebarMenuButton,
-  SidebarTrigger,
   SidebarInset,
 } from '@/components/ui/sidebar';
 import {
@@ -26,7 +25,23 @@ export function DashboardSidebar({ children }: { children: React.ReactNode }) {
         <SidebarHeader>
             <div className="flex items-center gap-2">
                 <div className="flex size-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-                    <LayoutDashboard className="size-4" />
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <path d="M22 10v6" />
+                      <path d="M2 10v6" />
+                      <path d="M12 2v8" />
+                      <path d="m6 12 6 6 6-6" />
+                      <path d="M6 18h12" />
+                    </svg>
                 </div>
                 <span className="text-lg font-semibold">Student Hub</span>
             </div>

@@ -12,16 +12,26 @@ import { ArrowLeft } from "lucide-react";
 export default function CourseDetailPage({ params: paramsPromise }: { params: { courseId: string } }) {
   const params = use(paramsPromise);
   const courseId = params.courseId;
-  const course = courseData.find(c => c.id === courseId);
   
-  const [isCompleted, setIsCompleted] = useState(false);
-  const [currentProgress, setCurrentProgress] = useState(0);
-
+  const [course, setCourse] = useState(courseData.find(c => c.id === courseId));
+  
   useEffect(() => {
-    const course = courseData.find(c => c.id === courseId);
-    if(course) {
-        setCurrentProgress(course.progress);
-    }
+    const initialCourse = courseData.find(c => c.id === courseId);
+    setCourse(initialCourse);
+
+    const handleCourseCompletion = (event: Event) => {
+      const customEvent = event as CustomEvent;
+      const { courseId: completedCourseId } = customEvent.detail;
+      if (completedCourseId === courseId) {
+        setCourse(prevCourse => prevCourse ? { ...prevCourse, progress: 100 } : undefined);
+      }
+    };
+
+    window.addEventListener('courseCompleted', handleCourseCompletion);
+
+    return () => {
+      window.removeEventListener('courseCompleted', handleCourseCompletion);
+    };
   }, [courseId]);
 
 
@@ -29,21 +39,21 @@ export default function CourseDetailPage({ params: paramsPromise }: { params: { 
     notFound();
   }
 
+  const isCompleted = course.progress === 100;
+
   const handleMarkAsComplete = () => {
-    setIsCompleted(true);
-    setCurrentProgress(100);
     // Dispatch a custom event to notify other components
     window.dispatchEvent(new CustomEvent('courseCompleted', { detail: { courseId } }));
   };
 
-  const progress = isCompleted ? 100 : currentProgress;
+  const progress = course.progress;
 
   return (
     <div className="flex min-h-screen w-full flex-col">
       <DashboardSidebar>
         <main className="flex-1 p-4 sm:p-8">
             <div className="mb-6">
-                 <Link href="/" passHref>
+                 <Link href="/courses" passHref>
                     <Button variant="outline" size="sm" className="mb-4">
                         <ArrowLeft className="mr-2 h-4 w-4" />
                         Quay lại trang chính

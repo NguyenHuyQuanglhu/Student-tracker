@@ -7,6 +7,9 @@ import { BarChart, Bar, XAxis, YAxis, PieChart, Pie, Cell } from "recharts";
 import { TrendingDown, TrendingUp } from "lucide-react";
 import { useEffect, useState } from "react";
 
+const COMPLETED_COURSES_KEY = 'completedCourses';
+const randomProgressValues = [25, 50, 75];
+
 const chartConfig = {
   score: {
     label: "Score",
@@ -14,69 +17,50 @@ const chartConfig = {
   },
 };
 
-const randomProgressValues = [25, 50, 75];
-
 export function ProgressOverview() {
   const [internalCourseData, setInternalCourseData] = useState(courseData);
-  const [courseStatusData, setCourseStatusData] = useState([
-    { name: 'In Progress', value: 0, fill: 'hsl(var(--primary))' },
-    { name: 'Completed', value: 0, fill: 'hsl(var(--chart-2))' },
-    { name: 'Yet to Start', value: 0, fill: 'hsl(var(--muted))' },
-  ]);
-  const [totalCourses, setTotalCourses] = useState(0);
 
-  const updateStats = (currentCourses: typeof courseData) => {
-    let completed = 0;
-    let inProgress = 0;
-    let yetToStart = 0;
-
-    currentCourses.forEach(course => {
-        if (course.progress === 100) {
-            completed++;
-        } else if (course.progress > 0) {
-            inProgress++;
-        } else {
-            yetToStart++;
-        }
-    });
-
-    setCourseStatusData([
-      { name: 'Đang học', value: inProgress, fill: 'hsl(var(--primary))' },
-      { name: 'Hoàn thành', value: completed, fill: 'hsl(var(--chart-2))' },
-      { name: 'Chưa bắt đầu', value: yetToStart, fill: 'hsl(var(--muted))' },
-    ]);
-    setTotalCourses(currentCourses.length);
+  const updateStats = () => {
+    if (typeof window !== 'undefined') {
+        const completedCourses = JSON.parse(localStorage.getItem(COMPLETED_COURSES_KEY) || '[]');
+        const updatedCourses = courseData.map(course => {
+            if (completedCourses.includes(course.id)) {
+                return { ...course, progress: 100 };
+            }
+             if (course.progress > 0 && course.progress < 100) {
+                 const randomProgress = randomProgressValues[Math.floor(Math.random() * randomProgressValues.length)];
+                 return { ...course, progress: randomProgress };
+            }
+            return course;
+        });
+        setInternalCourseData(updatedCourses);
+    }
   }
 
   useEffect(() => {
-    const randomizedCourses = courseData.map(course => {
-        const randomProgress = randomProgressValues[Math.floor(Math.random() * randomProgressValues.length)];
-        return {
-            ...course,
-            progress: course.progress === 100 ? 100 : randomProgress,
-        };
-    });
-    setInternalCourseData(randomizedCourses);
-    updateStats(randomizedCourses);
+    updateStats();
 
-    const handleCourseCompletion = (event: Event) => {
-        const customEvent = event as CustomEvent;
-        const { courseId } = customEvent.detail;
-        setInternalCourseData(prevCourses => {
-            const newCourses = prevCourses.map(course =>
-                course.id === courseId ? { ...course, progress: 100 } : course
-            );
-            updateStats(newCourses);
-            return newCourses;
-        });
+    const handleStorageChange = () => {
+        updateStats();
     };
 
-    window.addEventListener('courseCompleted', handleCourseCompletion);
+    window.addEventListener('storage', handleStorageChange);
 
     return () => {
-        window.removeEventListener('courseCompleted', handleCourseCompletion);
+        window.removeEventListener('storage', handleStorageChange);
     };
   }, []);
+
+  const totalCourses = internalCourseData.length;
+  const completed = internalCourseData.filter(c => c.progress === 100).length;
+  const inProgress = internalCourseData.filter(c => c.progress > 0 && c.progress < 100).length;
+  const yetToStart = totalCourses - completed - inProgress;
+
+  const courseStatusData = [
+    { name: 'Đang học', value: inProgress, fill: 'hsl(var(--primary))' },
+    { name: 'Hoàn thành', value: completed, fill: 'hsl(var(--chart-2))' },
+    { name: 'Chưa bắt đầu', value: yetToStart, fill: 'hsl(var(--muted))' },
+  ];
 
   const progressOverview = {
     courses: internalCourseData.map(c => ({name: c.name, score: c.progress}))

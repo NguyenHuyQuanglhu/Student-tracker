@@ -8,42 +8,46 @@ import { courseData, CourseStatus } from "@/app/lib/mock-data";
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
 
+const COMPLETED_COURSES_KEY = 'completedCourses';
+const randomProgressValues = [25, 50, 75];
+
 const statusColors: Record<CourseStatus, string> = {
     Active: "bg-blue-100 text-blue-800",
     Finished: "bg-gray-100 text-gray-800",
     Paused: "bg-yellow-100 text-yellow-800",
 }
 
-const randomProgressValues = [25, 50, 75];
-
-
 export function YourCourses() {
     const [courses, setCourses] = useState(courseData);
 
+    const updateCourseProgress = () => {
+        if (typeof window !== 'undefined') {
+            const completedCourses = JSON.parse(localStorage.getItem(COMPLETED_COURSES_KEY) || '[]');
+            const updatedCourses = courseData.map(course => {
+                if (completedCourses.includes(course.id)) {
+                    return { ...course, progress: 100 };
+                }
+                if (course.progress > 0 && course.progress < 100) {
+                     const randomProgress = randomProgressValues[Math.floor(Math.random() * randomProgressValues.length)];
+                     return { ...course, progress: randomProgress };
+                }
+                return course;
+            });
+            setCourses(updatedCourses);
+        }
+    };
+    
     useEffect(() => {
-        const randomizedCourses = courseData.map(course => {
-            const randomProgress = randomProgressValues[Math.floor(Math.random() * randomProgressValues.length)];
-            return {
-                ...course,
-                progress: course.progress === 100 ? 100 : randomProgress,
-            };
-        });
-        setCourses(randomizedCourses);
+        updateCourseProgress();
 
-        const handleCourseCompletion = (event: Event) => {
-          const customEvent = event as CustomEvent;
-          const { courseId } = customEvent.detail;
-          setCourses(prevCourses =>
-            prevCourses.map(course =>
-              course.id === courseId ? { ...course, progress: 100 } : course
-            )
-          );
+        const handleStorageChange = () => {
+            updateCourseProgress();
         };
-    
-        window.addEventListener('courseCompleted', handleCourseCompletion);
-    
+
+        window.addEventListener('storage', handleStorageChange);
+
         return () => {
-          window.removeEventListener('courseCompleted', handleCourseCompletion);
+          window.removeEventListener('storage', handleStorageChange);
         };
       }, []);
       

@@ -9,6 +9,8 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 
+const COMPLETED_COURSES_KEY = 'completedCourses';
+
 export default function CourseDetailPage({ params }: { params: { courseId: string } }) {
   const { courseId } = use(params);
   
@@ -16,19 +18,12 @@ export default function CourseDetailPage({ params }: { params: { courseId: strin
   const [course, setCourse] = useState(initialCourse);
 
   useEffect(() => {
-    const handleCourseCompletion = (event: Event) => {
-      const customEvent = event as CustomEvent;
-      const { courseId: completedCourseId } = customEvent.detail;
-      if (completedCourseId === courseId) {
-        setCourse(prevCourse => prevCourse ? { ...prevCourse, progress: 100 } : undefined);
+    if (typeof window !== 'undefined') {
+      const completedCourses = JSON.parse(localStorage.getItem(COMPLETED_COURSES_KEY) || '[]');
+      if (course && completedCourses.includes(course.id)) {
+        setCourse({ ...course, progress: 100 });
       }
-    };
-
-    window.addEventListener('courseCompleted', handleCourseCompletion);
-
-    return () => {
-      window.removeEventListener('courseCompleted', handleCourseCompletion);
-    };
+    }
   }, [courseId]);
 
   if (!course) {
@@ -38,10 +33,17 @@ export default function CourseDetailPage({ params }: { params: { courseId: strin
   const isCompleted = course.progress === 100;
 
   const handleMarkAsComplete = () => {
-    window.dispatchEvent(new CustomEvent('courseCompleted', { detail: { courseId } }));
+    if (typeof window !== 'undefined') {
+        const completedCourses = JSON.parse(localStorage.getItem(COMPLETED_COURSES_KEY) || '[]');
+        if (!completedCourses.includes(courseId)) {
+            const newCompletedCourses = [...completedCourses, courseId];
+            localStorage.setItem(COMPLETED_COURSES_KEY, JSON.stringify(newCompletedCourses));
+            // Dispatch a storage event to notify other components/tabs
+            window.dispatchEvent(new Event('storage'));
+            setCourse({ ...course, progress: 100 });
+        }
+    }
   };
-
-  const progress = course.progress;
 
   return (
     <div className="flex min-h-screen w-full flex-col">
@@ -61,7 +63,7 @@ export default function CourseDetailPage({ params }: { params: { courseId: strin
             <Card>
               <CardHeader>
                 <CardTitle className="font-headline">Nội dung khóa học</CardTitle>
-                <CardDescription>Tiến độ hiện tại của bạn: {progress}%</CardDescription>
+                <CardDescription>Tiến độ hiện tại của bạn: {course.progress}%</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="text-center py-12">

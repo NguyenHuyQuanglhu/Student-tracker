@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, use } from 'react';
+import { useState, useEffect, use } from 'react';
 import { DashboardSidebar } from "@/components/dashboard/sidebar";
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/ui/card";
 import { courseData } from "@/app/lib/mock-data";
@@ -14,11 +14,20 @@ export default function CourseDetailPage({ params: paramsPromise }: { params: { 
   const course = courseData.find(c => c.id === courseId);
   const [isCompleted, setIsCompleted] = useState(false);
 
+  useEffect(() => {
+    // On component mount, check localStorage for completion status
+    const completionStatus = localStorage.getItem(`course_completed_${courseId}`);
+    if (completionStatus === 'true') {
+      setIsCompleted(true);
+    }
+  }, [courseId]);
+
   if (!course) {
     notFound();
   }
 
   const handleMarkAsComplete = () => {
+    localStorage.setItem(`course_completed_${courseId}`, 'true');
     setIsCompleted(true);
   };
 

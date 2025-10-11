@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { courseData, CourseStatus } from "@/app/lib/mock-data";
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 const statusColors: Record<CourseStatus, string> = {
     Active: "bg-blue-100 text-blue-800",
@@ -15,14 +15,22 @@ const statusColors: Record<CourseStatus, string> = {
     Paused: "bg-yellow-100 text-yellow-800",
 }
 
+type DisplayCourse = (typeof courseData)[0] & { displayProgress: number };
+
 export default function CoursesPage() {
-  const [courses] = useState(courseData.map(course => {
-      // Temporarily show some courses as finished for display purposes
-      if (course.progress === 100) {
-          return { ...course, status: 'Finished' as CourseStatus };
-      }
-      return course;
-  }));
+  const [courses, setCourses] = useState<DisplayCourse[]>([]);
+
+  useEffect(() => {
+    const updatedCourses = courseData.map(course => {
+      const isCompleted = localStorage.getItem(`course_completed_${course.id}`) === 'true';
+      return {
+        ...course,
+        displayProgress: isCompleted ? 100 : course.progress,
+      };
+    });
+    setCourses(updatedCourses);
+  }, []);
+
 
   return (
     <div className="flex min-h-screen w-full flex-col">
@@ -34,7 +42,7 @@ export default function CoursesPage() {
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                 {courses.map((course) => {
-                    const progress = course.progress;
+                    const progress = course.displayProgress;
                     const isFinished = progress === 100;
                     const status = isFinished ? 'Finished' : course.status;
                     return (

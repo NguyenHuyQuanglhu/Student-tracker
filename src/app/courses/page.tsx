@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { courseData, CourseStatus } from "@/app/lib/mock-data";
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 const statusColors: Record<CourseStatus, string> = {
     Active: "bg-blue-100 text-blue-800",
@@ -16,19 +16,13 @@ const statusColors: Record<CourseStatus, string> = {
 }
 
 export default function CoursesPage() {
-  const [courses, setCourses] = useState(courseData);
-
-  useEffect(() => {
-    // Check local storage for each course and update progress
-    const updatedCourses = courseData.map(course => {
-      const isCompleted = localStorage.getItem(`course_completed_${course.id}`) === 'true';
-      if (isCompleted) {
-        return { ...course, progress: 100, status: 'Finished' as CourseStatus };
+  const [courses] = useState(courseData.map(course => {
+      // Temporarily show some courses as finished for display purposes
+      if (course.progress === 100) {
+          return { ...course, status: 'Finished' as CourseStatus };
       }
       return course;
-    });
-    setCourses(updatedCourses);
-  }, []);
+  }));
 
   return (
     <div className="flex min-h-screen w-full flex-col">
@@ -41,11 +35,13 @@ export default function CoursesPage() {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                 {courses.map((course) => {
                     const progress = course.progress;
+                    const isFinished = progress === 100;
+                    const status = isFinished ? 'Finished' : course.status;
                     return (
                         <Link href={`/courses/${course.id}`} key={course.id} className="no-underline">
                             <Card className="flex flex-col h-full overflow-hidden hover:shadow-lg transition-shadow">
                                 <CardHeader>
-                                    <Badge className={`w-fit ${statusColors[course.status]}`}>{course.status}</Badge>
+                                    <Badge className={`w-fit ${statusColors[status]}`}>{status}</Badge>
                                     <CardTitle className="pt-2">{course.name}</CardTitle>
                                 </CardHeader>
                                 <CardContent className="flex-grow">

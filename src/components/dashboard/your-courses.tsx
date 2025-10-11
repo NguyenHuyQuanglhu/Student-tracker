@@ -1,13 +1,11 @@
 'use client';
 
 import Link from 'next/link';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { courseData, CourseStatus } from "@/app/lib/mock-data";
-import Image from "next/image";
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
-import { useEffect, useState } from 'react';
 
 const statusColors: Record<CourseStatus, string> = {
     Active: "bg-blue-100 text-blue-800",
@@ -16,21 +14,7 @@ const statusColors: Record<CourseStatus, string> = {
 }
 
 export function YourCourses() {
-  const [courses, setCourses] = useState(courseData);
-
-  useEffect(() => {
-    // Check local storage for each course and update progress
-    const updatedCourses = courseData.map(course => {
-      const isCompleted = localStorage.getItem(`course_completed_${course.id}`) === 'true';
-      if (isCompleted) {
-        return { ...course, progress: 100, status: 'Finished' as CourseStatus };
-      }
-      return course;
-    });
-    setCourses(updatedCourses);
-  }, []);
-
-  const unfinishedCourses = courses.filter(course => course.progress < 100);
+  const unfinishedCourses = courseData.filter(course => course.progress < 100);
 
   return (
     <div>

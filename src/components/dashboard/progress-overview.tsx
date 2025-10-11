@@ -1,9 +1,8 @@
 "use client"
 
-import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ChartContainer } from "@/components/ui/chart";
-import { progressOverview, courseData, CourseStatus } from "@/app/lib/mock-data";
+import { progressOverview, courseData } from "@/app/lib/mock-data";
 import { BarChart, Bar, XAxis, YAxis, PieChart, Pie, Cell } from "recharts";
 import { TrendingDown, TrendingUp } from "lucide-react";
 
@@ -15,44 +14,10 @@ const chartConfig = {
 };
 
 export function ProgressOverview() {
-  const [courses, setCourses] = useState(courseData);
-
-  useEffect(() => {
-    const updatedCourses = courseData.map(course => {
-      const isCompleted = localStorage.getItem(`course_completed_${course.id}`) === 'true';
-      if (isCompleted) {
-        return { ...course, progress: 100, status: 'Finished' as CourseStatus };
-      }
-      return course;
-    });
-    setCourses(updatedCourses);
-
-    const handleStorageChange = () => {
-        const refreshedCourses = courseData.map(course => {
-            const isCompleted = localStorage.getItem(`course_completed_${course.id}`) === 'true';
-            if (isCompleted) {
-                return { ...course, progress: 100, status: 'Finished' as CourseStatus };
-            }
-            return course;
-        });
-        setCourses(refreshedCourses);
-    };
-
-    window.addEventListener('storage', handleStorageChange);
-    
-    // Also listen for a custom event that we can trigger manually
-    window.addEventListener('courseCompletionChanged', handleStorageChange);
-
-    return () => {
-        window.removeEventListener('storage', handleStorageChange);
-        window.removeEventListener('courseCompletionChanged', handleStorageChange);
-    };
-  }, []);
-
-  const totalCourses = courses.length;
-  const completedCourses = courses.filter(c => c.status === 'Finished').length;
-  const inProgressCourses = courses.filter(c => c.status === 'Active' && c.progress > 0).length;
-  const yetToStartCourses = courses.filter(c => c.status === 'Active' && c.progress === 0).length;
+  const totalCourses = courseData.length;
+  const completedCourses = courseData.filter(c => c.progress === 100).length;
+  const inProgressCourses = courseData.filter(c => c.progress > 0 && c.progress < 100).length;
+  const yetToStartCourses = courseData.filter(c => c.progress === 0).length;
 
   const courseStatusData = [
       { name: 'In Progress', value: inProgressCourses, fill: 'hsl(var(--primary))' },

@@ -9,8 +9,8 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 
-export default function CourseDetailPage({ params }: { params: { courseId: string } }) {
-  const { courseId } = params;
+export default function CourseDetailPage({ params: paramsPromise }: { params: { courseId: string } }) {
+  const { courseId } = use(paramsPromise);
   const course = courseData.find(c => c.id === courseId);
   const [isCompleted, setIsCompleted] = useState(false);
 
@@ -30,6 +30,8 @@ export default function CourseDetailPage({ params }: { params: { courseId: strin
     setIsCompleted(true);
     // Persist the completion status in localStorage
     localStorage.setItem(`course_completed_${courseId}`, 'true');
+    // Dispatch a custom event to notify other components of the change
+    window.dispatchEvent(new Event('courseCompletionChanged'));
   };
 
   const progress = isCompleted ? 100 : course.progress;

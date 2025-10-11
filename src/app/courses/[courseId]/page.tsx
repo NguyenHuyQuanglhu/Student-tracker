@@ -4,7 +4,7 @@ import { useState, useEffect, use } from 'react';
 import { DashboardSidebar } from "@/components/dashboard/sidebar";
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/ui/card";
 import { courseData } from "@/app/lib/mock-data";
-import { notFound } from "next/navigation";
+import { notFound, useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
@@ -20,11 +20,13 @@ export default function CourseDetailPage({ params }: { params: { courseId: strin
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const completedCourses = JSON.parse(localStorage.getItem(COMPLETED_COURSES_KEY) || '[]');
-      if (course && completedCourses.includes(course.id)) {
-        setCourse({ ...course, progress: 100 });
+      if (initialCourse && completedCourses.includes(initialCourse.id)) {
+        setCourse({ ...initialCourse, progress: 100 });
+      } else {
+        setCourse(initialCourse);
       }
     }
-  }, [courseId, course]);
+  }, [courseId, initialCourse]);
 
   if (!course) {
     notFound();

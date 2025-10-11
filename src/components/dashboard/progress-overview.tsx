@@ -8,7 +8,6 @@ import { TrendingDown, TrendingUp } from "lucide-react";
 import { useEffect, useState } from "react";
 
 const COMPLETED_COURSES_KEY = 'completedCourses';
-const randomProgressValues = [25, 50, 75];
 
 const chartConfig = {
   score: {
@@ -26,10 +25,6 @@ export function ProgressOverview() {
         const updatedCourses = courseData.map(course => {
             if (completedCourses.includes(course.id)) {
                 return { ...course, progress: 100 };
-            }
-             if (course.progress > 0 && course.progress < 100) {
-                 const randomProgress = randomProgressValues[Math.floor(Math.random() * randomProgressValues.length)];
-                 return { ...course, progress: randomProgress };
             }
             return course;
         });

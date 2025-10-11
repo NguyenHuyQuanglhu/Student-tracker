@@ -1,5 +1,4 @@
 import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import Image from "next/image";
 
 export function WelcomeBanner() {
@@ -12,7 +11,6 @@ export function WelcomeBanner() {
             <p className="text-muted-foreground max-w-md">
               Khóa học Vượt qua nỗi sợ nói trước công chúng của bạn đã được 11 người dùng mới hoàn thành trong tuần này!
             </p>
-            <Button className="mt-2">Tạo khóa học mới</Button>
           </div>
           <Image 
             src="https://picsum.photos/seed/welcome-banner/200/150" 

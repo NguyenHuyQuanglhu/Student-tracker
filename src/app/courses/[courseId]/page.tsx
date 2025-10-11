@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { DashboardSidebar } from "@/components/dashboard/sidebar";
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/ui/card";
 import { courseData } from "@/app/lib/mock-data";
@@ -13,13 +13,25 @@ export default function CourseDetailPage({ params }: { params: { courseId: strin
   const course = courseData.find(c => c.id === params.courseId);
   const [isCompleted, setIsCompleted] = useState(false);
 
+  useEffect(() => {
+    // On component mount, check localStorage for completion status
+    const completionStatus = localStorage.getItem(`course_completed_${params.courseId}`);
+    if (completionStatus === 'true') {
+      setIsCompleted(true);
+    }
+  }, [params.courseId]);
+
   if (!course) {
     notFound();
   }
 
   const handleMarkAsComplete = () => {
     setIsCompleted(true);
+    // Persist the completion status in localStorage
+    localStorage.setItem(`course_completed_${params.courseId}`, 'true');
   };
+
+  const progress = isCompleted ? 100 : course.progress;
 
   return (
     <div className="flex min-h-screen w-full flex-col">
@@ -39,7 +51,7 @@ export default function CourseDetailPage({ params }: { params: { courseId: strin
             <Card>
               <CardHeader>
                 <CardTitle className="font-headline">Nội dung khóa học</CardTitle>
-                <CardDescription>Tiến độ hiện tại của bạn: {isCompleted ? 100 : course.progress}%</CardDescription>
+                <CardDescription>Tiến độ hiện tại của bạn: {progress}%</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="text-center py-12">

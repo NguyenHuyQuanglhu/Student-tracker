@@ -1,39 +1,49 @@
 "use client"
 
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { ChartContainer, ChartTooltip, ChartTooltipContent, ChartConfig } from "@/components/ui/chart";
-import { softSkills } from "@/app/lib/mock-data";
-import { PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar, RadarChart } from "recharts";
+import { ChartContainer } from "@/components/ui/chart";
+import { PieChart, Pie, Cell } from "recharts";
 
-const chartConfig = {
-  value: {
-    label: "Score",
-    color: "hsl(var(--accent))",
-  },
-} satisfies ChartConfig
+const workingHoursData = [
+  { name: 'Progress', value: 77, fill: 'hsl(var(--primary))' },
+  { name: 'Done', value: 23, fill: 'hsl(var(--muted))' },
+];
 
 export function SoftSkillsDashboard() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="font-headline">Kỹ năng mềm</CardTitle>
-        <CardDescription>Sự phát triển của bạn trong các lĩnh vực chuyên môn chính.</CardDescription>
+        <CardTitle className="font-headline">Giờ làm việc</CardTitle>
+        <CardDescription>Tiến độ của bạn trong tuần này.</CardDescription>
       </CardHeader>
-      <CardContent>
-        <ChartContainer config={chartConfig} className="mx-auto aspect-square max-h-[250px]">
-          <RadarChart data={softSkills}>
-            <ChartTooltip cursor={false} content={<ChartTooltipContent />} />
-            <PolarAngleAxis dataKey="skill" />
-            <PolarRadiusAxis angle={30} domain={[0, 100]} />
-            <PolarGrid />
-            <Radar
-              name="Soft Skills"
+      <CardContent className="flex justify-center items-center">
+        <ChartContainer config={{}} className="mx-auto aspect-square max-h-[180px]">
+          <PieChart>
+            <Pie
+              data={workingHoursData}
               dataKey="value"
-              stroke="hsl(var(--accent))"
-              fill="hsl(var(--accent))"
-              fillOpacity={0.6}
-            />
-          </RadarChart>
+              nameKey="name"
+              cx="50%"
+              cy="50%"
+              innerRadius={60}
+              outerRadius={80}
+              startAngle={90}
+              endAngle={450}
+            >
+              {workingHoursData.map((entry, index) => (
+                <Cell key={`cell-${index}`} fill={entry.fill} stroke={entry.fill} />
+              ))}
+            </Pie>
+             <text
+              x="50%"
+              y="50%"
+              textAnchor="middle"
+              dominantBaseline="middle"
+              className="text-4xl font-bold fill-foreground"
+            >
+              77%
+            </text>
+          </PieChart>
         </ChartContainer>
       </CardContent>
     </Card>

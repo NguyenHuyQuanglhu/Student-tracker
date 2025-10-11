@@ -54,7 +54,7 @@ export function DashboardSidebar({ children }: { children: React.ReactNode }) {
                       <path d="M6 18h12" />
                     </svg>
                 </div>
-                <span className="text-lg font-semibold">Góc học tập</span>
+                <span className="text-lg font-semibold">EduAdmin</span>
             </div>
         </SidebarHeader>
         <SidebarContent>

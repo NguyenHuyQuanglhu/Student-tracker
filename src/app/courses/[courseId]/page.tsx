@@ -14,16 +14,23 @@ export default function CourseDetailPage({ params: paramsPromise }: { params: { 
   const courseId = params.courseId;
   const course = courseData.find(c => c.id === courseId);
   
-  const [isCompleted, setIsCompleted] = useState(course?.progress === 100);
-  const [currentProgress, setCurrentProgress] = useState(course?.progress || 0);
+  const [isCompleted, setIsCompleted] = useState(false);
+  const [currentProgress, setCurrentProgress] = useState(0);
 
   useEffect(() => {
     const course = courseData.find(c => c.id === courseId);
     if(course) {
-        setCurrentProgress(course.progress);
-        setIsCompleted(course.progress === 100);
+        // Check localStorage for completion status
+        const completionStatus = localStorage.getItem(`course_completed_${params.courseId}`);
+        if (completionStatus === 'true') {
+          setIsCompleted(true);
+          setCurrentProgress(100);
+        } else {
+            setIsCompleted(false);
+            setCurrentProgress(course.progress);
+        }
     }
-  }, [courseId]);
+  }, [courseId, params.courseId]);
 
 
   if (!course) {
@@ -33,6 +40,9 @@ export default function CourseDetailPage({ params: paramsPromise }: { params: { 
   const handleMarkAsComplete = () => {
     setIsCompleted(true);
     setCurrentProgress(100);
+    localStorage.setItem(`course_completed_${courseId}`, 'true');
+    // We can dispatch a custom event to notify other components
+    window.dispatchEvent(new Event('storage'));
   };
 
   const progress = isCompleted ? 100 : currentProgress;

@@ -35,13 +35,14 @@ export function ProgressOverview() {
   ]);
   const [totalCourses, setTotalCourses] = useState(0);
 
-  useEffect(() => {
+  const updateStats = () => {
     let completed = 0;
     let inProgress = 0;
     let yetToStart = 0;
 
     courseData.forEach(course => {
-        if (course.progress === 100) {
+        const isCompleted = localStorage.getItem(`course_completed_${course.id}`) === 'true';
+        if (isCompleted || course.progress === 100) {
             completed++;
         } else if (course.progress > 0) {
             inProgress++;
@@ -56,7 +57,16 @@ export function ProgressOverview() {
       { name: 'Chưa bắt đầu', value: yetToStart, fill: 'hsl(var(--muted))' },
     ]);
     setTotalCourses(courseData.length);
+  }
 
+  useEffect(() => {
+    updateStats();
+    
+    window.addEventListener('storage', updateStats);
+
+    return () => {
+      window.removeEventListener('storage', updateStats);
+    };
   }, []);
 
   return (

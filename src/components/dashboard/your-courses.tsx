@@ -17,12 +17,24 @@ const statusColors: Record<CourseStatus, string> = {
 export function YourCourses() {
     const [courses, setCourses] = useState(courseData);
 
+    const updateCoursesFromStorage = () => {
+        const updatedCourses = courseData.map(course => {
+            const isCompleted = localStorage.getItem(`course_completed_${course.id}`) === 'true';
+            return {
+                ...course,
+                progress: isCompleted ? 100 : course.progress,
+            };
+        });
+        setCourses(updatedCourses);
+    };
+
     useEffect(() => {
-        const randomizedCourses = courseData.map(course => ({
-            ...course,
-            progress: course.progress
-        }));
-        setCourses(randomizedCourses);
+        updateCoursesFromStorage();
+
+        window.addEventListener('storage', updateCoursesFromStorage);
+        return () => {
+            window.removeEventListener('storage', updateCoursesFromStorage);
+        };
     }, []);
 
 

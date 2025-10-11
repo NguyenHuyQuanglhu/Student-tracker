@@ -18,20 +18,17 @@ const randomProgressValues = [25, 50, 75];
 
 
 export function YourCourses() {
-    const [courses, setCourses] = useState(courseData.filter(c => c.progress < 100));
+    const [courses, setCourses] = useState(courseData);
 
     useEffect(() => {
         const randomizedCourses = courseData.map(course => {
-            if (course.progress !== 100) {
-                const randomProgress = randomProgressValues[Math.floor(Math.random() * randomProgressValues.length)];
-                return {
-                    ...course,
-                    progress: randomProgress,
-                };
-            }
-            return course;
+            const randomProgress = randomProgressValues[Math.floor(Math.random() * randomProgressValues.length)];
+            return {
+                ...course,
+                progress: course.progress === 100 ? 100 : randomProgress,
+            };
         });
-        setCourses(randomizedCourses.filter(course => course.progress < 100));
+        setCourses(randomizedCourses);
 
         const handleCourseCompletion = (event: Event) => {
           const customEvent = event as CustomEvent;
@@ -39,7 +36,7 @@ export function YourCourses() {
           setCourses(prevCourses =>
             prevCourses.map(course =>
               course.id === courseId ? { ...course, progress: 100 } : course
-            ).filter(c => c.progress < 100)
+            )
           );
         };
     
@@ -49,12 +46,14 @@ export function YourCourses() {
           window.removeEventListener('courseCompleted', handleCourseCompletion);
         };
       }, []);
+      
+    const activeCourses = courses.filter(c => c.progress < 100);
 
   return (
     <div>
         <h3 className="text-xl font-bold mb-4">Các khóa học của bạn</h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {courses.map((course) => {
+            {activeCourses.map((course) => {
                 const progress = course.progress;
                 return (
                     <Link href={`/courses/${course.id}`} key={course.id} className="no-underline">

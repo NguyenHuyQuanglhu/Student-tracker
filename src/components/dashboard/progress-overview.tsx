@@ -50,14 +50,11 @@ export function ProgressOverview() {
 
   useEffect(() => {
     const randomizedCourses = courseData.map(course => {
-        if (course.progress !== 100) {
-            const randomProgress = randomProgressValues[Math.floor(Math.random() * randomProgressValues.length)];
-            return {
-                ...course,
-                progress: randomProgress,
-            };
-        }
-        return course;
+        const randomProgress = randomProgressValues[Math.floor(Math.random() * randomProgressValues.length)];
+        return {
+            ...course,
+            progress: course.progress === 100 ? 100 : randomProgress,
+        };
     });
     setInternalCourseData(randomizedCourses);
     updateStats(randomizedCourses);

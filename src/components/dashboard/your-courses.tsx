@@ -39,7 +39,7 @@ export function YourCourses() {
           setCourses(prevCourses =>
             prevCourses.map(course =>
               course.id === courseId ? { ...course, progress: 100 } : course
-            )
+            ).filter(c => c.progress < 100)
           );
         };
     
@@ -50,14 +50,11 @@ export function YourCourses() {
         };
       }, []);
 
-
-  const unfinishedCourses = courses.filter(course => course.progress < 100);
-
   return (
     <div>
         <h3 className="text-xl font-bold mb-4">Các khóa học của bạn</h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {unfinishedCourses.map((course) => {
+            {courses.map((course) => {
                 const progress = course.progress;
                 return (
                     <Link href={`/courses/${course.id}`} key={course.id} className="no-underline">

@@ -1,9 +1,8 @@
 "use client"
 
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
-import { ChartContainer, ChartTooltip, ChartTooltipContent, ChartConfig } from "@/components/ui/chart";
-import { progressOverview } from "@/app/lib/mock-data";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { ChartContainer } from "@/components/ui/chart";
+import { progressOverview, courseData } from "@/app/lib/mock-data";
 import { BarChart, Bar, XAxis, YAxis, PieChart, Pie, Cell } from "recharts";
 import { TrendingDown, TrendingUp } from "lucide-react";
 
@@ -12,15 +11,20 @@ const chartConfig = {
     label: "Score",
     color: "hsl(var(--primary))",
   },
-} satisfies ChartConfig
-
-const courseStatusData = [
-    { name: 'In Progress', value: 12, fill: 'hsl(var(--primary))' },
-    { name: 'Completed', value: 5, fill: 'hsl(var(--chart-2))' },
-    { name: 'Yet to Start', value: 2, fill: 'hsl(var(--muted))' },
-];
+};
 
 export function ProgressOverview() {
+  const totalCourses = courseData.length;
+  const completedCourses = courseData.filter(c => c.status === 'Finished').length;
+  const inProgressCourses = courseData.filter(c => c.status === 'Active' && c.progress > 0).length;
+  const yetToStartCourses = courseData.filter(c => c.status === 'Active' && c.progress === 0).length;
+
+  const courseStatusData = [
+      { name: 'In Progress', value: inProgressCourses, fill: 'hsl(var(--primary))' },
+      { name: 'Completed', value: completedCourses, fill: 'hsl(var(--chart-2))' },
+      { name: 'Yet to Start', value: yetToStartCourses, fill: 'hsl(var(--muted))' },
+  ];
+
   return (
     <Card className="h-full">
       <CardHeader>
@@ -30,7 +34,7 @@ export function ProgressOverview() {
         <div>
             <h3 className="text-lg font-semibold">Tổng số khóa học</h3>
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                <span className="text-2xl font-bold text-foreground">19</span>
+                <span className="text-2xl font-bold text-foreground">{totalCourses}</span>
                 <span className="flex items-center text-green-500">
                     <TrendingUp className="w-4 h-4 mr-1" /> 2 Mới
                 </span>

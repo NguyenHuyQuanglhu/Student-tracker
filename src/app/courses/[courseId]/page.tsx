@@ -24,7 +24,7 @@ export default function CourseDetailPage({ params }: { params: { courseId: strin
         setCourse({ ...course, progress: 100 });
       }
     }
-  }, [courseId]);
+  }, [courseId, course]);
 
   if (!course) {
     notFound();
@@ -50,7 +50,7 @@ export default function CourseDetailPage({ params }: { params: { courseId: strin
       <DashboardSidebar>
         <main className="flex-1 p-4 sm:p-8">
             <div className="mb-6">
-                 <Link href="/courses" passHref>
+                 <Link href="/" passHref>
                     <Button variant="outline" size="sm" className="mb-4">
                         <ArrowLeft className="mr-2 h-4 w-4" />
                         Quay lại trang chính

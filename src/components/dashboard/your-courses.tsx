@@ -14,22 +14,25 @@ const statusColors: Record<CourseStatus, string> = {
     Paused: "bg-yellow-100 text-yellow-800",
 }
 
-const randomProgressValues = [25, 50, 75, 100];
-const randomizedCourses = courseData.map(course => {
-    if (course.progress !== 100) {
-        const randomProgress = randomProgressValues[Math.floor(Math.random() * randomProgressValues.length)];
-        return {
-            ...course,
-            progress: randomProgress,
-        };
-    }
-    return course;
-});
+const randomProgressValues = [25, 50, 75];
+
 
 export function YourCourses() {
-    const [courses, setCourses] = useState(randomizedCourses);
+    const [courses, setCourses] = useState(courseData.filter(c => c.progress < 100));
 
     useEffect(() => {
+        const randomizedCourses = courseData.map(course => {
+            if (course.progress !== 100) {
+                const randomProgress = randomProgressValues[Math.floor(Math.random() * randomProgressValues.length)];
+                return {
+                    ...course,
+                    progress: randomProgress,
+                };
+            }
+            return course;
+        });
+        setCourses(randomizedCourses.filter(course => course.progress < 100));
+
         const handleCourseCompletion = (event: Event) => {
           const customEvent = event as CustomEvent;
           const { courseId } = customEvent.detail;

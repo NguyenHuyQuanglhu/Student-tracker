@@ -14,33 +14,10 @@ const chartConfig = {
   },
 };
 
-const progressOverview = {
-    courses: [
-        { name: 'IT & Software', score: 25 },
-        { name: 'Programming', score: 50 },
-        { name: 'Networking', score: 75 },
-        { name: 'Network Security', score: 100 },
-        { name: 'Public Speaking', score: 25 },
-        { name: 'Leadership', score: 50 },
-        { name: 'Teamwork', score: 75 },
-    ],
-};
-
 const randomProgressValues = [25, 50, 75, 100];
-const randomizedCourses = courseData.map(course => {
-    if (course.progress !== 100) {
-        const randomProgress = randomProgressValues[Math.floor(Math.random() * randomProgressValues.length)];
-        return {
-            ...course,
-            progress: randomProgress,
-        };
-    }
-    return course;
-});
-
 
 export function ProgressOverview() {
-  const [internalCourseData, setInternalCourseData] = useState(randomizedCourses);
+  const [internalCourseData, setInternalCourseData] = useState(courseData);
   const [courseStatusData, setCourseStatusData] = useState([
     { name: 'In Progress', value: 0, fill: 'hsl(var(--primary))' },
     { name: 'Completed', value: 0, fill: 'hsl(var(--chart-2))' },
@@ -72,18 +49,29 @@ export function ProgressOverview() {
   }
 
   useEffect(() => {
-    updateStats(internalCourseData);
-  }, [internalCourseData]);
+    const randomizedCourses = courseData.map(course => {
+        if (course.progress !== 100) {
+            const randomProgress = randomProgressValues[Math.floor(Math.random() * randomProgressValues.length)];
+            return {
+                ...course,
+                progress: randomProgress,
+            };
+        }
+        return course;
+    });
+    setInternalCourseData(randomizedCourses);
+    updateStats(randomizedCourses);
 
-  useEffect(() => {
     const handleCourseCompletion = (event: Event) => {
         const customEvent = event as CustomEvent;
         const { courseId } = customEvent.detail;
-        setInternalCourseData(prevCourses =>
-            prevCourses.map(course =>
+        setInternalCourseData(prevCourses => {
+            const newCourses = prevCourses.map(course =>
                 course.id === courseId ? { ...course, progress: 100 } : course
-            )
-        );
+            );
+            updateStats(newCourses);
+            return newCourses;
+        });
     };
 
     window.addEventListener('courseCompleted', handleCourseCompletion);
@@ -92,6 +80,10 @@ export function ProgressOverview() {
         window.removeEventListener('courseCompleted', handleCourseCompletion);
     };
   }, []);
+
+  const progressOverview = {
+    courses: internalCourseData.map(c => ({name: c.name, score: c.progress}))
+  };
 
   return (
     <Card className="h-full">

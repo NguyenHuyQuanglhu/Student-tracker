@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, use } from 'react';
 import { DashboardSidebar } from "@/components/dashboard/sidebar";
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/ui/card";
 import { courseData } from "@/app/lib/mock-data";
@@ -10,16 +10,17 @@ import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 
 export default function CourseDetailPage({ params }: { params: { courseId: string } }) {
-  const course = courseData.find(c => c.id === params.courseId);
+  const { courseId } = params;
+  const course = courseData.find(c => c.id === courseId);
   const [isCompleted, setIsCompleted] = useState(false);
 
   useEffect(() => {
     // On component mount, check localStorage for completion status
-    const completionStatus = localStorage.getItem(`course_completed_${params.courseId}`);
+    const completionStatus = localStorage.getItem(`course_completed_${courseId}`);
     if (completionStatus === 'true') {
       setIsCompleted(true);
     }
-  }, [params.courseId]);
+  }, [courseId]);
 
   if (!course) {
     notFound();
@@ -28,7 +29,7 @@ export default function CourseDetailPage({ params }: { params: { courseId: strin
   const handleMarkAsComplete = () => {
     setIsCompleted(true);
     // Persist the completion status in localStorage
-    localStorage.setItem(`course_completed_${params.courseId}`, 'true');
+    localStorage.setItem(`course_completed_${courseId}`, 'true');
   };
 
   const progress = isCompleted ? 100 : course.progress;

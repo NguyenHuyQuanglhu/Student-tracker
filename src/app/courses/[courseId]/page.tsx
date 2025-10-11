@@ -14,18 +14,14 @@ export default function CourseDetailPage({ params: paramsPromise }: { params: { 
   const courseId = params.courseId;
   const course = courseData.find(c => c.id === courseId);
   
-  const [isCompleted, setIsCompleted] = useState(false);
-  const [initialProgress, setInitialProgress] = useState(course?.progress || 0);
+  const [isCompleted, setIsCompleted] = useState(course?.progress === 100);
+  const [currentProgress, setCurrentProgress] = useState(course?.progress || 0);
 
   useEffect(() => {
-    // On component mount, check localStorage for completion status
-    const completionStatus = localStorage.getItem(`course_completed_${courseId}`);
-    if (completionStatus === 'true') {
-      setIsCompleted(true);
-    } else {
-        const progressValues = [25, 50, 75, 100];
-        const randomProgress = progressValues[Math.floor(Math.random() * progressValues.length)];
-        setInitialProgress(randomProgress);
+    const course = courseData.find(c => c.id === courseId);
+    if(course) {
+        setCurrentProgress(course.progress);
+        setIsCompleted(course.progress === 100);
     }
   }, [courseId]);
 
@@ -36,10 +32,10 @@ export default function CourseDetailPage({ params: paramsPromise }: { params: { 
 
   const handleMarkAsComplete = () => {
     setIsCompleted(true);
-    localStorage.setItem(`course_completed_${courseId}`, 'true');
+    setCurrentProgress(100);
   };
 
-  const progress = isCompleted ? 100 : initialProgress;
+  const progress = isCompleted ? 100 : currentProgress;
 
   return (
     <div className="flex min-h-screen w-full flex-col">

@@ -16,13 +16,13 @@ const chartConfig = {
 
 const progressOverview = {
     courses: [
-        { name: 'IT & Software', score: 95 },
-        { name: 'Programming', score: 88 },
-        { name: 'Networking', score: 72 },
-        { name: 'Network Security', score: 91 },
-        { name: 'Public Speaking', score: 68 },
-        { name: 'Leadership', score: 82 },
-        { name: 'Teamwork', score: 90 },
+        { name: 'IT & Software', score: 25 },
+        { name: 'Programming', score: 50 },
+        { name: 'Networking', score: 75 },
+        { name: 'Network Security', score: 100 },
+        { name: 'Public Speaking', score: 25 },
+        { name: 'Leadership', score: 50 },
+        { name: 'Teamwork', score: 75 },
     ],
 };
 
@@ -33,33 +33,29 @@ export function ProgressOverview() {
     { name: 'Completed', value: 0, fill: 'hsl(var(--chart-2))' },
     { name: 'Yet to Start', value: 0, fill: 'hsl(var(--muted))' },
   ]);
-  const totalCourses = courseData.length;
+  const [totalCourses, setTotalCourses] = useState(0);
 
   useEffect(() => {
-    const progressValues = [25, 50, 75, 100];
     let completed = 0;
     let inProgress = 0;
     let yetToStart = 0;
 
     courseData.forEach(course => {
-        const isCompleted = localStorage.getItem(`course_completed_${course.id}`) === 'true';
-        if (isCompleted) {
+        if (course.progress === 100) {
             completed++;
+        } else if (course.progress > 0) {
+            inProgress++;
         } else {
-            const randomProgress = progressValues[Math.floor(Math.random() * progressValues.length)];
-            if (randomProgress > 0) {
-                inProgress++;
-            } else {
-                yetToStart++;
-            }
+            yetToStart++;
         }
     });
 
     setCourseStatusData([
-      { name: 'In Progress', value: inProgress, fill: 'hsl(var(--primary))' },
-      { name: 'Completed', value: completed, fill: 'hsl(var(--chart-2))' },
-      { name: 'Yet to Start', value: yetToStart, fill: 'hsl(var(--muted))' },
+      { name: 'Đang học', value: inProgress, fill: 'hsl(var(--primary))' },
+      { name: 'Hoàn thành', value: completed, fill: 'hsl(var(--chart-2))' },
+      { name: 'Chưa bắt đầu', value: yetToStart, fill: 'hsl(var(--muted))' },
     ]);
+    setTotalCourses(courseData.length);
 
   }, []);
 

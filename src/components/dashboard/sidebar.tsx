@@ -53,8 +53,8 @@ export function DashboardSidebar({ children }: { children: React.ReactNode }) {
                 <span className="text-xl font-bold text-sidebar-foreground">Akademi</span>
             </div>
         </SidebarHeader>
-        <SidebarContent>
-          <SidebarMenu>
+        <SidebarContent className="flex-1">
+          <SidebarMenu className="flex flex-col justify-start">
             {menuItems.map((item) => (
               <SidebarMenuItem key={item.href}>
                 <Link href={item.href} passHref>

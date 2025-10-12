@@ -126,6 +126,19 @@ export default function CourseDetailPage() {
     }
   };
 
+  const getButtonText = () => {
+    if (status === 'Finished') {
+      return 'Học lại';
+    }
+    if (isLearning) {
+      return 'Đang học...';
+    }
+    if (progress > 0) {
+      return 'Tiếp tục học';
+    }
+    return 'Bắt đầu học';
+  };
+
   const isCompleted = status === 'Finished';
 
   return (
@@ -154,14 +167,15 @@ export default function CourseDetailPage() {
                   <h3 className="text-lg font-semibold">Nội dung sắp ra mắt!</h3>
                   <p className="text-muted-foreground">Các bài học và tài liệu cho khóa học này đang được xây dựng.</p>
                   <div className="mt-4 flex justify-center gap-4">
-                    <Button 
-                      onClick={handleMarkAsComplete}
-                      disabled={isCompleted}
-                    >
-                      {isCompleted ? 'Đã hoàn thành' : 'Đánh dấu là đã hoàn thành'}
-                    </Button>
-                    <Button onClick={handleStartCourse} disabled={isLearning && !isCompleted}>
-                      {isCompleted ? 'Học lại' : isLearning ? 'Đang học' : 'Bắt đầu học'}
+                    {!isCompleted && (
+                       <Button 
+                         onClick={handleMarkAsComplete}
+                       >
+                         Đánh dấu là đã hoàn thành
+                       </Button>
+                    )}
+                    <Button onClick={handleStartCourse} disabled={isLearning}>
+                      {getButtonText()}
                     </Button>
                   </div>
                 </div>

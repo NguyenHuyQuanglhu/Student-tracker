@@ -80,4 +80,4 @@ export const exercises: Exercise[] = [
 
 
 // Add a version to the mock data
-export const mockDataVersion = '1.19';
+export const mockDataVersion = '1.25';

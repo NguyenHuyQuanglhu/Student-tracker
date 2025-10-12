@@ -54,6 +54,7 @@ export default function ExercisesPage() {
 
     const storedState = JSON.parse(sessionStorage.getItem('exerciseState') || '{}');
     
+    // Clear state for exercises that no longer exist in mock data
     const mockExerciseIds = new Set(mockExercises.map(ex => ex.id));
     Object.keys(storedState).forEach(storedId => {
         if (!mockExerciseIds.has(storedId)) {
@@ -74,6 +75,11 @@ export default function ExercisesPage() {
   };
 
   useEffect(() => {
+    // On initial load, reset exercise state to "Chưa bắt đầu"
+    if (typeof window !== 'undefined') {
+        sessionStorage.removeItem('exerciseState');
+    }
+
     updateExerciseStates();
     window.addEventListener('exerciseStateChanged', updateExerciseStates);
     
@@ -126,7 +132,7 @@ export default function ExercisesPage() {
       sessionStorage.setItem('exerciseState', JSON.stringify(storedState));
       window.dispatchEvent(new CustomEvent('exerciseStateChanged'));
 
-      // Check for new warnings
+      // Check for low score warning
       if (score < 60) {
         addDynamicWarning({
           id: `low-score-${exerciseId}`,
@@ -134,6 +140,7 @@ export default function ExercisesPage() {
         });
       }
 
+      // Check for finishing too fast warning, independently of the score
       if ((originalExercise.difficulty === 'Trung bình' || originalExercise.difficulty === 'Khó') && completionTime <= 300) { // Less than or equal to 5 minutes
          addDynamicWarning({
           id: `too-fast-${exerciseId}`,
@@ -204,16 +211,9 @@ export default function ExercisesPage() {
                      <Button 
                       variant="outline"
                       className="w-full"
-                      onClick={() => {
-                        const storedState = JSON.parse(sessionStorage.getItem('exerciseState') || '{}');
-                        if (storedState[exercise.id]) {
-                          delete storedState[exercise.id]; 
-                          sessionStorage.setItem('exerciseState', JSON.stringify(storedState));
-                          window.dispatchEvent(new CustomEvent('exerciseStateChanged'));
-                        }
-                      }}
+                      disabled
                     >
-                      Làm lại
+                      Đã hoàn thành
                     </Button>
                   )}
                 </CardFooter>

@@ -22,6 +22,14 @@ const statusColors = {
   notStarted: 'hsl(var(--muted))',
 };
 
+const formatHoursToHHMMSS = (decimalHours: number): string => {
+    const totalSeconds = Math.floor(decimalHours * 3600);
+    const h = Math.floor(totalSeconds / 3600).toString().padStart(2, '0');
+    const m = Math.floor((totalSeconds % 3600) / 60).toString().padStart(2, '0');
+    const s = (totalSeconds % 60).toString().padStart(2, '0');
+    return `${h}:${m}:${s}`;
+};
+
 const StatusLegend = () => (
     <div className="flex justify-center gap-4 text-xs mt-4">
         <div className="flex items-center">
@@ -79,7 +87,7 @@ function CoursePerformanceDetails({ courses }: { courses: (typeof courseData) })
                             <TableRow key={index}>
                                 <TableCell className="font-medium">{item.name}</TableCell>
                                 <TableCell className="text-right">{item.progress}</TableCell>
-                                <TableCell className="text-right">{item.estimatedHours.toFixed(2)}</TableCell>
+                                <TableCell className="text-right">{formatHoursToHHMMSS(item.estimatedHours)}</TableCell>
                             </TableRow>
                         ))}
                     </TableBody>

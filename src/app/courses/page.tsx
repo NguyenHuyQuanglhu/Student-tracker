@@ -20,27 +20,20 @@ export default function CoursesPage() {
 
   const updateCourseStates = () => {
     if (typeof window !== 'undefined') {
-        // Clear session storage if version mismatch
         if (sessionStorage.getItem('mockDataVersion') !== mockDataVersion) {
-            sessionStorage.removeItem('completedCourses');
-            sessionStorage.removeItem('activeCourses');
+            sessionStorage.removeItem('courseProgress');
             sessionStorage.setItem('mockDataVersion', mockDataVersion);
         }
         
-        const completedCourses = JSON.parse(sessionStorage.getItem('completedCourses') || '[]');
-        const activeCourses = JSON.parse(sessionStorage.getItem('activeCourses') || '[]');
+        const progressState = JSON.parse(sessionStorage.getItem('courseProgress') || '{}');
         
         const updatedCourses = courseData.map(course => {
-            if (completedCourses.includes(course.id)) {
-                return { ...course, progress: 100, status: 'Finished' as CourseStatus };
+            const state = progressState[course.id];
+            if (state) {
+                return { ...course, progress: state.progress, status: state.status as CourseStatus };
             }
-            if (activeCourses.includes(course.id)) {
-                 const newProgress = course.progress === 0 ? 10 : course.progress;
-                return { ...course, status: 'Active' as CourseStatus, progress: newProgress };
-            }
-            // For courses that are neither completed nor active, reset to their original state from mock-data
-            const originalCourse = courseData.find(c => c.id === course.id);
-            return { ...originalCourse, status: originalCourse?.status || 'Paused', progress: originalCourse?.progress || 0 };
+            // For courses not in session storage, use original data
+            return { ...course };
         });
         setCourses(updatedCourses);
     }

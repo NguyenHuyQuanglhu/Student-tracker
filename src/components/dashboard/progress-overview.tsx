@@ -95,24 +95,18 @@ export function ProgressOverview() {
   const updateStats = () => {
       if (typeof window !== 'undefined') {
           if (sessionStorage.getItem('mockDataVersion') !== mockDataVersion) {
-              sessionStorage.removeItem('completedCourses');
-              sessionStorage.removeItem('activeCourses');
+              sessionStorage.removeItem('courseProgress');
               sessionStorage.setItem('mockDataVersion', mockDataVersion);
           }
 
-          const completedCoursesSession = JSON.parse(sessionStorage.getItem('completedCourses') || '[]');
-          const activeCoursesSession = JSON.parse(sessionStorage.getItem('activeCourses') || '[]');
+          const progressState = JSON.parse(sessionStorage.getItem('courseProgress') || '{}');
 
           const updatedCourses = courseData.map(course => {
-              if (completedCoursesSession.includes(course.id)) {
-                  return { ...course, progress: 100, status: 'Finished' as const };
+              const state = progressState[course.id];
+              if (state) {
+                  return { ...course, progress: state.progress, status: state.status };
               }
-              if (activeCoursesSession.includes(course.id)) {
-                  const newProgress = course.progress === 0 ? 10 : course.progress;
-                  return { ...course, status: 'Active' as const, progress: newProgress };
-              }
-              const originalCourse = courseData.find(c => c.id === course.id);
-                return { ...originalCourse, status: originalCourse?.status || 'Paused', progress: originalCourse?.progress || 0 };
+              return { ...course };
           });
           setInternalCourseData(updatedCourses);
       }
@@ -132,8 +126,8 @@ export function ProgressOverview() {
   const skills = internalCourseData.filter(c => c.category === 'Kỹ năng');
 
   const totalSubjects = subjects.length;
-  const inProgressSubjects = subjects.filter(c => c.status === 'Active' && c.progress > 0 && c.progress < 100).length;
-  const completedSubjects = subjects.filter(c => c.progress === 100 || c.status === 'Finished').length;
+  const inProgressSubjects = subjects.filter(c => c.status === 'Active').length;
+  const completedSubjects = subjects.filter(c => c.status === 'Finished').length;
   const notStartedSubjects = totalSubjects - inProgressSubjects - completedSubjects;
   
   const subjectStatusData = [
@@ -143,8 +137,8 @@ export function ProgressOverview() {
   ];
 
   const totalSkills = skills.length;
-  const inProgressSkills = skills.filter(c => c.status === 'Active' && c.progress > 0 && c.progress < 100).length;
-  const completedSkills = skills.filter(c => c.progress === 100 || c.status === 'Finished').length;
+  const inProgressSkills = skills.filter(c => c.status === 'Active').length;
+  const completedSkills = skills.filter(c => c.status === 'Finished').length;
   const notStartedSkills = totalSkills - inProgressSkills - completedSkills;
 
   const skillStatusData = [
@@ -154,8 +148,8 @@ export function ProgressOverview() {
   ];
 
   const totalCourses = internalCourseData.length;
-  const inProgressCourses = internalCourseData.filter(c => c.status === 'Active' && c.progress > 0 && c.progress < 100).length;
-  const completedCourses = internalCourseData.filter(c => c.progress === 100 || c.status === 'Finished').length;
+  const inProgressCourses = internalCourseData.filter(c => c.status === 'Active').length;
+  const completedCourses = internalCourseData.filter(c => c.status === 'Finished').length;
   const notStartedCourses = totalCourses - inProgressCourses - completedCourses;
 
   const allCoursesStatusData = [

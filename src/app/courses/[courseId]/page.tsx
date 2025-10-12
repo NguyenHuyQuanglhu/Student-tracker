@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { DashboardSidebar } from "@/components/dashboard/sidebar";
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/ui/card";
 import { courseData, mockDataVersion } from "@/app/lib/mock-data";
@@ -8,56 +8,93 @@ import { notFound, useParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
+import { Progress } from '@/components/ui/progress';
 
 export default function CourseDetailPage() {
   const params = useParams();
   const courseId = typeof params.courseId === 'string' ? params.courseId : '';
   
   const [course, setCourse] = useState(() => courseData.find(c => c.id === courseId));
-  const [isCompleted, setIsCompleted] = useState(false);
+  const [progress, setProgress] = useState(0);
   const [status, setStatus] = useState(course?.status);
+  const isLearning = useRef(false);
 
-  const updateCourseState = () => {
+  // Function to load state from sessionStorage
+  const loadCourseState = () => {
     if (typeof window === 'undefined' || !courseId) return;
 
-    // Clear session storage if version mismatch
     if (sessionStorage.getItem('mockDataVersion') !== mockDataVersion) {
-      sessionStorage.removeItem('completedCourses');
-      sessionStorage.removeItem('activeCourses');
+      sessionStorage.removeItem('courseProgress');
       sessionStorage.setItem('mockDataVersion', mockDataVersion);
     }
-
+    
     const targetCourse = courseData.find(c => c.id === courseId);
     if (!targetCourse) {
       notFound();
       return;
     }
 
-    const completedInSession = sessionStorage.getItem('completedCourses');
-    const completedCourses = completedInSession ? JSON.parse(completedInSession) : [];
-    const hasCompleted = completedCourses.includes(courseId);
-
-    const activeInSession = sessionStorage.getItem('activeCourses');
-    const activeCourses = activeInSession ? JSON.parse(activeInSession) : [];
-    const isActive = activeCourses.includes(courseId);
-
-    const newProgress = hasCompleted ? 100 : (isActive && targetCourse.progress === 0 ? 10 : targetCourse.progress);
-    const newStatus = hasCompleted ? 'Finished' : (isActive ? 'Active' : targetCourse.status);
-
-    setCourse({ ...targetCourse, progress: newProgress, status: newStatus });
-    setIsCompleted(hasCompleted);
-    setStatus(newStatus);
+    const progressState = JSON.parse(sessionStorage.getItem('courseProgress') || '{}');
+    const courseState = progressState[courseId] || { progress: targetCourse.progress, status: targetCourse.status };
+    
+    setCourse({ ...targetCourse });
+    setProgress(courseState.progress);
+    setStatus(courseState.status);
+    isLearning.current = courseState.status === 'Active';
   };
 
+  // Function to save state to sessionStorage
+  const saveCourseState = (newProgress: number, newStatus: string) => {
+      const progressState = JSON.parse(sessionStorage.getItem('courseProgress') || '{}');
+      progressState[courseId] = { progress: newProgress, status: newStatus };
+      sessionStorage.setItem('courseProgress', JSON.stringify(progressState));
+      window.dispatchEvent(new CustomEvent('courseStateChanged'));
+  };
+
+  // Load state on initial render and on courseId change
   useEffect(() => {
-    updateCourseState();
+    loadCourseState();
     
-    window.addEventListener('courseStateChanged', updateCourseState);
+    // Listen for external state changes
+    window.addEventListener('courseStateChanged', loadCourseState);
     
     return () => {
-        window.removeEventListener('courseStateChanged', updateCourseState);
+        window.removeEventListener('courseStateChanged', loadCourseState);
     };
   }, [courseId]);
+
+  // Effect for dynamic progress increase
+  useEffect(() => {
+    let timer: NodeJS.Timeout;
+
+    if (isLearning.current && progress < 100) {
+      timer = setInterval(() => {
+        setProgress(prevProgress => {
+          const newProgress = Math.min(prevProgress + 1, 100);
+          if (newProgress === 100) {
+            isLearning.current = false;
+            saveCourseState(100, 'Finished');
+          }
+          return newProgress;
+        });
+      }, 2000); // Increase progress every 2 seconds
+    }
+    
+    // Cleanup function: This will run when the component unmounts
+    return () => {
+      clearInterval(timer);
+      // Save progress when leaving the page if learning was in progress
+      if (isLearning.current) {
+        // Since setProgress is async, we get the latest value from the DOM or a ref
+        // But for simplicity, we'll just save the progress value from the state
+        // A more robust solution might use a ref to track progress for saving.
+         const finalProgress = progress; // This might not be the absolute latest value.
+         if (finalProgress < 100) {
+            saveCourseState(finalProgress, 'Active');
+         }
+      }
+    };
+  }, [status, progress]); // Rerun when status or progress changes
 
 
   if (!course) {
@@ -65,35 +102,23 @@ export default function CourseDetailPage() {
   }
 
   const handleMarkAsComplete = () => {
-    if (!isCompleted) {
-        let completedCourses = JSON.parse(sessionStorage.getItem('completedCourses') || '[]');
-        if (!completedCourses.includes(courseId)) {
-            completedCourses.push(courseId);
-            sessionStorage.setItem('completedCourses', JSON.stringify(completedCourses));
-        }
-        
-        // Remove from active if it exists there
-        let activeCourses = JSON.parse(sessionStorage.getItem('activeCourses') || '[]');
-        const index = activeCourses.indexOf(courseId);
-        if (index > -1) {
-            activeCourses.splice(index, 1);
-            sessionStorage.setItem('activeCourses', JSON.stringify(activeCourses));
-        }
-
-        window.dispatchEvent(new CustomEvent('courseStateChanged'));
-    }
+    isLearning.current = false;
+    setProgress(100);
+    setStatus('Finished');
+    saveCourseState(100, 'Finished');
   };
 
   const handleStartCourse = () => {
-    if (course.status !== 'Active') {
-        let activeCourses = JSON.parse(sessionStorage.getItem('activeCourses') || '[]');
-        if (!activeCourses.includes(courseId)) {
-            activeCourses.push(courseId);
-            sessionStorage.setItem('activeCourses', JSON.stringify(activeCourses));
-        }
-        window.dispatchEvent(new CustomEvent('courseStateChanged'));
+    if (status !== 'Active') {
+        const newProgress = progress === 0 ? 1 : progress;
+        isLearning.current = true;
+        setProgress(newProgress);
+        setStatus('Active');
+        saveCourseState(newProgress, 'Active');
     }
   };
+
+  const isCompleted = status === 'Finished';
 
   return (
     <div className="flex min-h-screen w-full flex-col">
@@ -113,9 +138,10 @@ export default function CourseDetailPage() {
             <Card>
               <CardHeader>
                 <CardTitle className="font-headline">Nội dung khóa học</CardTitle>
-                <CardDescription>Tiến độ hiện tại của bạn: {course.progress}%</CardDescription>
+                <CardDescription>Tiến độ hiện tại của bạn: {progress}%</CardDescription>
               </CardHeader>
               <CardContent>
+                <Progress value={progress} className="mb-8" />
                 <div className="text-center py-12">
                   <h3 className="text-lg font-semibold">Nội dung sắp ra mắt!</h3>
                   <p className="text-muted-foreground">Các bài học và tài liệu cho khóa học này đang được xây dựng.</p>

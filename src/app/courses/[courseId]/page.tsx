@@ -18,6 +18,11 @@ export default function CourseDetailPage() {
   const [progress, setProgress] = useState(0);
   const [status, setStatus] = useState(course?.status);
   const isLearning = useRef(false);
+  const progressRef = useRef(progress);
+  
+  useEffect(() => {
+    progressRef.current = progress;
+  }, [progress]);
 
   // Function to load state from sessionStorage
   const loadCourseState = () => {
@@ -45,6 +50,7 @@ export default function CourseDetailPage() {
 
   // Function to save state to sessionStorage
   const saveCourseState = (newProgress: number, newStatus: string) => {
+      if (typeof window === 'undefined' || !courseId) return;
       const progressState = JSON.parse(sessionStorage.getItem('courseProgress') || '{}');
       progressState[courseId] = { progress: newProgress, status: newStatus };
       sessionStorage.setItem('courseProgress', JSON.stringify(progressState));
@@ -89,20 +95,8 @@ export default function CourseDetailPage() {
     // Cleanup function: This will run when the component unmounts or status changes
     return () => {
       if (timer) clearInterval(timer);
-      // Save progress when leaving the page if learning was in progress
       if (isLearning.current) {
-         // We need to read the latest progress value. Since `progress` state is stale in cleanup,
-         // we pass it to a ref or read it differently. A simple way is to use setProgress's callback
-         // to get the latest value, but that's for updating. For saving on unmount, we
-         // might need a ref to hold the latest progress.
-         // For simplicity here, we'll tell React to save the current progress value from state.
-         // A more robust implementation would use a ref updated alongside state.
-         setProgress(currentProgress => {
-            if(currentProgress < 100) {
-                saveCourseState(currentProgress, 'Active');
-            }
-            return currentProgress;
-         });
+        saveCourseState(progressRef.current, 'Active');
       }
     };
   }, [status, courseId]); // Only re-run when status or courseId changes
@@ -121,7 +115,7 @@ export default function CourseDetailPage() {
 
   const handleStartCourse = () => {
     if (status !== 'Active') {
-        const newProgress = progress === 0 ? 1 : progress;
+        const newProgress = progress === 100 ? 0 : progress === 0 ? 1 : progress;
         setProgress(newProgress);
         setStatus('Active');
         saveCourseState(newProgress, 'Active');
@@ -162,8 +156,8 @@ export default function CourseDetailPage() {
                     >
                       {isCompleted ? 'Đã hoàn thành' : 'Đánh dấu là đã hoàn thành'}
                     </Button>
-                    <Button onClick={handleStartCourse} disabled={status === 'Active' || isCompleted}>
-                      {status === 'Active' ? 'Đang học' : 'Bắt đầu học'}
+                    <Button onClick={handleStartCourse} disabled={status === 'Active' && !isCompleted}>
+                      {isCompleted ? 'Học lại' : status === 'Active' ? 'Đang học' : 'Bắt đầu học'}
                     </Button>
                   </div>
                 </div>

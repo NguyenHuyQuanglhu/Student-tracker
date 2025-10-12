@@ -20,6 +20,12 @@ import {
   Settings,
   ClipboardList,
   LogOut,
+  Users,
+  Calendar,
+  CircleDollarSign,
+  Utensils,
+  MessageSquare,
+  Activity,
 } from 'lucide-react';
 import { DashboardHeader } from "@/components/dashboard/header";
 
@@ -28,28 +34,33 @@ export function DashboardSidebar({ children }: { children: React.ReactNode }) {
 
   const menuItems = [
     { href: '/', label: 'Dashboard', icon: LayoutDashboard },
-    { href: '/courses', label: 'Courses', icon: Book },
-    { href: '/exercises', label: 'Bài tập', icon: ClipboardList },
-    { href: '/profile', label: 'Profile', icon: User },
-    { href: '/settings', label: 'Settings', icon: Settings },
+    { href: '/courses', label: 'Students', icon: Users },
+    { href: '/exercises', label: 'Teachers', icon: User },
+    { href: '/events', label: 'Event', icon: Calendar },
+    { href: '/finance', label: 'Finance', icon: CircleDollarSign },
+    { href: '/food', label: 'Food', icon: Utensils },
+    { href: '/profile', label: 'User', icon: User },
+    { href: '/chat', label: 'Chat', icon: MessageSquare },
+    { href: '/activity', label: 'Lastest Activity', icon: Activity },
   ];
 
   return (
     <SidebarProvider>
       <Sidebar>
         <SidebarHeader>
-            <div className="flex items-center gap-2">
-                <span className="text-xl font-bold text-primary">MJUI</span>
+            <div className="flex items-center gap-3">
+                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-orange-500 text-white text-xl font-bold">A</div>
+                <span className="text-xl font-bold text-sidebar-foreground">Akademi</span>
             </div>
         </SidebarHeader>
-        <SidebarContent className="flex-1">
+        <SidebarContent>
           <SidebarMenu>
             {menuItems.map((item) => (
               <SidebarMenuItem key={item.href}>
                 <Link href={item.href} passHref>
-                    <SidebarMenuButton asChild isActive={pathname === item.href} className="text-base">
+                    <SidebarMenuButton asChild isActive={pathname === item.href} className="text-base" variant="ghost">
                       <div>
-                        <item.icon />
+                        <item.icon className="h-5 w-5" />
                         {item.label}
                       </div>
                     </SidebarMenuButton>
@@ -58,17 +69,9 @@ export function DashboardSidebar({ children }: { children: React.ReactNode }) {
             ))}
           </SidebarMenu>
         </SidebarContent>
-        <SidebarFooter>
-            <SidebarMenu>
-                <SidebarMenuItem>
-                     <SidebarMenuButton asChild className="text-base">
-                      <div>
-                        <LogOut />
-                        Log Out
-                      </div>
-                    </SidebarMenuButton>
-                </SidebarMenuItem>
-            </SidebarMenu>
+        <SidebarFooter className="text-xs text-sidebar-foreground/60 text-center">
+            <p>Akademi - School Admission Dashboard</p>
+            <p>Made with ❤️ by Peterdraw</p>
         </SidebarFooter>
       </Sidebar>
       <SidebarInset>

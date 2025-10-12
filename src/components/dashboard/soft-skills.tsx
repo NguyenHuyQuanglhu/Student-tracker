@@ -1,3 +1,4 @@
+
 "use client"
 
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -20,16 +21,17 @@ export function SoftSkillsDashboard() {
     if (typeof window !== 'undefined') {
         if (localStorage.getItem('mockDataVersion') !== mockDataVersion) {
             localStorage.removeItem('courseProgress');
+            localStorage.removeItem('skillMastery');
             localStorage.setItem('mockDataVersion', mockDataVersion);
         }
         
-        const progressState = JSON.parse(localStorage.getItem('courseProgress') || '{}');
+        const skillMastery = JSON.parse(localStorage.getItem('skillMastery') || '{}');
         
         const skillCourses = courseData
             .filter(course => course.category === 'Kỹ năng')
             .map(course => {
-                const state = progressState[course.id];
-                const progress = state ? state.progress : course.progress;
+                // Use mastered progress if available, otherwise 0
+                const progress = skillMastery[course.id] || 0;
                 return { skill: course.name, value: progress };
             });
 
@@ -40,9 +42,13 @@ export function SoftSkillsDashboard() {
   useEffect(() => {
     updateSkillStates();
 
+    // Listen for both mastery changes and general course changes (for initial population)
+    window.addEventListener('skillMasteryChanged', updateSkillStates);
     window.addEventListener('courseStateChanged', updateSkillStates);
 
+
     return () => {
+      window.removeEventListener('skillMasteryChanged', updateSkillStates);
       window.removeEventListener('courseStateChanged', updateSkillStates);
     };
   }, []);
@@ -73,3 +79,4 @@ export function SoftSkillsDashboard() {
     </Card>
   );
 }
+

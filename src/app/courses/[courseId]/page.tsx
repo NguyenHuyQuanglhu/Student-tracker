@@ -25,7 +25,6 @@ export default function CourseDetailPage() {
   // 1. Load state from localStorage on initial component mount
   useEffect(() => {
     if (typeof window === 'undefined' || !courseId) return;
-    
     if (initialLoadDone.current) return;
 
     if (localStorage.getItem('mockDataVersion') !== mockDataVersion) {
@@ -46,7 +45,7 @@ export default function CourseDetailPage() {
     if (courseState) {
         setProgress(courseState.progress || 0);
         setStatus(courseState.status || 'Paused');
-        setIsLearning(false); // Always start in a non-learning state when loading the page
+        setIsLearning(false); // Always start in a non-learning state
     } else {
         setProgress(targetCourse.progress);
         setStatus(targetCourse.status);
@@ -65,6 +64,19 @@ export default function CourseDetailPage() {
     const progressState = JSON.parse(localStorage.getItem('courseProgress') || '{}');
     progressState[courseId] = { progress: progress, status: status };
     localStorage.setItem('courseProgress', JSON.stringify(progressState));
+
+    // If it's a skill course and progress is 100, update skillMastery
+    if (course.category === 'Kỹ năng' && progress === 100) {
+        const skillMastery = JSON.parse(localStorage.getItem('skillMastery') || '{}');
+        const currentMastery = skillMastery[courseId] || 0;
+        if (progress > currentMastery) {
+            skillMastery[courseId] = progress;
+            localStorage.setItem('skillMastery', JSON.stringify(skillMastery));
+            // Notify skill chart to update
+            window.dispatchEvent(new CustomEvent('skillMasteryChanged'));
+        }
+    }
+
 
     window.dispatchEvent(new CustomEvent('courseStateChanged'));
 
@@ -101,15 +113,10 @@ export default function CourseDetailPage() {
   const handleStartCourse = () => {
     if (isLearning) return;
   
-    // Rule: Completed "Kỹ năng" courses cannot be restarted.
-    if (course.category === 'Kỹ năng' && status === 'Finished') {
-      return;
-    }
-  
     let startProgress = progress;
   
-    // Rule: If it's a finished "Môn học", restart it from 1.
-    if (status === 'Finished' && course.category === 'Môn học') {
+    // If it's a finished course (Môn học OR Kỹ năng), restart it from 1.
+    if (status === 'Finished') {
       startProgress = 1;
     // Rule: If it's a new course, start from 1.
     } else if (progress === 0) {
@@ -147,7 +154,6 @@ export default function CourseDetailPage() {
   };
 
   const isCompleted = status === 'Finished';
-  const isSkillCourse = course.category === 'Kỹ năng';
 
   return (
     <div className="flex min-h-screen w-full flex-col">
@@ -189,7 +195,7 @@ export default function CourseDetailPage() {
                          Tạm dừng
                        </Button>
                     ) : (
-                       <Button onClick={handleStartCourse} disabled={isCompleted && isSkillCourse}>
+                       <Button onClick={handleStartCourse}>
                          {getButtonText()}
                        </Button>
                     )}
@@ -203,3 +209,4 @@ export default function CourseDetailPage() {
     </div>
   );
 }
+

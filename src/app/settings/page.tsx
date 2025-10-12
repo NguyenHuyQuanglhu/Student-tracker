@@ -1,3 +1,4 @@
+
 'use client';
 
 import { DashboardSidebar } from "@/components/dashboard/sidebar";
@@ -29,8 +30,9 @@ export default function SettingsPage() {
       if (typeof window !== 'undefined') {
         localStorage.removeItem('courseProgress');
         localStorage.removeItem('exerciseState');
-        localStorage.removeItem('dynamicWarnings'); // Also clear dynamic warnings
-        
+        localStorage.removeItem('dynamicWarnings');
+        localStorage.removeItem('skillMastery'); // Also clear skill mastery
+
         toast({
           title: "Thành công!",
           description: "Toàn bộ tiến trình đã được đặt lại. Đang tải lại trang...",
@@ -40,6 +42,7 @@ export default function SettingsPage() {
         window.dispatchEvent(new CustomEvent('courseStateChanged'));
         window.dispatchEvent(new CustomEvent('exerciseStateChanged'));
         window.dispatchEvent(new CustomEvent('warningsChanged'));
+        window.dispatchEvent(new CustomEvent('skillMasteryChanged'));
 
         // Reload the page to ensure all components reset from a clean state
         setTimeout(() => {

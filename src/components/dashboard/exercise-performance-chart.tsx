@@ -34,10 +34,10 @@ const gradeColors: Record<Grade, string> = {
 
 
 const calculateGrade = (score: number, completionTime: number, targetTime: number, difficulty: Exercise['difficulty']): Grade => {
-    let grade: Grade;
     const grades: Grade[] = ['F', 'E', 'D', 'C', 'B', 'A', 'S'];
+    let grade: Grade;
 
-    // Base grade on score
+    // 1. Base grade on score
     if (score >= 95) grade = 'S';
     else if (score >= 85) grade = 'A';
     else if (score >= 75) grade = 'B';
@@ -46,28 +46,32 @@ const calculateGrade = (score: number, completionTime: number, targetTime: numbe
     else if (score >= 45) grade = 'E';
     else grade = 'F';
 
-    // Adjust based on time and difficulty
-    const timeRatio = completionTime / targetTime;
     let currentGradeIndex = grades.indexOf(grade);
 
+    // 2. Adjust based on time vs target and difficulty
+    const timeRatio = completionTime / targetTime;
     switch (difficulty) {
         case 'Dễ':
-            if (timeRatio <= 0.7) currentGradeIndex++; // Significant bonus for being fast
+            if (timeRatio <= 0.7) currentGradeIndex++; // Bonus for being fast
             else if (timeRatio > 1.3) currentGradeIndex--; // Penalty for being slow
             break;
         case 'Trung bình':
             if (timeRatio <= 0.8) currentGradeIndex++; // Standard bonus
             else if (timeRatio > 1.2) currentGradeIndex--; // Standard penalty
-            if (completionTime < (25 * 60)) currentGradeIndex--; // Lower grade if finished < 25 mins for Medium
             break;
         case 'Khó':
             if (timeRatio <= 0.9) currentGradeIndex++; // Small bonus, score is more important
             else if (timeRatio > 1.5) currentGradeIndex--; // Lenient penalty
-            if (completionTime < (25 * 60)) currentGradeIndex--; // Lower grade if finished < 25 mins for Hard
             break;
     }
+    
+    // 3. Final check for finishing too quickly on harder exercises
+    if ((difficulty === 'Trung bình' || difficulty === 'Khó') && completionTime < (25 * 60)) {
+        currentGradeIndex--; // Lower grade if finished < 25 mins
+    }
 
-    // Ensure grade stays within bounds
+
+    // Ensure grade stays within bounds (F to S)
     if (currentGradeIndex < 0) currentGradeIndex = 0;
     if (currentGradeIndex >= grades.length) currentGradeIndex = grades.length - 1;
     

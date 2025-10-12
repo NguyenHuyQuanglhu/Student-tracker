@@ -83,15 +83,20 @@ export default function ExercisesPage() {
     const storedState = JSON.parse(sessionStorage.getItem('exerciseState') || '{}');
     const exercise = exercises.find(ex => ex.id === exerciseId);
 
-    if (exercise && exercise.status === 'Chưa bắt đầu') {
-      storedState[exerciseId] = {
-        status: 'Đang làm',
-        startTime: Date.now(),
-        completionTime: null,
-        score: null,
-      };
-      sessionStorage.setItem('exerciseState', JSON.stringify(storedState));
-      window.dispatchEvent(new CustomEvent('exerciseStateChanged'));
+    if (exercise && exercise.status !== 'Đang làm') {
+        // If the exercise is completed, reset it first.
+        if(exercise.status === 'Đã hoàn thành') {
+            delete storedState[exerciseId];
+        }
+
+        storedState[exerciseId] = {
+            status: 'Đang làm',
+            startTime: Date.now(),
+            completionTime: null,
+            score: null,
+        };
+        sessionStorage.setItem('exerciseState', JSON.stringify(storedState));
+        window.dispatchEvent(new CustomEvent('exerciseStateChanged'));
     }
   };
 
@@ -184,7 +189,7 @@ export default function ExercisesPage() {
                       className="w-full"
                       onClick={() => handleResetExercise(exercise.id)}
                     >
-                      Làm lại
+                      Bắt đầu
                     </Button>
                   )}
                 </CardFooter>

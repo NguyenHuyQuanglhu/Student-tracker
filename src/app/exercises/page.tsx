@@ -134,21 +134,12 @@ export default function ExercisesPage() {
         });
       }
 
-      if ((originalExercise.difficulty === 'Trung bình' || originalExercise.difficulty === 'Khó') && completionTime < 300) { // Less than 5 minutes
+      if ((originalExercise.difficulty === 'Trung bình' || originalExercise.difficulty === 'Khó') && completionTime <= 300) { // Less than or equal to 5 minutes
          addDynamicWarning({
           id: `too-fast-${exerciseId}`,
           message: `Bạn đã hoàn thành bài tập khó "${originalExercise.title}" quá nhanh. Hãy chắc chắn rằng bạn đã hiểu kỹ.`
         });
       }
-    }
-  };
-
-  const handleResetExercise = (exerciseId: string) => {
-    const storedState = JSON.parse(sessionStorage.getItem('exerciseState') || '{}');
-    if (storedState[exerciseId]) {
-      delete storedState[exerciseId]; 
-      sessionStorage.setItem('exerciseState', JSON.stringify(storedState));
-      window.dispatchEvent(new CustomEvent('exerciseStateChanged'));
     }
   };
 
@@ -213,7 +204,14 @@ export default function ExercisesPage() {
                      <Button 
                       variant="outline"
                       className="w-full"
-                      onClick={() => handleResetExercise(exercise.id)}
+                      onClick={() => {
+                        const storedState = JSON.parse(sessionStorage.getItem('exerciseState') || '{}');
+                        if (storedState[exercise.id]) {
+                          delete storedState[exercise.id]; 
+                          sessionStorage.setItem('exerciseState', JSON.stringify(storedState));
+                          window.dispatchEvent(new CustomEvent('exerciseStateChanged'));
+                        }
+                      }}
                     >
                       Làm lại
                     </Button>

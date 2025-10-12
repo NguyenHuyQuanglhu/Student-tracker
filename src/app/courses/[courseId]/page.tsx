@@ -98,9 +98,7 @@ export default function CourseDetailPage() {
                     >
                       {isCompleted ? 'Đã hoàn thành' : 'Đánh dấu là đã hoàn thành'}
                     </Button>
-                    <Button
-                      disabled
-                    >
+                    <Button>
                       Đang học
                     </Button>
                   </div>

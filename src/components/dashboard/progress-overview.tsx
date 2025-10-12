@@ -41,7 +41,6 @@ export function ProgressOverview() {
 
   const updateStats = () => {
       if (typeof window !== 'undefined') {
-          // Clear session storage if version mismatch
           if (sessionStorage.getItem('mockDataVersion') !== mockDataVersion) {
               sessionStorage.removeItem('completedCourses');
               sessionStorage.removeItem('activeCourses');
@@ -59,7 +58,8 @@ export function ProgressOverview() {
                   const newProgress = course.progress === 0 ? 10 : course.progress;
                   return { ...course, status: 'Active' as const, progress: newProgress };
               }
-              return { ...course };
+              const originalCourse = courseData.find(c => c.id === course.id);
+                return { ...originalCourse, status: originalCourse?.status || 'Paused', progress: originalCourse?.progress || 0 };
           });
           setInternalCourseData(updatedCourses);
       }
@@ -75,38 +75,39 @@ export function ProgressOverview() {
     };
   }, []);
   
-  const activeCourses = internalCourseData.filter(c => c.progress < 100);
-
-  const subjects = activeCourses.filter(c => c.category === 'Môn học');
-  const skills = activeCourses.filter(c => c.category === 'Kỹ năng');
+  const subjects = internalCourseData.filter(c => c.category === 'Môn học');
+  const skills = internalCourseData.filter(c => c.category === 'Kỹ năng');
 
   const totalSubjects = subjects.length;
-  const inProgressSubjects = subjects.filter(c => c.status === 'Active' && c.progress < 100).length;
-  const notStartedSubjects = totalSubjects - inProgressSubjects;
+  const inProgressSubjects = subjects.filter(c => c.status === 'Active' && c.progress > 0 && c.progress < 100).length;
+  const completedSubjects = subjects.filter(c => c.progress === 100).length;
+  const notStartedSubjects = totalSubjects - inProgressSubjects - completedSubjects;
   
   const subjectStatusData = [
     { name: 'Đang học', value: inProgressSubjects, fill: statusColors.inProgress },
-    { name: 'Hoàn thành', value: 0, fill: statusColors.completed },
+    { name: 'Hoàn thành', value: completedSubjects, fill: statusColors.completed },
     { name: 'Chưa bắt đầu', value: notStartedSubjects, fill: statusColors.notStarted },
   ];
 
   const totalSkills = skills.length;
-  const inProgressSkills = skills.filter(c => c.status === 'Active' && c.progress < 100).length;
-  const notStartedSkills = totalSkills - inProgressSkills;
+  const inProgressSkills = skills.filter(c => c.status === 'Active' && c.progress > 0 && c.progress < 100).length;
+  const completedSkills = skills.filter(c => c.progress === 100).length;
+  const notStartedSkills = totalSkills - inProgressSkills - completedSkills;
 
   const skillStatusData = [
     { name: 'Đang học', value: inProgressSkills, fill: statusColors.inProgress },
-    { name: 'Hoàn thành', value: 0, fill: statusColors.completed },
+    { name: 'Hoàn thành', value: completedSkills, fill: statusColors.completed },
     { name: 'Chưa bắt đầu', value: notStartedSkills, fill: statusColors.notStarted },
   ];
 
-  const totalCourses = activeCourses.length;
-  const inProgressCourses = activeCourses.filter(c => c.status === 'Active' && c.progress < 100).length;
-  const notStartedCourses = totalCourses - inProgressCourses;
+  const totalCourses = internalCourseData.length;
+  const inProgressCourses = internalCourseData.filter(c => c.status === 'Active' && c.progress > 0 && c.progress < 100).length;
+  const completedCourses = internalCourseData.filter(c => c.progress === 100).length;
+  const notStartedCourses = totalCourses - inProgressCourses - completedCourses;
 
   const allCoursesStatusData = [
     { name: 'Đang học', value: inProgressCourses, fill: statusColors.inProgress },
-    { name: 'Hoàn thành', value: 0, fill: statusColors.completed },
+    { name: 'Hoàn thành', value: completedCourses, fill: statusColors.completed },
     { name: 'Chưa bắt đầu', value: notStartedCourses, fill: statusColors.notStarted },
   ];
 

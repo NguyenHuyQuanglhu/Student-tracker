@@ -33,16 +33,18 @@ export function ExercisePerformanceChart() {
         
         const storedState = JSON.parse(sessionStorage.getItem('exerciseState') || '{}');
 
-        const completedExercises = mockExercises
-            .map(ex => {
-                const state = storedState[ex.id];
-                if (state && state.status === 'Đã hoàn thành' && state.completionTime !== null && state.completionTime > 0) {
+        const completedExercises = Object.keys(storedState)
+            .map(exerciseId => {
+                const state = storedState[exerciseId];
+                const originalExercise = mockExercises.find(ex => ex.id === exerciseId);
+
+                if (originalExercise && state.status === 'Đã hoàn thành' && state.completionTime !== null) {
                     return { 
-                        ...ex, 
+                        ...originalExercise, 
                         ...state,
-                        title: ex.title.split(' ').slice(0, 3).join(' ') + '...', // Shorten title
+                        title: originalExercise.title.split(' ').slice(0, 3).join(' ') + '...', // Shorten title
                         completionTime: parseFloat((state.completionTime / 60).toFixed(2)), // to minutes from state
-                        targetTime: parseFloat((ex.targetTime / 60).toFixed(2)), // to minutes from mock
+                        targetTime: parseFloat((originalExercise.targetTime / 60).toFixed(2)), // to minutes from mock
                     };
                 }
                 return null;

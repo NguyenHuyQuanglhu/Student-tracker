@@ -1,9 +1,31 @@
+
+'use client';
+
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { warnings } from "@/app/lib/mock-data";
+import { warnings as staticWarnings, Warning } from "@/app/lib/mock-data";
 import { AlertTriangle } from "lucide-react";
+import { useEffect, useState } from "react";
 
 export function EarlyWarnings() {
+  const [warnings, setWarnings] = useState<Warning[]>(staticWarnings);
+
+  const updateWarnings = () => {
+    if (typeof window === 'undefined') return;
+    const dynamicWarnings: Warning[] = JSON.parse(sessionStorage.getItem('dynamicWarnings') || '[]');
+    setWarnings([...staticWarnings, ...dynamicWarnings]);
+  };
+
+  useEffect(() => {
+    updateWarnings();
+
+    window.addEventListener('warningsChanged', updateWarnings);
+
+    return () => {
+      window.removeEventListener('warningsChanged', updateWarnings);
+    };
+  }, []);
+
   return (
     <Card>
       <CardHeader>

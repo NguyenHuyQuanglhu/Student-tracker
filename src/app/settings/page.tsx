@@ -24,11 +24,17 @@ export default function SettingsPage() {
       if (typeof window !== 'undefined') {
         sessionStorage.removeItem('courseProgress');
         sessionStorage.removeItem('exerciseState');
+        sessionStorage.removeItem('dynamicWarnings'); // Also clear dynamic warnings
         
         toast({
           title: "Thành công!",
           description: "Toàn bộ tiến trình đã được đặt lại. Đang tải lại trang...",
         });
+
+        // Dispatch events to update components immediately before reload
+        window.dispatchEvent(new CustomEvent('courseStateChanged'));
+        window.dispatchEvent(new CustomEvent('exerciseStateChanged'));
+        window.dispatchEvent(new CustomEvent('warningsChanged'));
 
         // Reload the page to ensure all components reset from a clean state
         setTimeout(() => {

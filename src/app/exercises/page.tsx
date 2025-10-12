@@ -5,7 +5,7 @@ import { DashboardSidebar } from "@/components/dashboard/sidebar";
 import { Card, CardHeader, CardTitle, CardContent, CardDescription, CardFooter } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { exercises as mockExercises, Exercise } from "@/app/lib/mock-data";
+import { exercises as mockExercises, Exercise, Warning } from "@/app/lib/mock-data";
 import { Timer, CheckCircle2 } from 'lucide-react';
 
 const difficultyColors: Record<Exercise['difficulty'], string> = {
@@ -54,7 +54,6 @@ export default function ExercisesPage() {
 
     const storedState = JSON.parse(sessionStorage.getItem('exerciseState') || '{}');
     
-    // Integrity check for mock data consistency
     const mockExerciseIds = new Set(mockExercises.map(ex => ex.id));
     Object.keys(storedState).forEach(storedId => {
         if (!mockExerciseIds.has(storedId)) {
@@ -99,20 +98,48 @@ export default function ExercisesPage() {
     }
   };
 
+  const addDynamicWarning = (warning: Warning) => {
+    const dynamicWarnings: Warning[] = JSON.parse(sessionStorage.getItem('dynamicWarnings') || '[]');
+    // Avoid duplicate warnings
+    if (!dynamicWarnings.some(w => w.id === warning.id)) {
+      dynamicWarnings.push(warning);
+      sessionStorage.setItem('dynamicWarnings', JSON.stringify(dynamicWarnings));
+      window.dispatchEvent(new CustomEvent('warningsChanged'));
+    }
+  };
+
   const handleSubmitExercise = (exerciseId: string) => {
     const storedState = JSON.parse(sessionStorage.getItem('exerciseState') || '{}');
+    const originalExercise = mockExercises.find(ex => ex.id === exerciseId);
     const exerciseState = storedState[exerciseId];
     
-    if (exerciseState && exerciseState.status === 'Đang làm' && exerciseState.startTime) {
+    if (originalExercise && exerciseState && exerciseState.status === 'Đang làm' && exerciseState.startTime) {
       const completionTime = Math.floor((Date.now() - exerciseState.startTime) / 1000);
+      const score = Math.floor(Math.random() * 71) + 30;
+
       storedState[exerciseId] = {
         ...exerciseState,
         status: 'Đã hoàn thành',
         completionTime: completionTime,
-        score: Math.floor(Math.random() * 71) + 30,
+        score: score,
       };
       sessionStorage.setItem('exerciseState', JSON.stringify(storedState));
       window.dispatchEvent(new CustomEvent('exerciseStateChanged'));
+
+      // Check for new warnings
+      if (score < 60) {
+        addDynamicWarning({
+          id: `low-score-${exerciseId}`,
+          message: `Bạn có điểm thấp (${score}/100) cho bài tập "${originalExercise.title}". Hãy xem lại.`
+        });
+      }
+
+      if ((originalExercise.difficulty === 'Trung bình' || originalExercise.difficulty === 'Khó') && completionTime < 300) { // Less than 5 minutes
+         addDynamicWarning({
+          id: `too-fast-${exerciseId}`,
+          message: `Bạn đã hoàn thành bài tập khó "${originalExercise.title}" quá nhanh. Hãy chắc chắn rằng bạn đã hiểu kỹ.`
+        });
+      }
     }
   };
 

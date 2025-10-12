@@ -31,9 +31,14 @@ export const todoList = [
   { id: '5', task: 'Prepare presentation', course: 'Public Speaking', dueDate: '1 ngày', completed: false },
 ];
 
-export const warnings = [
-  { id: '1', message: 'Bạn có nguy cơ trượt môn Lịch sử thế giới. Điểm hiện tại của bạn là 68%.' },
-  { id: '2', message: 'Bài Cơ học lượng tử sẽ hết hạn trong 3 ngày nữa.' },
+export type Warning = {
+  id: string;
+  message: string;
+}
+
+export const warnings: Warning[] = [
+  { id: 'risk-1', message: 'Bạn có nguy cơ trượt môn Lịch sử thế giới. Điểm hiện tại của bạn là 68%.' },
+  { id: 'due-1', message: 'Bài Cơ học lượng tử sẽ hết hạn trong 3 ngày nữa.' },
 ];
 
 export type CourseStatus = 'Active' | 'Finished' | 'Paused';

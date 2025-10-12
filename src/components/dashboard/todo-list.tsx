@@ -42,6 +42,7 @@ export function TodoList() {
     }
     
     const courseProgress = JSON.parse(localStorage.getItem('courseProgress') || '{}');
+    const exerciseState = JSON.parse(localStorage.getItem('exerciseState') || '{}');
     
     // Get courses that have been started but not finished
     const inProgressCourses: TodoItem[] = courseData
@@ -57,8 +58,22 @@ export function TodoList() {
         type: 'Khóa học',
         completed: false, // In-progress courses are not completed
       }));
+
+    // Get exercises that are not started
+    const notStartedExercises: TodoItem[] = mockExercises
+        .filter(ex => {
+            const state = exerciseState[ex.id];
+            return !state || state.status === 'Chưa bắt đầu';
+        })
+        .map(ex => ({
+            id: `exercise-${ex.id}`,
+            task: `Làm bài tập ${ex.title}`,
+            course: ex.course,
+            type: 'Bài tập',
+            completed: false
+        }));
     
-    setTodoItems(inProgressCourses);
+    setTodoItems([...inProgressCourses, ...notStartedExercises]);
     setLoading(false);
   };
   

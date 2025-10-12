@@ -46,4 +46,7 @@ export const courseData = [
     { id: "public-speaking", name: "Public Speaking", progress: 25, status: "Active" as CourseStatus, imageSeed: "course5" },
     { id: "leadership", name: "Leadership", progress: 50, status: "Active" as CourseStatus, imageSeed: "course6" },
     { id: "teamwork", name: "Teamwork", progress: 75, status: "Active" as CourseStatus, imageSeed: "course7" },
+    { id: "data-structures", name: "Cấu trúc dữ liệu & Thuật toán", progress: 0, status: "Active" as CourseStatus, imageSeed: "course8" },
+    { id: "web-development", name: "Phát triển Web", progress: 0, status: "Active" as CourseStatus, imageSeed: "course9" },
+    { id: "python-programming", name: "Lập trình Python", progress: 0, status: "Active" as CourseStatus, imageSeed: "course10" },
 ];

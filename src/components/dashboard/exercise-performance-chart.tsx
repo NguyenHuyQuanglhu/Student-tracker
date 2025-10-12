@@ -93,7 +93,7 @@ const ExerciseSummary = ({ data }: { data: ChartData[] }) => {
     const avgTargetTime = data.reduce((acc, item) => acc + item.targetTime, 0) / totalExercises;
 
     const getEvaluation = () => {
-        let scoreFeedback = '';
+        let scoreFeedback: React.ReactNode;
         if (avgScore >= 90) {
             scoreFeedback = "Xuất sắc! Điểm trung bình của bạn rất cao.";
         } else if (avgScore >= 75) {
@@ -101,7 +101,21 @@ const ExerciseSummary = ({ data }: { data: ChartData[] }) => {
         } else if (avgScore >= 60) {
             scoreFeedback = "Khá tốt! Hãy tiếp tục cố gắng để cải thiện hơn nữa.";
         } else {
-            scoreFeedback = "Cần cố gắng hơn. Hãy xem lại các bài tập có điểm thấp.";
+            const lowScoreExercises = data
+                .filter(item => item.score !== null)
+                .sort((a, b) => (a.score!) - (b.score!))
+                .slice(0, 2);
+
+            scoreFeedback = (
+                <div>
+                    <p className="font-semibold">Cần cố gắng hơn. Dưới đây là các phần bạn nên xem lại:</p>
+                    <ul className="list-disc pl-5 mt-1">
+                        {lowScoreExercises.map((ex, i) => (
+                            <li key={i}>{ex.title} (Điểm: {ex.score})</li>
+                        ))}
+                    </ul>
+                </div>
+            );
         }
 
         let timeFeedback = '';

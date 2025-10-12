@@ -115,29 +115,29 @@ export default function ExercisesPage() {
       const completionTime = Math.floor((Date.now() - exerciseState.startTime) / 1000);
       const score = Math.floor(Math.random() * 71) + 30;
 
-      storedState[exerciseId] = {
+      const newState = {
         ...exerciseState,
         status: 'Đã hoàn thành',
         completionTime: completionTime,
         score: score,
       };
-      
+      storedState[exerciseId] = newState;
       sessionStorage.setItem('exerciseState', JSON.stringify(storedState));
       window.dispatchEvent(new CustomEvent('exerciseStateChanged'));
-
+      
       // Check for low score warning
-      if (score < 60) {
+      if (score < 50) {
         addDynamicWarning({
-          id: `low-score-${exerciseId}`,
-          message: `Cảnh báo điểm thấp! Điểm ${score}/100 cho bài tập "${originalExercise.title}" có nguy cơ khiến bạn rớt môn. Hãy ôn tập lại ngay!`
+          id: `low-score-${exerciseId}-${Date.now()}`,
+          message: `Cảnh báo điểm thấp! Điểm ${score}/100 cho bài tập "${originalExercise.title}" có nguy cơ khiến bạn rớt môn.`
         });
       }
 
       // Check for finishing too fast warning, independently of the score
       if ((originalExercise.difficulty === 'Trung bình' || originalExercise.difficulty === 'Khó') && completionTime < 1500) { // Less than 25 minutes
          addDynamicWarning({
-          id: `too-fast-${exerciseId}`,
-          message: `Bạn đã hoàn thành bài tập khó "${originalExercise.title}" quá nhanh. Hãy chắc chắn rằng bạn đã hiểu kỹ.`
+          id: `too-fast-${exerciseId}-${Date.now()}`,
+          message: `Bạn đã hoàn thành bài tập khó "${originalExercise.title}" quá nhanh (dưới 25 phút). Hãy chắc chắn rằng bạn đã hiểu kỹ.`
         });
       }
     }

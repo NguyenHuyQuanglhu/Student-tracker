@@ -1,5 +1,7 @@
+'use client';
+
 import { DashboardSidebar } from "@/components/dashboard/sidebar";
-// import { ExerciseSuggestions } from "@/components/dashboard/exercise-suggestions";
+import { AcademicWarnings } from "@/components/dashboard/academic-warnings";
 import { ProgressOverview } from "@/components/dashboard/progress-overview";
 import { SoftSkillsDashboard } from "@/components/dashboard/soft-skills";
 import { TodoList } from "@/components/dashboard/todo-list";
@@ -26,7 +28,7 @@ export default function Home() {
               <div className="lg:col-span-2">
                 <TodoList />
               </div>
-              {/* <ExerciseSuggestions /> */}
+               <AcademicWarnings />
             </div>
           </div>
         </main>

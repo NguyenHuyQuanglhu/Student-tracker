@@ -48,7 +48,12 @@ const calculateGrade = (score: number, completionTime: number, targetTime: numbe
 
     let currentGradeIndex = grades.indexOf(grade);
 
-    // 2. Adjust based on time vs target and difficulty
+    // 2. Penalize for finishing too quickly on harder exercises FIRST
+    if ((difficulty === 'Trung bình' || difficulty === 'Khó') && completionTime < (25 * 60)) {
+        currentGradeIndex--; 
+    }
+
+    // 3. Adjust based on time vs target and difficulty
     const timeRatio = completionTime / targetTime;
     switch (difficulty) {
         case 'Dễ':
@@ -65,13 +70,7 @@ const calculateGrade = (score: number, completionTime: number, targetTime: numbe
             break;
     }
     
-    // 3. Final check for finishing too quickly on harder exercises
-    if ((difficulty === 'Trung bình' || difficulty === 'Khó') && completionTime < (25 * 60)) {
-        currentGradeIndex--; // Lower grade if finished < 25 mins
-    }
-
-
-    // Ensure grade stays within bounds (F to S)
+    // 4. Ensure grade stays within bounds (F to S)
     if (currentGradeIndex < 0) currentGradeIndex = 0;
     if (currentGradeIndex >= grades.length) currentGradeIndex = grades.length - 1;
     

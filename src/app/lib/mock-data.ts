@@ -49,6 +49,8 @@ export const courseData = [
     { id: "data-structures", name: "Cấu trúc dữ liệu & Thuật toán", progress: 0, status: "Active" as CourseStatus, imageSeed: "course8" },
     { id: "web-development", name: "Phát triển Web", progress: 0, status: "Active" as CourseStatus, imageSeed: "course9" },
     { id: "python-programming", name: "Lập trình Python", progress: 0, status: "Active" as CourseStatus, imageSeed: "course10" },
+    { id: "mobile-development", name: "Phát triển di động", progress: 0, status: "Active" as CourseStatus, imageSeed: "course11" },
+    { id: "cloud-computing", name: "Điện toán đám mây", progress: 0, status: "Active" as CourseStatus, imageSeed: "course12" },
 ];
 
 export type Status = 'inProgress' | 'completed' | 'notStarted';
@@ -59,6 +61,8 @@ export const subjectData: { name: string; status: Status }[] = [
     { name: 'Toán học', status: 'inProgress' },
     { name: 'Vật lý', status: 'notStarted' },
     { name: 'Ngoại ngữ', status: 'completed' },
+    { name: 'Hệ điều hành', status: 'notStarted' },
+    { name: 'Kiến trúc máy tính', status: 'notStarted' },
 ];
 
 export const skillData: { name: string; status: Status }[] = [
@@ -69,4 +73,5 @@ export const skillData: { name: string; status: Status }[] = [
     { name: 'Thuyết trình', status: 'notStarted' },
     { name: 'Giải quyết vấn đề', status: 'inProgress' },
     { name: 'Next.js', status: 'notStarted' },
+    { name: 'Docker', status: 'notStarted' },
 ];

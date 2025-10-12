@@ -1,5 +1,4 @@
 import { DashboardSidebar } from "@/components/dashboard/sidebar";
-import { EarlyWarnings } from "@/components/dashboard/early-warnings";
 // import { ExerciseSuggestions } from "@/components/dashboard/exercise-suggestions";
 import { ProgressOverview } from "@/components/dashboard/progress-overview";
 import { SoftSkillsDashboard } from "@/components/dashboard/soft-skills";
@@ -21,7 +20,6 @@ export default function Home() {
               </div>
               <div className="flex flex-col gap-6">
                 <SoftSkillsDashboard />
-                <EarlyWarnings />
               </div>
             </div>
             <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">

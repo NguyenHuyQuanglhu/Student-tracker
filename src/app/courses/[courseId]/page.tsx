@@ -46,7 +46,7 @@ export default function CourseDetailPage() {
     if (courseState) {
         setProgress(courseState.progress || 0);
         setStatus(courseState.status || 'Paused');
-        // Do NOT restore isLearning, user must press play.
+        setIsLearning(courseState.isLearning || false);
     } else {
         setProgress(targetCourse.progress);
         setStatus(targetCourse.status);
@@ -64,14 +64,13 @@ export default function CourseDetailPage() {
     }
     
     const progressState = JSON.parse(localStorage.getItem('courseProgress') || '{}');
-    // Always save isLearning as false when saving, so it doesn't auto-play on reload
-    progressState[courseId] = { progress: progress, status: status };
+    progressState[courseId] = { progress: progress, status: status, isLearning: isLearning };
     localStorage.setItem('courseProgress', JSON.stringify(progressState));
 
     // Notify other components (like the main course list) that state has changed
     window.dispatchEvent(new CustomEvent('courseStateChanged'));
 
-  }, [progress, status, courseId, course]);
+  }, [progress, status, isLearning, courseId, course]);
 
   // 3. Handle learning progress simulation (the timer)
   useEffect(() => {
@@ -104,12 +103,18 @@ export default function CourseDetailPage() {
 
   const handleStartCourse = () => {
     if (isLearning) return;
+
+    if (course?.category === 'Kỹ năng' && status === 'Finished') {
+      // Do not allow restarting a finished skill course
+      return;
+    }
     
     let startProgress = progress;
     if (status === 'Finished') { 
-        startProgress = 1; // Restarting a finished course
+      // This will now only apply to 'Môn học' due to the check above
+        startProgress = 1; 
     } else if (progress === 0) {
-        startProgress = 1; // Starting a new course
+        startProgress = 1; 
     }
     
     setProgress(startProgress);
@@ -132,13 +137,17 @@ export default function CourseDetailPage() {
     if (status === 'Finished') {
       return 'Học lại';
     }
-    if (progress > 0) {
+    if (progress > 0 && status !== 'Active') {
       return 'Tiếp tục học';
+    }
+    if (status === 'Active') {
+      return 'Đang học...';
     }
     return 'Bắt đầu học';
   };
 
   const isCompleted = status === 'Finished';
+  const isSkillCourse = course.category === 'Kỹ năng';
 
   return (
     <div className="flex min-h-screen w-full flex-col">
@@ -180,7 +189,7 @@ export default function CourseDetailPage() {
                          Tạm dừng
                        </Button>
                     ) : (
-                       <Button onClick={handleStartCourse} disabled={isCompleted}>
+                       <Button onClick={handleStartCourse} disabled={isCompleted && isSkillCourse}>
                          {getButtonText()}
                        </Button>
                     )}

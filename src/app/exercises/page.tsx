@@ -5,7 +5,7 @@ import { DashboardSidebar } from "@/components/dashboard/sidebar";
 import { Card, CardHeader, CardTitle, CardContent, CardDescription, CardFooter } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { exercises as mockExercises, Exercise } from "@/app/lib/mock-data";
+import { exercises as mockExercises, Exercise, mockDataVersion } from "@/app/lib/mock-data";
 import { Timer, CheckCircle2 } from 'lucide-react';
 
 const difficultyColors: Record<Exercise['difficulty'], string> = {
@@ -49,22 +49,67 @@ const ExerciseTimer = ({ startTime }: { startTime: number }) => {
 export default function ExercisesPage() {
   const [exercises, setExercises] = useState<Exercise[]>(mockExercises);
 
+  const updateExerciseStates = () => {
+    if (typeof window === 'undefined') return;
+
+    if (sessionStorage.getItem('mockDataVersion') !== mockDataVersion) {
+      sessionStorage.removeItem('exerciseState');
+      sessionStorage.setItem('mockDataVersion', mockDataVersion);
+    }
+    
+    const storedState = JSON.parse(sessionStorage.getItem('exerciseState') || '{}');
+
+    const updatedExercises = mockExercises.map(ex => {
+      const state = storedState[ex.id];
+      if (state) {
+        return { ...ex, ...state };
+      }
+      // Reset to default if not in session storage
+      const originalExercise = mockExercises.find(mockEx => mockEx.id === ex.id)!;
+      return { ...originalExercise };
+    });
+    setExercises(updatedExercises);
+  };
+
+  useEffect(() => {
+    updateExerciseStates();
+    window.addEventListener('exerciseStateChanged', updateExerciseStates);
+    return () => {
+      window.removeEventListener('exerciseStateChanged', updateExerciseStates);
+    };
+  }, []);
+
   const handleStartExercise = (exerciseId: string) => {
-    setExercises(exercises.map(ex => 
-      ex.id === exerciseId && ex.status === 'Chưa bắt đầu' 
-        ? { ...ex, status: 'Đang làm', startTime: Date.now() } 
-        : ex
-    ));
+    const storedState = JSON.parse(sessionStorage.getItem('exerciseState') || '{}');
+    const exercise = exercises.find(ex => ex.id === exerciseId);
+
+    if (exercise && exercise.status === 'Chưa bắt đầu') {
+      storedState[exerciseId] = {
+        status: 'Đang làm',
+        startTime: Date.now(),
+        completionTime: null,
+        score: null,
+      };
+      sessionStorage.setItem('exerciseState', JSON.stringify(storedState));
+      window.dispatchEvent(new CustomEvent('exerciseStateChanged'));
+    }
   };
 
   const handleSubmitExercise = (exerciseId: string) => {
-    setExercises(exercises.map(ex => {
-      if (ex.id === exerciseId && ex.status === 'Đang làm' && ex.startTime) {
-        const completionTime = Math.floor((Date.now() - ex.startTime) / 1000);
-        return { ...ex, status: 'Đã hoàn thành', completionTime, score: ex.score ?? Math.floor(Math.random() * 31) + 70 }; // Assign a random score if not present
-      }
-      return ex;
-    }));
+    const storedState = JSON.parse(sessionStorage.getItem('exerciseState') || '{}');
+    const exercise = exercises.find(ex => ex.id === exerciseId);
+    
+    if (exercise && exercise.status === 'Đang làm' && exercise.startTime) {
+      const completionTime = Math.floor((Date.now() - exercise.startTime) / 1000);
+      storedState[exerciseId] = {
+        ...storedState[exerciseId],
+        status: 'Đã hoàn thành',
+        completionTime,
+        score: exercise.score ?? Math.floor(Math.random() * 31) + 70, // Assign random score
+      };
+      sessionStorage.setItem('exerciseState', JSON.stringify(storedState));
+      window.dispatchEvent(new CustomEvent('exerciseStateChanged'));
+    }
   };
 
   return (

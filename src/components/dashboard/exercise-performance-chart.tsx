@@ -1,7 +1,8 @@
 "use client"
 
+import { useEffect, useState } from "react";
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer } from "recharts";
-import { exercises } from "@/app/lib/mock-data";
+import { exercises as mockExercises, Exercise, mockDataVersion } from "@/app/lib/mock-data";
 import { ChartContainer } from "@/components/ui/chart";
 
 const chartConfig = {
@@ -20,8 +21,41 @@ const chartConfig = {
 };
 
 export function ExercisePerformanceChart() {
+    const [exercises, setExercises] = useState<Exercise[]>(mockExercises);
+
+    const updateChartData = () => {
+        if (typeof window === 'undefined') return;
+
+        if (sessionStorage.getItem('mockDataVersion') !== mockDataVersion) {
+            sessionStorage.removeItem('exerciseState');
+        }
+        
+        const storedState = JSON.parse(sessionStorage.getItem('exerciseState') || '{}');
+
+        const updatedExercises = mockExercises.map(ex => {
+            const state = storedState[ex.id];
+            if (state && state.status === 'Đã hoàn thành') {
+                return { ...ex, ...state };
+            }
+            // For chart, only include completed exercises from original mock data if not in session
+            if (!state && ex.status === 'Đã hoàn thành') {
+                return ex;
+            }
+            return { ...ex, status: 'Chưa bắt đầu' }; // Default to not completed if no state
+        });
+        setExercises(updatedExercises);
+    };
+
+    useEffect(() => {
+        updateChartData();
+        window.addEventListener('exerciseStateChanged', updateChartData);
+        return () => {
+            window.removeEventListener('exerciseStateChanged', updateChartData);
+        };
+    }, []);
+
     const completedExercises = exercises
-        .filter(ex => ex.status === 'Đã hoàn thành' && ex.completionTime !== null)
+        .filter(ex => ex.status === 'Đã hoàn thành' && ex.completionTime !== null && ex.completionTime > 0)
         .map(ex => ({
             ...ex,
             title: ex.title.split(' ').slice(0, 3).join(' ') + '...', // Shorten title

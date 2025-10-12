@@ -131,7 +131,7 @@ export default function ExercisesPage() {
       if (score < 60) {
         addDynamicWarning({
           id: `low-score-${exerciseId}`,
-          message: `Bạn có điểm thấp (${score}/100) cho bài tập "${originalExercise.title}". Hãy xem lại.`
+          message: `Cảnh báo điểm thấp! Điểm ${score}/100 cho bài tập "${originalExercise.title}" có nguy cơ khiến bạn rớt môn. Hãy ôn tập lại ngay!`
         });
       }
 

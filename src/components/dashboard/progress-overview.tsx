@@ -91,6 +91,16 @@ export function ProgressOverview() {
     { name: 'Chưa bắt đầu', value: notStartedSkills, fill: statusColors.notStarted },
   ];
 
+  const totalCourses = internalCourseData.length;
+  const completedCourses = internalCourseData.filter(c => c.progress === 100).length;
+  const inProgressCourses = internalCourseData.filter(c => c.progress > 0 && c.progress < 100).length;
+  const notStartedCourses = totalCourses - completedCourses - inProgressCourses;
+
+  const allCoursesStatusData = [
+    { name: 'Đang học', value: inProgressCourses, fill: statusColors.inProgress },
+    { name: 'Hoàn thành', value: completedCourses, fill: statusColors.completed },
+    { name: 'Chưa bắt đầu', value: notStartedCourses, fill: statusColors.notStarted },
+  ];
 
   return (
     <Card className="h-full">
@@ -98,7 +108,7 @@ export function ProgressOverview() {
         <CardTitle className="font-headline">Hiệu suất & Thống kê</CardTitle>
         <CardDescription>Tổng quan về tiến độ học tập của bạn.</CardDescription>
       </CardHeader>
-      <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6 text-center">
+      <CardContent className="grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
         <div>
             <h3 className="text-lg font-semibold">Tổng số môn học</h3>
             <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
@@ -108,6 +118,21 @@ export function ProgressOverview() {
                 <PieChart accessibilityLayer >
                     <Pie data={subjectStatusData} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={60} >
                          {subjectStatusData.map((entry, index) => (
+                            <Cell key={`cell-${index}`} fill={entry.fill} />
+                        ))}
+                    </Pie>
+                </PieChart>
+            </ChartContainer>
+        </div>
+        <div>
+            <h3 className="text-lg font-semibold">Tổng khóa học</h3>
+            <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
+                <span className="text-2xl font-bold text-foreground">{totalCourses}</span>
+            </div>
+            <ChartContainer config={chartConfig} className="min-h-[150px] w-full mt-4 mx-auto">
+                <PieChart accessibilityLayer >
+                    <Pie data={allCoursesStatusData} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={60} >
+                         {allCoursesStatusData.map((entry, index) => (
                             <Cell key={`cell-${index}`} fill={entry.fill} />
                         ))}
                     </Pie>

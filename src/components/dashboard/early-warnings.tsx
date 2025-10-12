@@ -13,7 +13,9 @@ export function EarlyWarnings() {
   const updateWarnings = () => {
     if (typeof window === 'undefined') return;
     const dynamicWarnings: Warning[] = JSON.parse(sessionStorage.getItem('dynamicWarnings') || '[]');
-    setWarnings([...staticWarnings, ...dynamicWarnings]);
+    // Reverse the array to show the newest first, then slice to get the top 3
+    const latestWarnings = dynamicWarnings.reverse().slice(0, 3);
+    setWarnings([...staticWarnings, ...latestWarnings]);
   };
 
   useEffect(() => {

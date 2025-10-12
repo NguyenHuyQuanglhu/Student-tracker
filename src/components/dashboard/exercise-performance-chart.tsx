@@ -33,7 +33,7 @@ const gradeColors: Record<Grade, string> = {
 };
 
 
-const calculateGrade = (score: number, completionTime: number, targetTime: number, difficulty: Exercise['difficulty']): Grade => {
+const calculateGrade = (score: number, completionTimeInSeconds: number, targetTimeInSeconds: number, difficulty: Exercise['difficulty']): Grade => {
     const grades: Grade[] = ['F', 'E', 'D', 'C', 'B', 'A', 'S'];
     let grade: Grade;
 
@@ -49,30 +49,31 @@ const calculateGrade = (score: number, completionTime: number, targetTime: numbe
     let currentGradeIndex = grades.indexOf(grade);
 
     // 2. Penalize for finishing too quickly on harder exercises FIRST
-    if ((difficulty === 'Trung bình' || difficulty === 'Khó') && completionTime < (25 * 60)) {
+    // This rule should have priority.
+    if ((difficulty === 'Trung bình' || difficulty === 'Khó') && completionTimeInSeconds < (25 * 60)) {
         currentGradeIndex--; 
-    }
-
-    // 3. Adjust based on time vs target and difficulty
-    const timeRatio = completionTime / targetTime;
-    switch (difficulty) {
-        case 'Dễ':
-            if (timeRatio <= 0.7) currentGradeIndex++; // Bonus for being fast
-            else if (timeRatio > 1.3) currentGradeIndex--; // Penalty for being slow
-            break;
-        case 'Trung bình':
-            if (timeRatio <= 0.8) currentGradeIndex++; // Standard bonus
-            else if (timeRatio > 1.2) currentGradeIndex--; // Standard penalty
-            break;
-        case 'Khó':
-            if (timeRatio <= 0.9) currentGradeIndex++; // Small bonus, score is more important
-            else if (timeRatio > 1.5) currentGradeIndex--; // Lenient penalty
-            break;
+    } else {
+        // 3. Adjust based on time vs target and difficulty ONLY if not penalized for being too fast
+        const timeRatio = completionTimeInSeconds / targetTimeInSeconds;
+        switch (difficulty) {
+            case 'Dễ':
+                if (timeRatio <= 0.7) currentGradeIndex++; // Bonus for being fast
+                else if (timeRatio > 1.3) currentGradeIndex--; // Penalty for being slow
+                break;
+            case 'Trung bình':
+                if (timeRatio <= 0.8) currentGradeIndex++; // Standard bonus
+                else if (timeRatio > 1.2) currentGradeIndex--; // Standard penalty
+                break;
+            case 'Khó':
+                if (timeRatio <= 0.9) currentGradeIndex++; // Small bonus, score is more important
+                else if (timeRatio > 1.5) currentGradeIndex--; // Lenient penalty
+                break;
+        }
     }
     
     // 4. Ensure grade stays within bounds (F to S)
-    if (currentGradeIndex < 0) currentGradeIndex = 0;
-    if (currentGradeIndex >= grades.length) currentGradeIndex = grades.length - 1;
+    if (currentGradeIndex < 0) currentGradeIndex = 0; // Grade cannot be lower than F
+    if (currentGradeIndex >= grades.length) currentGradeIndex = grades.length - 1; // Grade cannot be higher than S
     
     return grades[currentGradeIndex];
 };
@@ -80,8 +81,8 @@ const calculateGrade = (score: number, completionTime: number, targetTime: numbe
 
 type ChartData = {
     title: string;
-    completionTime: number;
-    targetTime: number;
+    completionTime: number; // in minutes
+    targetTime: number; // in minutes
     score: number | null;
     grade: Grade;
     difficulty: Exercise['difficulty'];
@@ -209,9 +210,10 @@ export function ExercisePerformanceChart() {
                 if (originalExercise && state.status === 'Đã hoàn thành' && state.completionTime !== null && state.score !== null) {
                     return { 
                         title: originalExercise.title,
-                        completionTime: parseFloat((state.completionTime / 60).toFixed(2)),
-                        targetTime: parseFloat((originalExercise.targetTime / 60).toFixed(2)),
+                        completionTime: parseFloat((state.completionTime / 60).toFixed(2)), // For display in minutes
+                        targetTime: parseFloat((originalExercise.targetTime / 60).toFixed(2)), // For display in minutes
                         score: state.score,
+                        // Pass time in SECONDS to calculateGrade
                         grade: calculateGrade(state.score, state.completionTime, originalExercise.targetTime, originalExercise.difficulty),
                         difficulty: originalExercise.difficulty,
                     };

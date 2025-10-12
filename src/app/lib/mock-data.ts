@@ -50,3 +50,23 @@ export const courseData = [
     { id: "web-development", name: "Phát triển Web", progress: 0, status: "Active" as CourseStatus, imageSeed: "course9" },
     { id: "python-programming", name: "Lập trình Python", progress: 0, status: "Active" as CourseStatus, imageSeed: "course10" },
 ];
+
+export type Status = 'inProgress' | 'completed' | 'notStarted';
+
+export const subjectData: { name: string; status: Status }[] = [
+    { name: 'Khoa học máy tính', status: 'inProgress' },
+    { name: 'Kỹ năng mềm', status: 'completed' },
+    { name: 'Toán học', status: 'inProgress' },
+    { name: 'Vật lý', status: 'notStarted' },
+    { name: 'Ngoại ngữ', status: 'completed' },
+];
+
+export const skillData: { name: string; status: Status }[] = [
+    { name: 'ReactJS', status: 'inProgress' },
+    { name: 'Node.js', status: 'completed' },
+    { name: 'TypeScript', status: 'inProgress' },
+    { name: 'Giao tiếp', status: 'completed' },
+    { name: 'Thuyết trình', status: 'notStarted' },
+    { name: 'Giải quyết vấn đề', status: 'inProgress' },
+    { name: 'Next.js', status: 'notStarted' },
+];

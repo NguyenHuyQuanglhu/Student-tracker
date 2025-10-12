@@ -65,6 +65,26 @@ export default function ProfilePage() {
                     <h2 className="text-lg font-semibold border-b pb-2">Thông tin cá nhân</h2>
                     <div className="space-y-4 text-sm">
                         <div className="grid grid-cols-3 gap-4">
+                            <span className="text-muted-foreground">Họ và tên</span>
+                            <span className="col-span-2 font-medium">Nguyễn Văn A</span>
+                        </div>
+                        <div className="grid grid-cols-3 gap-4">
+                            <span className="text-muted-foreground">Mã số sinh viên</span>
+                            <span className="col-span-2 font-medium">B20DCCN001</span>
+                        </div>
+                        <div className="grid grid-cols-3 gap-4">
+                            <span className="text-muted-foreground">Lớp</span>
+                            <span className="col-span-2 font-medium">D20CNPM1</span>
+                        </div>
+                        <div className="grid grid-cols-3 gap-4">
+                            <span className="text-muted-foreground">Trường</span>
+                            <span className="col-span-2 font-medium">Học viện Công nghệ Bưu chính Viễn thông</span>
+                        </div>
+                         <div className="grid grid-cols-3 gap-4">
+                            <span className="text-muted-foreground">Ngành</span>
+                            <span className="col-span-2 font-medium">Công nghệ thông tin</span>
+                        </div>
+                        <div className="grid grid-cols-3 gap-4">
                             <span className="text-muted-foreground">Giới tính</span>
                             <span className="col-span-2 font-medium">Nam</span>
                         </div>

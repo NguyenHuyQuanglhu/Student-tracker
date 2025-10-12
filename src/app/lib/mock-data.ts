@@ -37,41 +37,21 @@ export const warnings = [
 ];
 
 export type CourseStatus = 'Active' | 'Finished' | 'Paused';
+export type CourseCategory = 'Môn học' | 'Kỹ năng';
 
 export const courseData = [
-    { id: "it-software", name: "IT & Software", progress: 25, status: "Active" as CourseStatus, imageSeed: "course1" },
-    { id: "programming", name: "Programming", progress: 75, status: "Active" as CourseStatus, imageSeed: "course2" },
-    { id: "networking", name: "Networking", progress: 50, status: "Active" as CourseStatus, imageSeed: "course3" },
-    { id: "network-security", name: "Network Security", progress: 100, status: "Finished" as CourseStatus, imageSeed: "course4" },
-    { id: "public-speaking", name: "Public Speaking", progress: 25, status: "Active" as CourseStatus, imageSeed: "course5" },
-    { id: "leadership", name: "Leadership", progress: 50, status: "Active" as CourseStatus, imageSeed: "course6" },
-    { id: "teamwork", name: "Teamwork", progress: 75, status: "Active" as CourseStatus, imageSeed: "course7" },
-    { id: "data-structures", name: "Cấu trúc dữ liệu & Thuật toán", progress: 0, status: "Active" as CourseStatus, imageSeed: "course8" },
-    { id: "web-development", name: "Phát triển Web", progress: 0, status: "Active" as CourseStatus, imageSeed: "course9" },
-    { id: "python-programming", name: "Lập trình Python", progress: 0, status: "Active" as CourseStatus, imageSeed: "course10" },
-    { id: "mobile-development", name: "Phát triển di động", progress: 0, status: "Active" as CourseStatus, imageSeed: "course11" },
-    { id: "cloud-computing", name: "Điện toán đám mây", progress: 0, status: "Active" as CourseStatus, imageSeed: "course12" },
+    { id: "it-software", name: "IT & Software", progress: 25, status: "Active" as CourseStatus, category: "Môn học" as CourseCategory, imageSeed: "course1" },
+    { id: "programming", name: "Programming", progress: 75, status: "Active" as CourseStatus, category: "Môn học" as CourseCategory, imageSeed: "course2" },
+    { id: "networking", name: "Networking", progress: 50, status: "Active" as CourseStatus, category: "Môn học" as CourseCategory, imageSeed: "course3" },
+    { id: "network-security", name: "Network Security", progress: 100, status: "Finished" as CourseStatus, category: "Môn học" as CourseCategory, imageSeed: "course4" },
+    { id: "public-speaking", name: "Public Speaking", progress: 25, status: "Active" as CourseStatus, category: "Kỹ năng" as CourseCategory, imageSeed: "course5" },
+    { id: "leadership", name: "Leadership", progress: 50, status: "Active" as CourseStatus, category: "Kỹ năng" as CourseCategory, imageSeed: "course6" },
+    { id: "teamwork", name: "Teamwork", progress: 75, status: "Active" as CourseStatus, category: "Kỹ năng" as CourseCategory, imageSeed: "course7" },
+    { id: "data-structures", name: "Cấu trúc dữ liệu & Thuật toán", progress: 0, status: "Active" as CourseStatus, category: "Môn học" as CourseCategory, imageSeed: "course8" },
+    { id: "web-development", name: "Phát triển Web", progress: 0, status: "Active" as CourseStatus, category: "Môn học" as CourseCategory, imageSeed: "course9" },
+    { id: "python-programming", name: "Lập trình Python", progress: 0, status: "Active" as CourseStatus, category: "Môn học" as CourseCategory, imageSeed: "course10" },
+    { id: "mobile-development", name: "Phát triển di động", progress: 0, status: "Active" as CourseStatus, category: "Môn học" as CourseCategory, imageSeed: "course11" },
+    { id: "cloud-computing", name: "Điện toán đám mây", progress: 0, status: "Active" as CourseStatus, category: "Môn học" as CourseCategory, imageSeed: "course12" },
 ];
 
 export type Status = 'inProgress' | 'completed' | 'notStarted';
-
-export const subjectData: { name: string; status: Status }[] = [
-    { name: 'Khoa học máy tính', status: 'inProgress' },
-    { name: 'Kỹ năng mềm', status: 'completed' },
-    { name: 'Toán học', status: 'inProgress' },
-    { name: 'Vật lý', status: 'notStarted' },
-    { name: 'Ngoại ngữ', status: 'completed' },
-    { name: 'Hệ điều hành', status: 'notStarted' },
-    { name: 'Kiến trúc máy tính', status: 'notStarted' },
-];
-
-export const skillData: { name: string; status: Status }[] = [
-    { name: 'ReactJS', status: 'inProgress' },
-    { name: 'Node.js', status: 'completed' },
-    { name: 'TypeScript', status: 'inProgress' },
-    { name: 'Giao tiếp', status: 'completed' },
-    { name: 'Thuyết trình', status: 'notStarted' },
-    { name: 'Giải quyết vấn đề', status: 'inProgress' },
-    { name: 'Next.js', status: 'notStarted' },
-    { name: 'Docker', status: 'notStarted' },
-];

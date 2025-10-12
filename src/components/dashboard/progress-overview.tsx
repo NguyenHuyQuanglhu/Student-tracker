@@ -2,9 +2,8 @@
 
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import { ChartContainer } from "@/components/ui/chart";
-import { courseData, subjectData, skillData } from "@/app/lib/mock-data";
+import { courseData } from "@/app/lib/mock-data";
 import { PieChart, Pie, Cell } from "recharts";
-import { TrendingUp } from "lucide-react";
 import { useEffect, useState } from "react";
 
 const chartConfig = {
@@ -65,32 +64,24 @@ export function ProgressOverview() {
     };
   }, []);
 
-  const totalCourses = internalCourseData.length;
-  const completedCourses = internalCourseData.filter(c => c.progress === 100).length;
-  const inProgressCourses = internalCourseData.filter(c => c.progress > 0 && c.progress < 100).length;
-  const yetToStartCourses = totalCourses - completedCourses - inProgressCourses;
+  const subjects = internalCourseData.filter(c => c.category === 'Môn học');
+  const skills = internalCourseData.filter(c => c.category === 'Kỹ năng');
 
-  const courseStatusData = [
-    { name: 'Đang học', value: inProgressCourses, fill: statusColors.inProgress },
-    { name: 'Hoàn thành', value: completedCourses, fill: statusColors.completed },
-    { name: 'Chưa bắt đầu', value: yetToStartCourses, fill: statusColors.notStarted },
-  ];
+  const totalSubjects = subjects.length;
+  const completedSubjects = subjects.filter(c => c.progress === 100).length;
+  const inProgressSubjects = subjects.filter(c => c.progress > 0 && c.progress < 100).length;
+  const notStartedSubjects = totalSubjects - completedSubjects - inProgressSubjects;
   
-  const totalSubjects = subjectData.length;
-  const inProgressSubjects = subjectData.filter(s => s.status === 'inProgress').length;
-  const completedSubjects = subjectData.filter(s => s.status === 'completed').length;
-  const notStartedSubjects = subjectData.filter(s => s.status === 'notStarted').length;
-
   const subjectStatusData = [
     { name: 'Đang học', value: inProgressSubjects, fill: statusColors.inProgress },
     { name: 'Hoàn thành', value: completedSubjects, fill: statusColors.completed },
     { name: 'Chưa bắt đầu', value: notStartedSubjects, fill: statusColors.notStarted },
   ];
 
-  const totalSkills = skillData.length;
-  const inProgressSkills = skillData.filter(s => s.status === 'inProgress').length;
-  const completedSkills = skillData.filter(s => s.status === 'completed').length;
-  const notStartedSkills = skillData.filter(s => s.status === 'notStarted').length;
+  const totalSkills = skills.length;
+  const completedSkills = skills.filter(c => c.progress === 100).length;
+  const inProgressSkills = skills.filter(c => c.progress > 0 && c.progress < 100).length;
+  const notStartedSkills = totalSkills - completedSkills - inProgressSkills;
 
   const skillStatusData = [
     { name: 'Đang học', value: inProgressSkills, fill: statusColors.inProgress },
@@ -105,31 +96,13 @@ export function ProgressOverview() {
         <CardTitle className="font-headline">Hiệu suất & Thống kê</CardTitle>
         <CardDescription>Tổng quan về tiến độ học tập của bạn.</CardDescription>
       </CardHeader>
-      <CardContent className="grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
-        <div>
-            <h3 className="text-lg font-semibold">Tổng số khóa học</h3>
-            <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
-                <span className="text-2xl font-bold text-foreground">{totalCourses}</span>
-                <span className="flex items-center text-green-500">
-                    <TrendingUp className="w-4 h-4 mr-1" /> 2 Mới
-                </span>
-            </div>
-            <ChartContainer config={{}} className="min-h-[150px] w-full mt-4 mx-auto">
-                <PieChart accessibilityLayer >
-                    <Pie data={courseStatusData} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={60} >
-                         {courseStatusData.map((entry, index) => (
-                            <Cell key={`cell-${index}`} fill={entry.fill} />
-                        ))}
-                    </Pie>
-                </PieChart>
-            </ChartContainer>
-        </div>
+      <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6 text-center">
         <div>
             <h3 className="text-lg font-semibold">Tổng số môn học</h3>
-             <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
+            <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
                 <span className="text-2xl font-bold text-foreground">{totalSubjects}</span>
             </div>
-            <ChartContainer config={chartConfig} className="min-h-[150px] w-full mt-4 mx-auto">
+            <ChartContainer config={{}} className="min-h-[150px] w-full mt-4 mx-auto">
                 <PieChart accessibilityLayer >
                     <Pie data={subjectStatusData} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={60} >
                          {subjectStatusData.map((entry, index) => (

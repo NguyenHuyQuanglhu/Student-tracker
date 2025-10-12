@@ -32,9 +32,9 @@ export function AcademicWarnings() {
   }, []);
 
   return (
-    <Card>
-      <Accordion type="single" collapsible className="w-full" defaultValue="item-1">
-        <AccordionItem value="item-1" className="border-b-0">
+    <Card className="flex flex-col">
+      <Accordion type="single" collapsible className="w-full flex flex-col flex-grow" defaultValue="item-1">
+        <AccordionItem value="item-1" className="border-b-0 flex flex-col flex-grow">
           <AccordionTrigger className="p-6 hover:no-underline">
             <div className="flex flex-col items-start text-left">
               <CardTitle className="font-headline flex items-center">
@@ -44,7 +44,7 @@ export function AcademicWarnings() {
               <CardDescription className="pt-1.5">Những vấn đề cần chú ý trong quá trình học tập của bạn.</CardDescription>
             </div>
           </AccordionTrigger>
-          <AccordionContent>
+          <AccordionContent className="flex-grow flex flex-col justify-end">
             <CardContent>
               {loading ? (
                    <div className="space-y-4">

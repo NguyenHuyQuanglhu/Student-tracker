@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -30,6 +31,7 @@ const typeColors: Record<TodoItem['type'], string> = {
 export function TodoList() {
   const [todoItems, setTodoItems] = useState<TodoItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const router = useRouter();
 
   const updateTodoList = () => {
     if (typeof window === 'undefined') return;
@@ -89,6 +91,15 @@ export function TodoList() {
     };
   }, []);
 
+  const handleRowClick = (item: TodoItem) => {
+    if (item.type === 'Khóa học') {
+      const courseId = item.id.replace('course-', '');
+      router.push(`/courses/${courseId}`);
+    } else {
+      router.push('/exercises');
+    }
+  };
+
   return (
     <Card>
       <CardHeader>
@@ -114,7 +125,11 @@ export function TodoList() {
                 </TableRow>
             ) : todoItems.length > 0 ? (
                 todoItems.map((item) => (
-                    <TableRow key={item.id} className={item.completed ? 'text-muted-foreground line-through' : ''}>
+                    <TableRow 
+                        key={item.id} 
+                        className="cursor-pointer hover:bg-muted"
+                        onClick={() => handleRowClick(item)}
+                    >
                         <TableCell>
                         <Checkbox id={`task-${item.id}`} checked={item.completed} aria-label={`Mark ${item.task} as complete`} disabled />
                         </TableCell>

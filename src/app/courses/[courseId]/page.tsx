@@ -19,18 +19,10 @@ export default function CourseDetailPage() {
   const [status, setStatus] = useState(course?.status);
   const [isLearning, setIsLearning] = useState(false);
   
-  // Refs to hold the latest state values for the cleanup function
-  const progressRef = useRef(progress);
-  useEffect(() => {
-    progressRef.current = progress;
-  }, [progress]);
+  // Ref to track if initial load is complete
+  const isInitialLoadComplete = useRef(false);
 
-  const statusRef = useRef(status);
-   useEffect(() => {
-    statusRef.current = status;
-  }, [status]);
-  
-  // Load state from localStorage only once on component mount for the specific course
+  // Load state from localStorage only once on component mount
   useEffect(() => {
     if (typeof window === 'undefined' || !courseId) return;
 
@@ -52,15 +44,21 @@ export default function CourseDetailPage() {
     setProgress(courseState.progress);
     setStatus(courseState.status);
     setIsLearning(courseState.isLearning);
+
+    // Mark initial load as complete
+    isInitialLoadComplete.current = true;
+
   }, [courseId]);
 
-  // Save state to localStorage whenever it changes
+  // Save state to localStorage whenever it changes, but only after initial load
   useEffect(() => {
-      if (typeof window === 'undefined' || !courseId || !course) return;
+      if (typeof window === 'undefined' || !courseId || !course || !isInitialLoadComplete.current) return;
+      
       const progressState = JSON.parse(localStorage.getItem('courseProgress') || '{}');
       progressState[courseId] = { progress: progress, status: status, isLearning: isLearning };
       localStorage.setItem('courseProgress', JSON.stringify(progressState));
       window.dispatchEvent(new CustomEvent('courseStateChanged'));
+
   }, [progress, status, isLearning, courseId, course]);
 
   // Handle learning progress simulation
@@ -86,19 +84,6 @@ export default function CourseDetailPage() {
     };
   }, [isLearning, progress]);
 
-  // Final save on unmount/navigation
-  useEffect(() => {
-    return () => {
-        if (typeof window !== 'undefined' && courseId) {
-            const progressState = JSON.parse(localStorage.getItem('courseProgress') || '{}');
-            // Save the latest values from refs, and always set isLearning to false when leaving the page
-            progressState[courseId] = { progress: progressRef.current, status: statusRef.current, isLearning: false }; 
-            localStorage.setItem('courseProgress', JSON.stringify(progressState));
-            window.dispatchEvent(new CustomEvent('courseStateChanged'));
-        }
-    };
-  }, [courseId]);
-
 
   if (!course) {
     return null;
@@ -111,11 +96,14 @@ export default function CourseDetailPage() {
   };
 
   const handleStartCourse = () => {
+    if (isLearning) return; // Do nothing if already learning
+
     if (status === 'Finished') { 
-        setProgress(1);
+        setProgress(1); // Restart course
     } else if (progress === 0) {
-        setProgress(1);
+        setProgress(1); // Start new course
     }
+    // If progress > 0 and not finished, just start learning, don't change progress
     
     setStatus('Active');
     setIsLearning(true);

@@ -36,10 +36,7 @@ export type Warning = {
   message: string;
 }
 
-export const warnings: Warning[] = [
-  { id: 'risk-1', message: 'Bạn có nguy cơ trượt môn Lịch sử thế giới. Điểm hiện tại của bạn là 68%.' },
-  { id: 'due-1', message: 'Bài Cơ học lượng tử sẽ hết hạn trong 3 ngày nữa.' },
-];
+export const warnings: Warning[] = [];
 
 export type CourseStatus = 'Active' | 'Finished' | 'Paused';
 export type CourseCategory = 'Môn học' | 'Kỹ năng';

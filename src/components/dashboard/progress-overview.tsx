@@ -3,7 +3,7 @@
 
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import { ChartContainer } from "@/components/ui/chart";
-import { courseData, mockDataVersion } from "@/app/lib/mock-data";
+import { courseData, mockDataVersion, CourseStatus } from "@/app/lib/mock-data";
 import { PieChart, Pie, Cell, Tooltip } from "recharts";
 import { useEffect, useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -113,7 +113,7 @@ export function ProgressOverview() {
           const updatedCourses = courseData.map(course => {
               const state = progressState[course.id];
               if (state) {
-                  return { ...course, progress: state.progress, status: state.status };
+                  return { ...course, progress: state.progress, status: state.status as CourseStatus };
               }
               return { ...course };
           });
@@ -125,26 +125,64 @@ export function ProgressOverview() {
     updateStats();
 
     window.addEventListener('courseStateChanged', updateStats);
+    window.addEventListener('skillMasteryChanged', updateStats);
 
     return () => {
         window.removeEventListener('courseStateChanged', updateStats);
+        window.removeEventListener('skillMasteryChanged', updateStats);
     };
   }, []);
   
   const subjects = internalCourseData.filter(c => c.category === 'Môn học');
   const skills = internalCourseData.filter(c => c.category === 'Kỹ năng');
 
-  const calculateStatus = (data: typeof courseData) => {
-    const completed = data.filter(c => c.progress === 100).length;
-    const inProgress = data.filter(c => c.progress > 0 && c.progress < 100).length;
+  const calculateStatus = (data: typeof courseData, skillMastery: Record<string, number> = {}) => {
+    const completed = data.filter(c => {
+        if (c.category === 'Kỹ năng') {
+            // A skill is considered completed for stats if it has ever been mastered.
+            return skillMastery[c.id] === 100 || c.progress === 100;
+        }
+        return c.progress === 100;
+    }).length;
+
+    const inProgress = data.filter(c => {
+        const isMasteredSkill = c.category === 'Kỹ năng' && skillMastery[c.id] === 100;
+        return c.progress > 0 && c.progress < 100 && !isMasteredSkill;
+    }).length;
+
     const notStarted = data.length - completed - inProgress;
     
     return { completed, inProgress, notStarted, total: data.length };
   };
+  
+  const [skillMastery, setSkillMastery] = useState<Record<string, number>>({});
+  
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+        const storedMastery = JSON.parse(localStorage.getItem('skillMastery') || '{}');
+        setSkillMastery(storedMastery);
+    }
+  }, [internalCourseData]); // Re-check when course data updates
 
   const subjectStats = calculateStatus(subjects);
-  const skillStats = calculateStatus(skills);
-  const allCoursesStats = calculateStatus(internalCourseData);
+  const skillStats = calculateStatus(skills, skillMastery);
+  
+  const allCourses = internalCourseData.map(c => {
+      if (c.category === 'Kỹ năng' && skillMastery[c.id] === 100) {
+          // For calculation, treat mastered skills as 100% complete for the 'all' chart
+          // This avoids double counting if user is re-learning.
+          return { ...c, progress: 100 };
+      }
+      return c;
+  });
+
+  const allCoursesStats = {
+      completed: subjects.filter(c => c.progress === 100).length + skills.filter(c => skillMastery[c.id] === 100 || c.progress === 100).length,
+      inProgress: subjects.filter(c => c.progress > 0 && c.progress < 100).length + skills.filter(c => c.progress > 0 && c.progress < 100 && skillMastery[c.id] !== 100).length,
+      notStarted: subjects.filter(c => c.progress === 0).length + skills.filter(c => c.progress === 0 && skillMastery[c.id] !== 100).length,
+      total: internalCourseData.length,
+  };
+
 
   const subjectStatusData = [
     { name: 'Đang học', value: subjectStats.inProgress, fill: statusColors.inProgress },

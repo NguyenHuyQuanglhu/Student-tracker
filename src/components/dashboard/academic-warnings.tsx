@@ -64,17 +64,17 @@ export function AcademicWarnings() {
                   {warnings.map((warning, index) => {
                     const isNewest = index === 0;
                     return (
-                      <li key={index} className="flex items-start">
+                      <li key={warning.id} className="flex items-start">
                          <div className="flex-shrink-0 mr-4">
                             <span className={`flex h-8 w-8 items-center justify-center rounded-full ${isNewest ? 'bg-destructive/20 text-destructive' : 'bg-destructive/10 text-destructive'}`}>
                                 <AlertCircle className="h-5 w-5" />
                             </span>
                         </div>
                         <div className="pt-1">
-                            <p className="text-sm font-medium text-foreground">
+                            <div className="text-sm font-medium text-foreground">
                               {warning.message}
                               {isNewest && <Badge variant="destructive" className="ml-2">Mới</Badge>}
-                            </p>
+                            </div>
                         </div>
                       </li>
                     );

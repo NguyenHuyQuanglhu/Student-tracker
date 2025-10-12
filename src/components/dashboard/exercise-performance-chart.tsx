@@ -6,6 +6,7 @@ import { exercises as mockExercises, mockDataVersion } from "@/app/lib/mock-data
 import { ChartContainer } from "@/components/ui/chart";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 const chartConfig = {
     completionTime: {
@@ -19,6 +20,8 @@ const chartConfig = {
 };
 
 type Grade = 'S' | 'A' | 'B' | 'C' | 'D' | 'E' | 'F';
+
+const gradeOrder: Grade[] = ['S', 'A', 'B', 'C', 'D', 'E', 'F'];
 
 const gradeColors: Record<Grade, string> = {
     S: 'bg-purple-100 text-purple-800',
@@ -53,7 +56,7 @@ const calculateGrade = (score: number, completionTime: number, targetTime: numbe
         grade = grades[currentGradeIndex + 1];
     } else if (timeRatio > 1.25 && currentGradeIndex > 0) {
         // Slower than 125% of target time, downgrade
-        grade = grades[currentGrade-1];
+        grade = grades[currentGradeIndex - 1];
     }
     
     return grade;
@@ -66,6 +69,73 @@ type ChartData = {
     targetTime: number;
     score: number | null;
     grade: Grade;
+}
+
+const ExerciseSummary = ({ data }: { data: ChartData[] }) => {
+    if (data.length === 0) {
+        return null;
+    }
+
+    const totalExercises = data.length;
+    const avgScore = data.reduce((acc, item) => acc + (item.score || 0), 0) / totalExercises;
+    const avgCompletionTime = data.reduce((acc, item) => acc + item.completionTime, 0) / totalExercises;
+    const avgTargetTime = data.reduce((acc, item) => acc + item.targetTime, 0) / totalExercises;
+
+    const gradeCounts = data.reduce((acc, item) => {
+        acc[item.grade] = (acc[item.grade] || 0) + 1;
+        return acc;
+    }, {} as Record<Grade, number>);
+
+    return (
+        <div className="mb-6">
+             <h3 className="text-lg font-semibold mb-4">Tổng kết hiệu suất</h3>
+             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+                <Card>
+                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                        <CardTitle className="text-sm font-medium">Đã hoàn thành</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                        <div className="text-2xl font-bold">{totalExercises}</div>
+                        <p className="text-xs text-muted-foreground">tổng số bài tập</p>
+                    </CardContent>
+                </Card>
+                <Card>
+                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                        <CardTitle className="text-sm font-medium">Điểm trung bình</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                        <div className="text-2xl font-bold">{avgScore.toFixed(2)}</div>
+                        <p className="text-xs text-muted-foreground">trên thang 100</p>
+                    </CardContent>
+                </Card>
+                <Card>
+                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                        <CardTitle className="text-sm font-medium">Thời gian trung bình</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                        <div className="text-2xl font-bold">{avgCompletionTime.toFixed(2)} phút</div>
+                        <p className="text-xs text-muted-foreground">
+                            so với mục tiêu {avgTargetTime.toFixed(2)} phút
+                        </p>
+                    </CardContent>
+                </Card>
+                <Card>
+                    <CardHeader className="pb-2">
+                        <CardTitle className="text-sm font-medium">Phân loại đánh giá</CardTitle>
+                    </CardHeader>
+                    <CardContent className="flex flex-wrap gap-2 pt-2">
+                        {gradeOrder.map(grade => (
+                            gradeCounts[grade] > 0 && (
+                                <Badge key={grade} className={`${gradeColors[grade]}`}>
+                                    {grade}: {gradeCounts[grade]}
+                                </Badge>
+                            )
+                        ))}
+                    </CardContent>
+                </Card>
+            </div>
+        </div>
+    );
 }
 
 export function ExercisePerformanceChart() {
@@ -95,7 +165,7 @@ export function ExercisePerformanceChart() {
                         completionTime: completionTimeMinutes,
                         targetTime: targetTimeMinutes,
                         score: state.score,
-                        grade: calculateGrade(state.score, completionTimeMinutes, targetTimeMinutes),
+                        grade: calculateGrade(state.score, state.completionTime, originalExercise.targetTime),
                     };
                 }
                 return null;
@@ -125,6 +195,8 @@ export function ExercisePerformanceChart() {
 
     return (
         <div className="space-y-6">
+            <ExerciseSummary data={chartData} />
+
             <ChartContainer config={chartConfig} className="min-h-[300px] w-full">
                 <ResponsiveContainer width="100%" height={300}>
                     <BarChart data={chartDisplayData} margin={{ top: 5, right: 20, left: 0, bottom: 50 }}>

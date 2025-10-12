@@ -9,7 +9,6 @@ import { YourCourses } from "@/components/dashboard/your-courses";
 
 export default function Home() {
   return (
-    <div className="flex min-h-screen w-full flex-col bg-muted/40">
       <DashboardSidebar>
         <main className="flex-1 p-4">
           <div className="space-y-6">
@@ -31,6 +30,5 @@ export default function Home() {
           </div>
         </main>
       </DashboardSidebar>
-    </div>
   );
 }

@@ -5,6 +5,8 @@ import { ChartContainer } from "@/components/ui/chart";
 import { courseData, mockDataVersion } from "@/app/lib/mock-data";
 import { PieChart, Pie, Cell } from "recharts";
 import { useEffect, useState } from "react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { ExercisePerformanceChart } from "./exercise-performance-chart";
 
 const chartConfig = {
   score: {
@@ -80,7 +82,7 @@ export function ProgressOverview() {
 
   const totalSubjects = subjects.length;
   const inProgressSubjects = subjects.filter(c => c.status === 'Active' && c.progress > 0 && c.progress < 100).length;
-  const completedSubjects = subjects.filter(c => c.progress === 100).length;
+  const completedSubjects = subjects.filter(c => c.progress === 100 || c.status === 'Finished').length;
   const notStartedSubjects = totalSubjects - inProgressSubjects - completedSubjects;
   
   const subjectStatusData = [
@@ -91,7 +93,7 @@ export function ProgressOverview() {
 
   const totalSkills = skills.length;
   const inProgressSkills = skills.filter(c => c.status === 'Active' && c.progress > 0 && c.progress < 100).length;
-  const completedSkills = skills.filter(c => c.progress === 100).length;
+  const completedSkills = skills.filter(c => c.progress === 100 || c.status === 'Finished').length;
   const notStartedSkills = totalSkills - inProgressSkills - completedSkills;
 
   const skillStatusData = [
@@ -102,7 +104,7 @@ export function ProgressOverview() {
 
   const totalCourses = internalCourseData.length;
   const inProgressCourses = internalCourseData.filter(c => c.status === 'Active' && c.progress > 0 && c.progress < 100).length;
-  const completedCourses = internalCourseData.filter(c => c.progress === 100).length;
+  const completedCourses = internalCourseData.filter(c => c.progress === 100 || c.status === 'Finished').length;
   const notStartedCourses = totalCourses - inProgressCourses - completedCourses;
 
   const allCoursesStatusData = [
@@ -115,60 +117,75 @@ export function ProgressOverview() {
     <Card className="h-full">
       <CardHeader>
         <CardTitle className="font-headline">Hiệu suất &amp; Thống kê</CardTitle>
-        <CardDescription>Tổng quan về tiến độ học tập của bạn.</CardDescription>
+        <CardDescription>Tổng quan về tiến độ học tập và hiệu suất bài tập của bạn.</CardDescription>
       </CardHeader>
-      <CardContent className="grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
-        <div>
-            <h3 className="text-lg font-semibold">Tổng khóa học</h3>
-            <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
-                <span className="text-2xl font-bold text-foreground">{totalCourses}</span>
-            </div>
-            <ChartContainer config={chartConfig} className="min-h-[150px] w-full mt-4 mx-auto">
-                <PieChart accessibilityLayer >
-                    <Pie data={allCoursesStatusData} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={60} >
-                         {allCoursesStatusData.map((entry, index) => (
-                            <Cell key={`cell-${index}`} fill={entry.fill} />
-                        ))}
-                    </Pie>
-                </PieChart>
-            </ChartContainer>
+      <Tabs defaultValue="courses">
+        <div className="px-6">
+            <TabsList>
+                <TabsTrigger value="courses">Thống kê khóa học</TabsTrigger>
+                <TabsTrigger value="exercises">Thống kê bài tập</TabsTrigger>
+            </TabsList>
         </div>
-        <div>
-            <h3 className="text-lg font-semibold">Tổng số môn học</h3>
-            <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
-                <span className="text-2xl font-bold text-foreground">{totalSubjects}</span>
-            </div>
-            <ChartContainer config={{}} className="min-h-[150px] w-full mt-4 mx-auto">
-                <PieChart accessibilityLayer >
-                    <Pie data={subjectStatusData} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={60} >
-                         {subjectStatusData.map((entry, index) => (
-                            <Cell key={`cell-${index}`} fill={entry.fill} />
-                        ))}
-                    </Pie>
-                </PieChart>
-            </ChartContainer>
-        </div>
-        <div>
-            <h3 className="text-lg font-semibold">Tổng số kỹ năng</h3>
-             <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
-                <span className="text-2xl font-bold text-foreground">{totalSkills}</span>
-            </div>
-            <ChartContainer config={chartConfig} className="min-h-[150px] w-full mt-4 mx-auto">
-                <PieChart accessibilityLayer >
-                    <Pie data={skillStatusData} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={60} >
-                         {skillStatusData.map((entry, index) => (
-                            <Cell key={`cell-${index}`} fill={entry.fill} />
-                        ))}
-                    </Pie>
-                </PieChart>
-            </ChartContainer>
-        </div>
-      </CardContent>
-      <CardFooter>
-          <div className="w-full">
-            <StatusLegend />
-          </div>
-      </CardFooter>
+        <TabsContent value="courses">
+            <CardContent className="grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
+                <div>
+                    <h3 className="text-lg font-semibold">Tổng khóa học</h3>
+                    <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
+                        <span className="text-2xl font-bold text-foreground">{totalCourses}</span>
+                    </div>
+                    <ChartContainer config={chartConfig} className="min-h-[150px] w-full mt-4 mx-auto">
+                        <PieChart accessibilityLayer >
+                            <Pie data={allCoursesStatusData} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={60} >
+                                {allCoursesStatusData.map((entry, index) => (
+                                    <Cell key={`cell-${index}`} fill={entry.fill} />
+                                ))}
+                            </Pie>
+                        </PieChart>
+                    </ChartContainer>
+                </div>
+                <div>
+                    <h3 className="text-lg font-semibold">Tổng số môn học</h3>
+                    <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
+                        <span className="text-2xl font-bold text-foreground">{totalSubjects}</span>
+                    </div>
+                    <ChartContainer config={{}} className="min-h-[150px] w-full mt-4 mx-auto">
+                        <PieChart accessibilityLayer >
+                            <Pie data={subjectStatusData} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={60} >
+                                {subjectStatusData.map((entry, index) => (
+                                    <Cell key={`cell-${index}`} fill={entry.fill} />
+                                ))}
+                            </Pie>
+                        </PieChart>
+                    </ChartContainer>
+                </div>
+                <div>
+                    <h3 className="text-lg font-semibold">Tổng số kỹ năng</h3>
+                    <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
+                        <span className="text-2xl font-bold text-foreground">{totalSkills}</span>
+                    </div>
+                    <ChartContainer config={chartConfig} className="min-h-[150px] w-full mt-4 mx-auto">
+                        <PieChart accessibilityLayer >
+                            <Pie data={skillStatusData} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={60} >
+                                {skillStatusData.map((entry, index) => (
+                                    <Cell key={`cell-${index}`} fill={entry.fill} />
+                                ))}
+                            </Pie>
+                        </PieChart>
+                    </ChartContainer>
+                </div>
+            </CardContent>
+            <CardFooter>
+                <div className="w-full">
+                    <StatusLegend />
+                </div>
+            </CardFooter>
+        </TabsContent>
+        <TabsContent value="exercises">
+            <CardContent>
+                <ExercisePerformanceChart />
+            </CardContent>
+        </TabsContent>
+      </Tabs>
     </Card>
   );
 }

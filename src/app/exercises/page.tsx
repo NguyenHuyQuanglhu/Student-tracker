@@ -6,7 +6,7 @@ import { Card, CardHeader, CardTitle, CardContent, CardDescription, CardFooter }
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { exercises as mockExercises, Exercise } from "@/app/lib/mock-data";
-import { Timer } from 'lucide-react';
+import { Timer, CheckCircle2 } from 'lucide-react';
 
 const difficultyColors: Record<Exercise['difficulty'], string> = {
   'Dễ': 'bg-green-100 text-green-800',
@@ -21,6 +21,7 @@ const statusColors: Record<Exercise['status'], string> = {
 };
 
 const formatDuration = (seconds: number) => {
+  if (seconds < 0) seconds = 0;
   const h = Math.floor(seconds / 3600).toString().padStart(2, '0');
   const m = Math.floor((seconds % 3600) / 60).toString().padStart(2, '0');
   const s = Math.floor(seconds % 60).toString().padStart(2, '0');
@@ -60,7 +61,7 @@ export default function ExercisesPage() {
     setExercises(exercises.map(ex => {
       if (ex.id === exerciseId && ex.status === 'Đang làm' && ex.startTime) {
         const completionTime = Math.floor((Date.now() - ex.startTime) / 1000);
-        return { ...ex, status: 'Đã hoàn thành', completionTime };
+        return { ...ex, status: 'Đã hoàn thành', completionTime, score: ex.score ?? Math.floor(Math.random() * 31) + 70 }; // Assign a random score if not present
       }
       return ex;
     }));
@@ -84,15 +85,21 @@ export default function ExercisesPage() {
                   </div>
                   <CardDescription>Khóa học: {exercise.course}</CardDescription>
                 </CardHeader>
-                <CardContent className="flex-grow">
+                <CardContent className="flex-grow space-y-2">
                    <Badge className={statusColors[exercise.status]}>{exercise.status}</Badge>
                    {exercise.status === 'Đang làm' && exercise.startTime && (
                      <ExerciseTimer startTime={exercise.startTime} />
                    )}
                    {exercise.status === 'Đã hoàn thành' && exercise.completionTime !== null && (
-                      <div className="flex items-center text-sm text-muted-foreground mt-2">
-                        <Timer className="w-4 h-4 mr-1" />
-                        <span>Thời gian hoàn thành: {formatDuration(exercise.completionTime)}</span>
+                      <div className="flex flex-col space-y-2">
+                        <div className="flex items-center text-sm text-muted-foreground mt-2">
+                          <Timer className="w-4 h-4 mr-1" />
+                          <span>Thời gian hoàn thành: {formatDuration(exercise.completionTime)}</span>
+                        </div>
+                        <div className="flex items-center text-sm text-muted-foreground mt-1">
+                          <CheckCircle2 className="w-4 h-4 mr-1" />
+                          <span>Điểm: {exercise.score}/100</span>
+                        </div>
                       </div>
                    )}
                 </CardContent>

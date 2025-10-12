@@ -68,16 +68,16 @@ export type Exercise = {
 };
 
 export const exercises: Exercise[] = [
-  { id: 'ex1', title: 'Viết thuật toán sắp xếp nổi bọt', course: 'Programming', difficulty: 'Dễ', status: 'Đã hoàn thành', startTime: 1672531200000, completionTime: 540, score: 95, targetTime: 600 },
-  { id: 'ex2', title: 'Xây dựng một API RESTful đơn giản', course: 'IT & Software', difficulty: 'Trung bình', status: 'Đã hoàn thành', startTime: 1672617600000, completionTime: 1500, score: 88, targetTime: 1800 },
+  { id: 'ex1', title: 'Viết thuật toán sắp xếp nổi bọt', course: 'Programming', difficulty: 'Dễ', status: 'Chưa bắt đầu', startTime: null, completionTime: null, score: null, targetTime: 600 },
+  { id: 'ex2', title: 'Xây dựng một API RESTful đơn giản', course: 'IT & Software', difficulty: 'Trung bình', status: 'Chưa bắt đầu', startTime: null, completionTime: null, score: null, targetTime: 1800 },
   { id: 'ex3', title: 'Triển khai danh sách liên kết kép', course: 'Data Structures', difficulty: 'Trung bình', status: 'Chưa bắt đầu', startTime: null, completionTime: null, score: null, targetTime: 1200 },
   { id: 'ex4', title: 'Cấu hình một mạng con đơn giản', course: 'Networking', difficulty: 'Dễ', status: 'Chưa bắt đầu', startTime: null, completionTime: null, score: null, targetTime: 900 },
-  { id: 'ex5', title: 'Tấn công SQL Injection và cách phòng chống', course: 'Network Security', difficulty: 'Khó', status: 'Đã hoàn thành', startTime: 1672704000000, completionTime: 2400, score: 75, targetTime: 2100 },
+  { id: 'ex5', title: 'Tấn công SQL Injection và cách phòng chống', course: 'Network Security', difficulty: 'Khó', status: 'Chưa bắt đầu', startTime: null, completionTime: null, score: null, targetTime: 2100 },
   { id: 'ex6', title: 'Xây dựng mô hình hồi quy tuyến tính', course: 'Machine Learning', difficulty: 'Khó', status: 'Chưa bắt đầu', startTime: null, completionTime: null, score: null, targetTime: 3600 },
-  { id: 'ex7', title: 'Gỡ lỗi một đoạn mã JavaScript phức tạp', course: 'Programming', difficulty: 'Khó', status: 'Đã hoàn thành', startTime: 1672790400000, completionTime: 3000, score: 62, targetTime: 2400 },
-  { id: 'ex8', title: 'Tối ưu hóa truy vấn cơ sở dữ liệu', course: 'IT & Software', difficulty: 'Trung bình', status: 'Đã hoàn thành', startTime: 1672876800000, completionTime: 2000, score: 55, targetTime: 1500 },
+  { id: 'ex7', title: 'Gỡ lỗi một đoạn mã JavaScript phức tạp', course: 'Programming', difficulty: 'Khó', status: 'Đã hoàn thành', startTime: 1672790400000, completionTime: 3000, score: 45, targetTime: 2400 },
+  { id: 'ex8', title: 'Tối ưu hóa truy vấn cơ sở dữ liệu', course: 'IT & Software', difficulty: 'Trung bình', status: 'Đã hoàn thành', startTime: 1672876800000, completionTime: 2000, score: 48, targetTime: 1500 },
 ];
 
 
 // Add a version to the mock data
-export const mockDataVersion = '1.11';
+export const mockDataVersion = '1.14';

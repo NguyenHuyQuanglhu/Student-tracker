@@ -1,4 +1,3 @@
-
 'use client';
 
 import { SidebarTrigger } from "@/components/ui/sidebar";
@@ -23,8 +22,8 @@ export function DashboardHeader() {
       <SidebarTrigger className="sm:hidden" />
       <div className="relative ml-auto flex items-center gap-2">
         <Link href="/profile" passHref>
-           <Button variant="ghost" size="icon" className="rounded-full">
-            <Avatar className="h-8 w-8">
+           <Button variant="ghost" size="icon" className="rounded-full h-12 w-12">
+            <Avatar className="h-10 w-10">
               {avatar && <AvatarImage src={avatar.imageUrl} alt="User Avatar" />}
               <AvatarFallback>A</AvatarFallback>
             </Avatar>

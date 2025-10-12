@@ -20,12 +20,6 @@ import {
   Settings,
   ClipboardList,
   LogOut,
-  Users,
-  Calendar,
-  CircleDollarSign,
-  Utensils,
-  MessageSquare,
-  Activity,
 } from 'lucide-react';
 import { DashboardHeader } from "@/components/dashboard/header";
 
@@ -64,10 +58,6 @@ export function DashboardSidebar({ children }: { children: React.ReactNode }) {
             ))}
           </SidebarMenu>
         </SidebarContent>
-        <SidebarFooter className="text-xs text-sidebar-foreground/60 text-center">
-            <p>Akademi - School Admission Dashboard</p>
-            <p>Made with ❤️ by Peterdraw</p>
-        </SidebarFooter>
       </Sidebar>
       <SidebarInset>
         <DashboardHeader />

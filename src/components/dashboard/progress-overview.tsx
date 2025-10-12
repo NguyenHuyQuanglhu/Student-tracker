@@ -42,20 +42,26 @@ export function ProgressOverview() {
   useEffect(() => {
     const updateStats = () => {
         if (typeof window !== 'undefined') {
-            const completedCourses = JSON.parse(sessionStorage.getItem('completedCourses') || '[]');
-            const updatedCourses = courseData.map(course => {
-                if (completedCourses.includes(course.id)) {
-                    return { ...course, progress: 100 };
-                }
-                return course;
-            });
-            setInternalCourseData(updatedCourses);
+            const completedCoursesStr = sessionStorage.getItem('completedCourses');
+            if (completedCoursesStr) {
+                const completedCourses = JSON.parse(completedCoursesStr);
+                const updatedCourses = courseData.map(course => {
+                    if (completedCourses.includes(course.id)) {
+                        return { ...course, progress: 100 };
+                    }
+                    return course;
+                });
+                setInternalCourseData(updatedCourses);
+            } else {
+                // If nothing in session storage, use original data
+                setInternalCourseData(courseData.map(c => ({...c})));
+            }
         }
     }
     
     updateStats();
 
-    const handleStorageChange = (event: Event) => {
+    const handleStorageChange = () => {
         updateStats();
     };
 
@@ -105,25 +111,10 @@ export function ProgressOverview() {
   return (
     <Card className="h-full">
       <CardHeader>
-        <CardTitle className="font-headline">Hiệu suất & Thống kê</CardTitle>
+        <CardTitle className="font-headline">Hiệu suất &amp; Thống kê</CardTitle>
         <CardDescription>Tổng quan về tiến độ học tập của bạn.</CardDescription>
       </CardHeader>
       <CardContent className="grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
-        <div>
-            <h3 className="text-lg font-semibold">Tổng số môn học</h3>
-            <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
-                <span className="text-2xl font-bold text-foreground">{totalSubjects}</span>
-            </div>
-            <ChartContainer config={{}} className="min-h-[150px] w-full mt-4 mx-auto">
-                <PieChart accessibilityLayer >
-                    <Pie data={subjectStatusData} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={60} >
-                         {subjectStatusData.map((entry, index) => (
-                            <Cell key={`cell-${index}`} fill={entry.fill} />
-                        ))}
-                    </Pie>
-                </PieChart>
-            </ChartContainer>
-        </div>
         <div>
             <h3 className="text-lg font-semibold">Tổng khóa học</h3>
             <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
@@ -133,6 +124,21 @@ export function ProgressOverview() {
                 <PieChart accessibilityLayer >
                     <Pie data={allCoursesStatusData} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={60} >
                          {allCoursesStatusData.map((entry, index) => (
+                            <Cell key={`cell-${index}`} fill={entry.fill} />
+                        ))}
+                    </Pie>
+                </PieChart>
+            </ChartContainer>
+        </div>
+        <div>
+            <h3 className="text-lg font-semibold">Tổng số môn học</h3>
+            <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
+                <span className="text-2xl font-bold text-foreground">{totalSubjects}</span>
+            </div>
+            <ChartContainer config={{}} className="min-h-[150px] w-full mt-4 mx-auto">
+                <PieChart accessibilityLayer >
+                    <Pie data={subjectStatusData} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={60} >
+                         {subjectStatusData.map((entry, index) => (
                             <Cell key={`cell-${index}`} fill={entry.fill} />
                         ))}
                     </Pie>

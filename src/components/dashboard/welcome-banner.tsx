@@ -1,5 +1,4 @@
 import { Card, CardContent } from "@/components/ui/card";
-import Image from "next/image";
 
 export function WelcomeBanner() {
   return (
@@ -12,14 +11,6 @@ export function WelcomeBanner() {
               Khóa học Vượt qua nỗi sợ nói trước công chúng của bạn đã được 11 người dùng mới hoàn thành trong tuần này!
             </p>
           </div>
-          <Image 
-            src="https://picsum.photos/seed/welcome-banner/200/150" 
-            alt="Welcome Illustration"
-            width={200}
-            height={150}
-            className="hidden md:block rounded-lg"
-            data-ai-hint="illustration person laptop"
-          />
         </div>
       </CardContent>
     </Card>

@@ -4,18 +4,21 @@ import { useState, useEffect } from 'react';
 import { DashboardSidebar } from "@/components/dashboard/sidebar";
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/ui/card";
 import { courseData } from "@/app/lib/mock-data";
-import { notFound, useRouter } from "next/navigation";
+import { notFound, useRouter, useParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 
-export default function CourseDetailPage({ params }: { params: { courseId: string } }) {
-  const { courseId } = params;
+export default function CourseDetailPage() {
+  const params = useParams();
+  const courseId = typeof params.courseId === 'string' ? params.courseId : '';
   
   const [course, setCourse] = useState(() => courseData.find(c => c.id === courseId));
   const [isCompleted, setIsCompleted] = useState(false);
 
   useEffect(() => {
+    if (!courseId) return;
+
     const targetCourse = courseData.find(c => c.id === courseId);
     if (!targetCourse) {
       notFound();
@@ -26,7 +29,7 @@ export default function CourseDetailPage({ params }: { params: { courseId: strin
     const completedCourses = completedInSession ? JSON.parse(completedInSession) : [];
     const hasCompleted = completedCourses.includes(courseId);
 
-    setCourse(hasCompleted ? { ...targetCourse, progress: 100 } : targetCourse);
+    setCourse(hasCompleted ? { ...targetCourse, progress: 100 } : { ...targetCourse });
     setIsCompleted(hasCompleted);
 
     const handleStorageChange = (event: Event) => {
@@ -46,7 +49,7 @@ export default function CourseDetailPage({ params }: { params: { courseId: strin
 
 
   if (!course) {
-    return notFound();
+    return null;
   }
 
   const handleMarkAsComplete = () => {

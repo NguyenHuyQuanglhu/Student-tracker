@@ -37,8 +37,6 @@ export function DashboardSidebar({ children }: { children: React.ReactNode }) {
     { href: '/courses', label: 'Courses', icon: Book },
     { href: '/exercises', label: 'Assignment', icon: ClipboardList },
     { href: '/profile', label: 'User', icon: User },
-    { href: '/chat', label: 'Chat', icon: MessageSquare },
-    { href: '/activity', label: 'Lastest Activity', icon: Activity },
   ];
 
   return (

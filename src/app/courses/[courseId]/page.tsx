@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, use } from 'react';
+import { useState, useEffect } from 'react';
 import { DashboardSidebar } from "@/components/dashboard/sidebar";
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/ui/card";
 import { courseData } from "@/app/lib/mock-data";
@@ -10,18 +10,24 @@ import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 
 export default function CourseDetailPage({ params }: { params: { courseId: string } }) {
-  const { courseId } = use(params);
+  const { courseId } = params;
   
-  const initialCourse = courseData.find(c => c.id === courseId);
-  const [course, setCourse] = useState(initialCourse);
-  const [isCompleted, setIsCompleted] = useState(initialCourse?.progress === 100);
+  const [course, setCourse] = useState(() => courseData.find(c => c.id === courseId));
+  const [isCompleted, setIsCompleted] = useState(false);
 
   useEffect(() => {
     const targetCourse = courseData.find(c => c.id === courseId);
     if (!targetCourse) {
-      setCourse(undefined);
+      notFound();
       return;
     }
+
+    const completedInSession = sessionStorage.getItem('completedCourses');
+    const completedCourses = completedInSession ? JSON.parse(completedInSession) : [];
+    const hasCompleted = completedCourses.includes(courseId);
+
+    setCourse(hasCompleted ? { ...targetCourse, progress: 100 } : targetCourse);
+    setIsCompleted(hasCompleted);
 
     const handleStorageChange = (event: Event) => {
         const customEvent = event as CustomEvent;
@@ -33,16 +39,6 @@ export default function CourseDetailPage({ params }: { params: { courseId: strin
     
     window.addEventListener('courseCompleted', handleStorageChange);
     
-    // Check initial state from session storage if needed, or just use mock
-    const completedInSession = sessionStorage.getItem('completedCourses');
-    if (completedInSession && JSON.parse(completedInSession).includes(courseId)) {
-      setCourse({ ...targetCourse, progress: 100 });
-      setIsCompleted(true);
-    } else {
-      setCourse(targetCourse);
-      setIsCompleted(targetCourse.progress === 100);
-    }
-
     return () => {
         window.removeEventListener('courseCompleted', handleStorageChange);
     };
@@ -50,7 +46,7 @@ export default function CourseDetailPage({ params }: { params: { courseId: strin
 
 
   if (!course) {
-    notFound();
+    return notFound();
   }
 
   const handleMarkAsComplete = () => {
@@ -60,8 +56,7 @@ export default function CourseDetailPage({ params }: { params: { courseId: strin
             completedCourses.push(courseId);
             sessionStorage.setItem('completedCourses', JSON.stringify(completedCourses));
         }
-
-        // Dispatch a custom event to notify other components
+        
         window.dispatchEvent(new CustomEvent('courseCompleted', { detail: completedCourses }));
         
         setCourse({ ...course, progress: 100 });
@@ -93,13 +88,19 @@ export default function CourseDetailPage({ params }: { params: { courseId: strin
                 <div className="text-center py-12">
                   <h3 className="text-lg font-semibold">Nội dung sắp ra mắt!</h3>
                   <p className="text-muted-foreground">Các bài học và tài liệu cho khóa học này đang được xây dựng.</p>
-                  <Button 
-                    className="mt-4" 
-                    onClick={handleMarkAsComplete}
-                    disabled={isCompleted}
-                  >
-                    {isCompleted ? 'Đã hoàn thành' : 'Đánh dấu là đã hoàn thành'}
-                  </Button>
+                  <div className="mt-4 flex justify-center gap-4">
+                    <Button 
+                      onClick={handleMarkAsComplete}
+                      disabled={isCompleted}
+                    >
+                      {isCompleted ? 'Đã hoàn thành' : 'Đánh dấu là đã hoàn thành'}
+                    </Button>
+                    <Button
+                      disabled
+                    >
+                      Hoàn thành
+                    </Button>
+                  </div>
                 </div>
               </CardContent>
             </Card>

@@ -108,6 +108,10 @@ const ExerciseSummary = ({ data }: { data: ChartData[] }) => {
 
     const getEvaluation = () => {
         let scoreFeedback: React.ReactNode;
+        const lowScoreExercises = data
+            .filter(item => (item.score ?? 0) < 75)
+            .sort((a, b) => (a.score ?? 0) - (b.score ?? 0));
+
         if (avgScore >= 90) {
             scoreFeedback = "Xuất sắc! Điểm trung bình của bạn rất cao.";
         } else if (avgScore >= 75) {
@@ -115,14 +119,22 @@ const ExerciseSummary = ({ data }: { data: ChartData[] }) => {
         } else if (avgScore >= 60) {
             scoreFeedback = "Khá tốt! Hãy tiếp tục cố gắng để cải thiện hơn nữa.";
         } else {
-            const lowScoreExercises = data
-                .filter(item => item.score !== null)
-                .sort((a, b) => (a.score!) - (b.score!))
-                .slice(0, 2);
-
-            scoreFeedback = (
+             scoreFeedback = (
                 <div>
                     <p className="font-semibold">Cần cố gắng hơn. Dưới đây là các phần bạn nên xem lại:</p>
+                    <ul className="list-disc pl-5 mt-1">
+                        {lowScoreExercises.slice(0, 2).map((ex, i) => (
+                            <li key={i}>{ex.title} (Điểm: {ex.score})</li>
+                        ))}
+                    </ul>
+                </div>
+            );
+        }
+        
+        if (lowScoreExercises.length > 0 && avgScore >= 60) {
+             scoreFeedback = (
+                <div>
+                    <p className="font-semibold">{scoreFeedback} Tuy nhiên, vẫn còn một số điểm cần cải thiện:</p>
                     <ul className="list-disc pl-5 mt-1">
                         {lowScoreExercises.map((ex, i) => (
                             <li key={i}>{ex.title} (Điểm: {ex.score})</li>

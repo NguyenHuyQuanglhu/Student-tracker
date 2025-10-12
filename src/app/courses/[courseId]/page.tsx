@@ -24,6 +24,11 @@ export default function CourseDetailPage() {
     progressRef.current = progress;
   }, [progress]);
 
+  const statusRef = useRef(status);
+   useEffect(() => {
+    statusRef.current = status;
+  }, [status]);
+
   const isLearningRef = useRef(isLearning);
   useEffect(() => {
     isLearningRef.current = isLearning;
@@ -68,7 +73,7 @@ export default function CourseDetailPage() {
     
     return () => {
         window.removeEventListener('courseStateChanged', handleStateChange);
-        saveCourseState(progressRef.current, progressRef.current === 100 ? 'Finished' : (progressRef.current > 0 ? 'Active' : 'Paused'), false);
+        saveCourseState(progressRef.current, statusRef.current ?? 'Paused', false);
     };
   }, [courseId]);
 
@@ -108,18 +113,24 @@ export default function CourseDetailPage() {
   };
 
   const handleStartCourse = () => {
-      let newProgress = progress;
-      if (status === 'Finished') { 
-          newProgress = 1;
-      } else if (progress === 0) {
-          newProgress = 1;
-      }
-      
-      setProgress(newProgress);
-      setStatus('Active');
-      setIsLearning(true);
-      saveCourseState(newProgress, 'Active', true);
+    let newProgress = progress;
+    let newStatus = 'Active';
+
+    if (status === 'Finished') { 
+        newProgress = 1;
+    } else if (progress > 0) {
+        // Just continue, don't reset progress
+        newProgress = progress;
+    } else { // progress is 0
+        newProgress = 1;
+    }
+    
+    setProgress(newProgress);
+    setStatus(newStatus);
+    setIsLearning(true);
+    saveCourseState(newProgress, newStatus, true);
   };
+
 
   const getButtonText = () => {
     if (status === 'Finished') {

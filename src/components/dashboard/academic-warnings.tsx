@@ -16,8 +16,8 @@ export function AcademicWarnings() {
 
     const dynamicWarnings: Warning[] = JSON.parse(sessionStorage.getItem('dynamicWarnings') || '[]');
     
-    // Combine static and dynamic warnings, then sort by reversing to get newest first, and slice to get top 5
-    const allWarnings = [...staticWarnings, ...dynamicWarnings].reverse().slice(0, 5);
+    // Combine static and dynamic warnings, then sort by reversing to get newest first, and slice to get top 7
+    const allWarnings = [...staticWarnings, ...dynamicWarnings].reverse().slice(0, 7);
     setWarnings(allWarnings);
     setLoading(false);
   };

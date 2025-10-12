@@ -17,13 +17,14 @@ export default function CourseDetailPage() {
   const [course, setCourse] = useState(() => courseData.find(c => c.id === courseId));
   const [progress, setProgress] = useState(0);
   const [status, setStatus] = useState(course?.status);
-  const isLearning = useRef(false);
-  const progressRef = useRef(progress);
+  const [isLearning, setIsLearning] = useState(false);
   
+  // Use a ref to store the latest progress value for saving in cleanup
+  const progressRef = useRef(progress);
   useEffect(() => {
     progressRef.current = progress;
   }, [progress]);
-
+  
   // Function to load state from sessionStorage
   const loadCourseState = () => {
     if (typeof window === 'undefined' || !courseId) return;
@@ -45,7 +46,7 @@ export default function CourseDetailPage() {
     setCourse({ ...targetCourse });
     setProgress(courseState.progress);
     setStatus(courseState.status);
-    isLearning.current = courseState.status === 'Active';
+    setIsLearning(courseState.status === 'Active');
   };
 
   // Function to save state to sessionStorage
@@ -61,7 +62,6 @@ export default function CourseDetailPage() {
   useEffect(() => {
     loadCourseState();
     
-    // Listen for external state changes
     const handleStateChange = () => loadCourseState();
     window.addEventListener('courseStateChanged', handleStateChange);
     
@@ -74,32 +74,29 @@ export default function CourseDetailPage() {
   useEffect(() => {
     let timer: NodeJS.Timeout | undefined;
 
-    if (status === 'Active' && progress < 100) {
-      isLearning.current = true;
+    if (isLearning && progress < 100) {
       timer = setInterval(() => {
         setProgress(prevProgress => {
           const newProgress = Math.min(prevProgress + 1, 100);
           if (newProgress === 100) {
-            isLearning.current = false;
+            setIsLearning(false);
             setStatus('Finished');
             saveCourseState(100, 'Finished');
             if (timer) clearInterval(timer);
           }
           return newProgress;
         });
-      }, 2000); // Increase progress every 2 seconds
-    } else {
-        isLearning.current = false;
+      }, 2000);
     }
     
-    // Cleanup function: This will run when the component unmounts or status changes
+    // Cleanup function
     return () => {
       if (timer) clearInterval(timer);
-      if (isLearning.current) {
+      if (isLearning) { // Only save if it was learning
         saveCourseState(progressRef.current, 'Active');
       }
     };
-  }, [status, courseId]); // Only re-run when status or courseId changes
+  }, [isLearning, courseId]);
 
 
   if (!course) {
@@ -107,17 +104,24 @@ export default function CourseDetailPage() {
   }
 
   const handleMarkAsComplete = () => {
-    isLearning.current = false;
+    setIsLearning(false);
     setProgress(100);
     setStatus('Finished');
     saveCourseState(100, 'Finished');
   };
 
   const handleStartCourse = () => {
-    if (status !== 'Active') {
-        const newProgress = progress === 100 ? 0 : progress === 0 ? 1 : progress;
+    if (status === 'Finished') { // Restart course
+        const newProgress = 1;
         setProgress(newProgress);
         setStatus('Active');
+        setIsLearning(true);
+        saveCourseState(newProgress, 'Active');
+    } else if (!isLearning) { // Start or resume
+        const newProgress = progress === 0 ? 1 : progress;
+        setProgress(newProgress);
+        setStatus('Active');
+        setIsLearning(true);
         saveCourseState(newProgress, 'Active');
     }
   };
@@ -156,8 +160,8 @@ export default function CourseDetailPage() {
                     >
                       {isCompleted ? 'Đã hoàn thành' : 'Đánh dấu là đã hoàn thành'}
                     </Button>
-                    <Button onClick={handleStartCourse} disabled={status === 'Active' && !isCompleted}>
-                      {isCompleted ? 'Học lại' : status === 'Active' ? 'Đang học' : 'Bắt đầu học'}
+                    <Button onClick={handleStartCourse} disabled={isLearning && !isCompleted}>
+                      {isCompleted ? 'Học lại' : isLearning ? 'Đang học' : 'Bắt đầu học'}
                     </Button>
                   </div>
                 </div>

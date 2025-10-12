@@ -15,21 +15,19 @@ export default function CourseDetailPage() {
   const params = useParams();
   const courseId = typeof params.courseId === 'string' ? params.courseId : '';
   
-  // Use a ref to ensure initial load logic runs only once
-  const initialLoadDone = useRef(false);
-
-  // State initialization with a function to avoid re-running on every render
   const [course, setCourse] = useState(() => courseData.find(c => c.id === courseId) || null);
   const [progress, setProgress] = useState(0);
   const [status, setStatus] = useState<'Active' | 'Finished' | 'Paused'>('Paused');
   const [isLearning, setIsLearning] = useState(false);
+
+  const initialLoadDone = useRef(false);
 
   // 1. Load state from localStorage on initial component mount
   useEffect(() => {
     if (typeof window === 'undefined' || !courseId || initialLoadDone.current) return;
 
     if (localStorage.getItem('mockDataVersion') !== mockDataVersion) {
-      localStorage.clear(); // Clear all old data
+      localStorage.clear();
       localStorage.setItem('mockDataVersion', mockDataVersion);
     }
     
@@ -46,7 +44,7 @@ export default function CourseDetailPage() {
     if (courseState) {
         setProgress(courseState.progress || 0);
         setStatus(courseState.status || 'Paused');
-        setIsLearning(courseState.isLearning || false);
+        setIsLearning(false); // Always start in a non-learning state when loading the page
     } else {
         setProgress(targetCourse.progress);
         setStatus(targetCourse.status);
@@ -58,7 +56,6 @@ export default function CourseDetailPage() {
 
   // 2. Save state to localStorage whenever it changes
   useEffect(() => {
-    // Guard against running on initial mount before state is loaded
     if (typeof window === 'undefined' || !courseId || !course || !initialLoadDone.current) {
         return;
     }
@@ -67,7 +64,6 @@ export default function CourseDetailPage() {
     progressState[courseId] = { progress: progress, status: status, isLearning: isLearning };
     localStorage.setItem('courseProgress', JSON.stringify(progressState));
 
-    // Notify other components (like the main course list) that state has changed
     window.dispatchEvent(new CustomEvent('courseStateChanged'));
 
   }, [progress, status, isLearning, courseId, course]);
@@ -90,7 +86,6 @@ export default function CourseDetailPage() {
       }, 2000);
     }
     
-    // Cleanup function to stop the timer
     return () => {
       if (timer) clearInterval(timer);
     };
@@ -98,24 +93,27 @@ export default function CourseDetailPage() {
 
 
   if (!course) {
-    return null; // or a loading skeleton
+    return null;
   }
 
   const handleStartCourse = () => {
     if (isLearning) return;
 
-    if (course?.category === 'Kỹ năng' && status === 'Finished') {
-      // Do not allow restarting a finished skill course
+    // Rule: Completed "Kỹ năng" courses cannot be restarted.
+    if (course.category === 'Kỹ năng' && status === 'Finished') {
       return;
     }
     
     let startProgress = progress;
+
+    // Rule: If a "Môn học" is finished, restart it from 1.
     if (status === 'Finished') { 
-      // This will now only apply to 'Môn học' due to the check above
-        startProgress = 1; 
+        startProgress = 1;
+    // Rule: If it's a new course, start from 1.
     } else if (progress === 0) {
         startProgress = 1; 
     }
+    // Otherwise, continue from the current progress.
     
     setProgress(startProgress);
     setStatus('Active');

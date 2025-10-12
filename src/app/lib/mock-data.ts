@@ -40,16 +40,16 @@ export type CourseStatus = 'Active' | 'Finished' | 'Paused';
 export type CourseCategory = 'Môn học' | 'Kỹ năng';
 
 export const courseData = [
-    { id: "it-software", name: "IT & Software", progress: 0, status: "Paused" as CourseStatus, category: "Môn học" as CourseCategory, imageSeed: "course1" },
-    { id: "programming", name: "Programming", progress: 0, status: "Paused" as CourseStatus, category: "Môn học" as CourseCategory, imageSeed: "course2" },
-    { id: "networking", name: "Networking", progress: 0, status: "Paused" as CourseStatus, category: "Môn học" as CourseCategory, imageSeed: "course3" },
-    { id: "network-security", name: "Network Security", progress: 0, status: "Paused" as CourseStatus, category: "Môn học" as CourseCategory, imageSeed: "course4" },
-    { id: "data-structures", name: "Data Structures", progress: 0, status: "Paused" as CourseStatus, category: "Môn học" as CourseCategory, imageSeed: "course7" },
-    { id: "machine-learning", name: "Machine Learning", progress: 0, status: "Paused" as CourseStatus, category: "Môn học" as CourseCategory, imageSeed: "course8" },
-    { id: "public-speaking", name: "Public Speaking", progress: 0, status: "Paused" as CourseStatus, category: "Kỹ năng" as CourseCategory, imageSeed: "course5" },
-    { id: "leadership", name: "Leadership", progress: 0, status: "Paused" as CourseStatus, category: "Kỹ năng" as CourseCategory, imageSeed: "course6" },
-    { id: "project-management", name: "Project Management", progress: 0, status: "Paused" as CourseStatus, category: "Kỹ năng" as CourseCategory, imageSeed: "course9" },
-    { id: "critical-thinking", name: "Critical Thinking", progress: 0, status: "Paused" as CourseStatus, category: "Kỹ năng" as CourseCategory, imageSeed: "course10" }
+  { id: "it-software", name: "IT & Software", progress: 0, status: "Paused" as CourseStatus, category: "Môn học" as CourseCategory, imageSeed: "course1" },
+  { id: "programming", name: "Programming", progress: 0, status: "Paused" as CourseStatus, category: "Môn học" as CourseCategory, imageSeed: "course2" },
+  { id: "networking", name: "Networking", progress: 0, status: "Paused" as CourseStatus, category: "Môn học" as CourseCategory, imageSeed: "course3" },
+  { id: "network-security", name: "Network Security", progress: 0, status: "Paused" as CourseStatus, category: "Môn học" as CourseCategory, imageSeed: "course4" },
+  { id: "data-structures", name: "Data Structures", progress: 0, status: "Paused" as CourseStatus, category: "Môn học" as CourseCategory, imageSeed: "course7" },
+  { id: "machine-learning", name: "Machine Learning", progress: 0, status: "Paused" as CourseStatus, category: "Môn học" as CourseCategory, imageSeed: "course8" },
+  { id: "public-speaking", name: "Public Speaking", progress: 0, status: "Paused" as CourseStatus, category: "Kỹ năng" as CourseCategory, imageSeed: "course5" },
+  { id: "leadership", name: "Leadership", progress: 0, status: "Paused" as CourseStatus, category: "Kỹ năng" as CourseCategory, imageSeed: "course6" },
+  { id: "project-management", name: "Project Management", progress: 0, status: "Paused" as CourseStatus, category: "Kỹ năng" as CourseCategory, imageSeed: "course9" },
+  { id: "critical-thinking", name: "Critical Thinking", progress: 0, status: "Paused" as CourseStatus, category: "Kỹ năng" as CourseCategory, imageSeed: "course10" }
 ];
 
 export type Status = 'inProgress' | 'completed' | 'notStarted';
@@ -60,17 +60,19 @@ export type Exercise = {
   course: string;
   difficulty: 'Dễ' | 'Trung bình' | 'Khó';
   status: 'Đã hoàn thành' | 'Đang làm' | 'Chưa bắt đầu';
+  startTime: number | null;
+  completionTime: number | null; // Duration in seconds
 };
 
 export const exercises: Exercise[] = [
-  { id: 'ex1', title: 'Viết thuật toán sắp xếp nổi bọt', course: 'Programming', difficulty: 'Dễ', status: 'Chưa bắt đầu' },
-  { id: 'ex2', title: 'Xây dựng một API RESTful đơn giản', course: 'IT & Software', difficulty: 'Trung bình', status: 'Chưa bắt đầu' },
-  { id: 'ex3', title: 'Triển khai danh sách liên kết kép', course: 'Data Structures', difficulty: 'Trung bình', status: 'Chưa bắt đầu' },
-  { id: 'ex4', title: 'Cấu hình một mạng con đơn giản', course: 'Networking', difficulty: 'Dễ', status: 'Chưa bắt đầu' },
-  { id: 'ex5', title: 'Tấn công SQL Injection và cách phòng chống', course: 'Network Security', difficulty: 'Khó', status: 'Chưa bắt đầu' },
-  { id: 'ex6', title: 'Xây dựng mô hình hồi quy tuyến tính', course: 'Machine Learning', difficulty: 'Khó', status: 'Chưa bắt đầu' },
+  { id: 'ex1', title: 'Viết thuật toán sắp xếp nổi bọt', course: 'Programming', difficulty: 'Dễ', status: 'Chưa bắt đầu', startTime: null, completionTime: null },
+  { id: 'ex2', title: 'Xây dựng một API RESTful đơn giản', course: 'IT & Software', difficulty: 'Trung bình', status: 'Chưa bắt đầu', startTime: null, completionTime: null },
+  { id: 'ex3', title: 'Triển khai danh sách liên kết kép', course: 'Data Structures', difficulty: 'Trung bình', status: 'Chưa bắt đầu', startTime: null, completionTime: null },
+  { id: 'ex4', title: 'Cấu hình một mạng con đơn giản', course: 'Networking', difficulty: 'Dễ', status: 'Chưa bắt đầu', startTime: null, completionTime: null },
+  { id: 'ex5', title: 'Tấn công SQL Injection và cách phòng chống', course: 'Network Security', difficulty: 'Khó', status: 'Chưa bắt đầu', startTime: null, completionTime: null },
+  { id: 'ex6', title: 'Xây dựng mô hình hồi quy tuyến tính', course: 'Machine Learning', difficulty: 'Khó', status: 'Chưa bắt đầu', startTime: null, completionTime: null },
 ];
 
 
 // Add a version to the mock data
-export const mockDataVersion = '1.4';
+export const mockDataVersion = '1.5';

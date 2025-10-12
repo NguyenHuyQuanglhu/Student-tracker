@@ -58,12 +58,12 @@ const calculateGrade = (score: number, completionTime: number, targetTime: numbe
         case 'Trung bình':
             if (timeRatio <= 0.8) currentGradeIndex++; // Standard bonus
             else if (timeRatio > 1.2) currentGradeIndex--; // Standard penalty
-            if ((targetTime - completionTime) > (25 * 60)) currentGradeIndex--; // Lower grade if finished > 25 mins faster for Medium
+            if (completionTime < (25 * 60)) currentGradeIndex--; // Lower grade if finished < 25 mins for Medium
             break;
         case 'Khó':
             if (timeRatio <= 0.9) currentGradeIndex++; // Small bonus, score is more important
             else if (timeRatio > 1.5) currentGradeIndex--; // Lenient penalty
-            if ((targetTime - completionTime) > (25 * 60)) currentGradeIndex--; // Lower grade if finished > 25 mins faster for Hard
+            if (completionTime < (25 * 60)) currentGradeIndex--; // Lower grade if finished < 25 mins for Hard
             break;
     }
 

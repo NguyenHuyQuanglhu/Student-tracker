@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -24,13 +24,10 @@ import { DashboardHeader } from "@/components/dashboard/header";
 export function DashboardSidebar({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
 
-  const mainMenuItems = [
+  const menuItems = [
     { href: '/', label: 'Dashboard', icon: LayoutDashboard },
     { href: '/courses', label: 'Courses', icon: Book },
     { href: '/exercises', label: 'Assignment', icon: ClipboardList },
-  ];
-
-  const secondaryMenuItems = [
     { href: '/profile', label: 'User', icon: User },
     { href: '/settings', label: 'Settings', icon: Settings },
   ];
@@ -44,24 +41,9 @@ export function DashboardSidebar({ children }: { children: React.ReactNode }) {
                 <span className="text-xl font-bold text-sidebar-foreground">Akademi</span>
             </div>
         </SidebarHeader>
-        <SidebarContent className="flex-1 flex flex-col justify-between">
+        <SidebarContent>
           <SidebarMenu>
-            {mainMenuItems.map((item) => (
-              <SidebarMenuItem key={item.href}>
-                <Link href={item.href} passHref>
-                    <SidebarMenuButton asChild isActive={pathname === item.href} className="text-base" variant="ghost">
-                      <div>
-                        <item.icon className="h-5 w-5" />
-                        {item.label}
-                      </div>
-                    </SidebarMenuButton>
-                </Link>
-              </SidebarMenuItem>
-            ))}
-          </SidebarMenu>
-
-          <SidebarMenu className="mt-auto">
-            {secondaryMenuItems.map((item) => (
+            {menuItems.map((item) => (
               <SidebarMenuItem key={item.href}>
                 <Link href={item.href} passHref>
                     <SidebarMenuButton asChild isActive={pathname === item.href} className="text-base" variant="ghost">

@@ -75,11 +75,6 @@ export default function ExercisesPage() {
   };
 
   useEffect(() => {
-    // On initial load, reset exercise state to "Chưa bắt đầu"
-    if (typeof window !== 'undefined') {
-        sessionStorage.removeItem('exerciseState');
-    }
-
     updateExerciseStates();
     window.addEventListener('exerciseStateChanged', updateExerciseStates);
     

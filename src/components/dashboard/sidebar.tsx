@@ -43,10 +43,10 @@ export function DashboardSidebar({ children }: { children: React.ReactNode }) {
     <SidebarProvider>
       <Sidebar>
         <SidebarHeader>
-            <Link href="/" className="flex items-center gap-3 no-underline">
-                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary text-white text-xl font-bold">A</div>
+            <div className="flex items-center gap-3">
+                <Link href="/" className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary text-white text-xl font-bold no-underline">A</Link>
                 <span className="text-xl font-bold text-sidebar-foreground">Akademi</span>
-            </Link>
+            </div>
         </SidebarHeader>
         <SidebarContent>
           <SidebarMenu>

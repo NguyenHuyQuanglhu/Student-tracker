@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer } from "recharts";
-import { exercises as mockExercises, mockDataVersion } from "@/app/lib/mock-data";
+import { exercises as mockExercises, mockDataVersion, Exercise } from "@/app/lib/mock-data";
 import { ChartContainer } from "@/components/ui/chart";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
@@ -33,8 +33,9 @@ const gradeColors: Record<Grade, string> = {
 };
 
 
-const calculateGrade = (score: number, completionTime: number, targetTime: number): Grade => {
+const calculateGrade = (score: number, completionTime: number, targetTime: number, difficulty: Exercise['difficulty']): Grade => {
     let grade: Grade;
+    const grades: Grade[] = ['F', 'E', 'D', 'C', 'B', 'A', 'S'];
 
     // Base grade on score
     if (score >= 95) grade = 'S';
@@ -45,20 +46,30 @@ const calculateGrade = (score: number, completionTime: number, targetTime: numbe
     else if (score >= 45) grade = 'E';
     else grade = 'F';
 
-    // Adjust based on time
+    // Adjust based on time and difficulty
     const timeRatio = completionTime / targetTime;
-    const grades: Grade[] = ['F', 'E', 'D', 'C', 'B', 'A', 'S'];
-    const currentGradeIndex = grades.indexOf(grade);
+    let currentGradeIndex = grades.indexOf(grade);
 
-    if (timeRatio <= 0.75 && currentGradeIndex < grades.length - 1) {
-        // Faster than 75% of target time, upgrade
-        grade = grades[currentGradeIndex + 1];
-    } else if (timeRatio > 1.25 && currentGradeIndex > 0) {
-        // Slower than 125% of target time, downgrade
-        grade = grades[currentGradeIndex - 1];
+    switch (difficulty) {
+        case 'Dễ':
+            if (timeRatio <= 0.7) currentGradeIndex++; // Significant bonus for being fast
+            else if (timeRatio > 1.3) currentGradeIndex--; // Penalty for being slow
+            break;
+        case 'Trung bình':
+            if (timeRatio <= 0.8) currentGradeIndex++; // Standard bonus
+            else if (timeRatio > 1.2) currentGradeIndex--; // Standard penalty
+            break;
+        case 'Khó':
+            if (timeRatio <= 0.9) currentGradeIndex++; // Small bonus, score is more important
+            else if (timeRatio > 1.5) currentGradeIndex--; // Lenient penalty
+            break;
     }
+
+    // Ensure grade stays within bounds
+    if (currentGradeIndex < 0) currentGradeIndex = 0;
+    if (currentGradeIndex >= grades.length) currentGradeIndex = grades.length - 1;
     
-    return grade;
+    return grades[currentGradeIndex];
 };
 
 
@@ -181,7 +192,7 @@ export function ExercisePerformanceChart() {
                         completionTime: parseFloat((state.completionTime / 60).toFixed(2)),
                         targetTime: parseFloat((originalExercise.targetTime / 60).toFixed(2)),
                         score: state.score,
-                        grade: calculateGrade(state.score, state.completionTime, originalExercise.targetTime),
+                        grade: calculateGrade(state.score, state.completionTime, originalExercise.targetTime, originalExercise.difficulty),
                     };
                 }
                 return null;

@@ -40,19 +40,19 @@ export type CourseStatus = 'Active' | 'Finished' | 'Paused';
 export type CourseCategory = 'Môn học' | 'Kỹ năng';
 
 export const courseData = [
-    { id: "it-software", name: "IT & Software", progress: 25, status: "Active" as CourseStatus, category: "Môn học" as CourseCategory, imageSeed: "course1" },
-    { id: "programming", name: "Programming", progress: 75, status: "Active" as CourseStatus, category: "Môn học" as CourseCategory, imageSeed: "course2" },
-    { id: "networking", name: "Networking", progress: 50, status: "Active" as CourseStatus, category: "Môn học" as CourseCategory, imageSeed: "course3" },
+    { id: "it-software", name: "IT & Software", progress: 0, status: "Paused" as CourseStatus, category: "Môn học" as CourseCategory, imageSeed: "course1" },
+    { id: "programming", name: "Programming", progress: 0, status: "Paused" as CourseStatus, category: "Môn học" as CourseCategory, imageSeed: "course2" },
+    { id: "networking", name: "Networking", progress: 0, status: "Paused" as CourseStatus, category: "Môn học" as CourseCategory, imageSeed: "course3" },
     { id: "network-security", name: "Network Security", progress: 0, status: "Paused" as CourseStatus, category: "Môn học" as CourseCategory, imageSeed: "course4" },
-    { id: "data-structures", name: "Data Structures", progress: 100, status: "Finished" as CourseStatus, category: "Môn học" as CourseCategory, imageSeed: "course7" },
+    { id: "data-structures", name: "Data Structures", progress: 0, status: "Paused" as CourseStatus, category: "Môn học" as CourseCategory, imageSeed: "course7" },
     { id: "machine-learning", name: "Machine Learning", progress: 0, status: "Paused" as CourseStatus, category: "Môn học" as CourseCategory, imageSeed: "course8" },
-    { id: "public-speaking", name: "Public Speaking", progress: 25, status: "Active" as CourseStatus, category: "Kỹ năng" as CourseCategory, imageSeed: "course5" },
-    { id: "leadership", name: "Leadership", progress: 50, status: "Active" as CourseStatus, category: "Kỹ năng" as CourseCategory, imageSeed: "course6" },
-    { id: "project-management", name: "Project Management", progress: 100, status: "Finished" as CourseStatus, category: "Kỹ năng" as CourseCategory, imageSeed: "course9" },
+    { id: "public-speaking", name: "Public Speaking", progress: 0, status: "Paused" as CourseStatus, category: "Kỹ năng" as CourseCategory, imageSeed: "course5" },
+    { id: "leadership", name: "Leadership", progress: 0, status: "Paused" as CourseStatus, category: "Kỹ năng" as CourseCategory, imageSeed: "course6" },
+    { id: "project-management", name: "Project Management", progress: 0, status: "Paused" as CourseStatus, category: "Kỹ năng" as CourseCategory, imageSeed: "course9" },
     { id: "critical-thinking", name: "Critical Thinking", progress: 0, status: "Paused" as CourseStatus, category: "Kỹ năng" as CourseCategory, imageSeed: "course10" }
 ];
 
 export type Status = 'inProgress' | 'completed' | 'notStarted';
 
 // Add a version to the mock data
-export const mockDataVersion = '1.2';
+export const mockDataVersion = '1.3';

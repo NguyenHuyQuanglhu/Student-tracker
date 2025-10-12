@@ -1,3 +1,4 @@
+
 "use client"
 
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
@@ -20,7 +21,6 @@ const statusColors = {
   inProgress: 'hsl(var(--primary))',
   completed: 'hsl(var(--chart-2))',
   notStarted: 'hsl(var(--muted))',
-  paused: 'hsl(var(--chart-4))',
 };
 
 const formatHoursToHHMMSS = (decimalHours: number): string => {
@@ -36,10 +36,6 @@ const StatusLegend = () => (
         <div className="flex items-center">
             <span className="w-2 h-2 rounded-full mr-2" style={{backgroundColor: statusColors.inProgress}}></span>
             Đang học
-        </div>
-        <div className="flex items-center">
-            <span className="w-2 h-2 rounded-full mr-2" style={{backgroundColor: statusColors.paused}}></span>
-            Tạm dừng
         </div>
         <div className="flex items-center">
             <span className="w-2 h-2 rounded-full mr-2" style={{backgroundColor: statusColors.completed}}></span>
@@ -141,39 +137,33 @@ export function ProgressOverview() {
   const totalSubjects = subjects.length;
   const inProgressSubjects = subjects.filter(c => c.status === 'Active').length;
   const completedSubjects = subjects.filter(c => c.status === 'Finished').length;
-  const pausedSubjects = subjects.filter(c => c.status === 'Paused' && c.progress > 0).length;
-  const notStartedSubjects = totalSubjects - inProgressSubjects - completedSubjects - pausedSubjects;
+  const notStartedSubjects = subjects.filter(c => c.progress === 0 && c.status !== 'Finished').length;
 
   const subjectStatusData = [
     { name: 'Đang học', value: inProgressSubjects, fill: statusColors.inProgress },
     { name: 'Hoàn thành', value: completedSubjects, fill: statusColors.completed },
-    { name: 'Tạm dừng', value: pausedSubjects, fill: statusColors.paused },
     { name: 'Chưa bắt đầu', value: notStartedSubjects, fill: statusColors.notStarted },
   ].filter(item => item.value > 0);
 
   const totalSkills = skills.length;
   const inProgressSkills = skills.filter(c => c.status === 'Active').length;
   const completedSkills = skills.filter(c => c.status === 'Finished').length;
-  const pausedSkills = skills.filter(c => c.status === 'Paused' && c.progress > 0).length;
-  const notStartedSkills = totalSkills - inProgressSkills - completedSkills - pausedSkills;
+  const notStartedSkills = skills.filter(c => c.progress === 0 && c.status !== 'Finished').length;
 
   const skillStatusData = [
     { name: 'Đang học', value: inProgressSkills, fill: statusColors.inProgress },
     { name: 'Hoàn thành', value: completedSkills, fill: statusColors.completed },
-    { name: 'Tạm dừng', value: pausedSkills, fill: statusColors.paused },
     { name: 'Chưa bắt đầu', value: notStartedSkills, fill: statusColors.notStarted },
   ].filter(item => item.value > 0);
 
   const totalCourses = internalCourseData.length;
   const inProgressCourses = internalCourseData.filter(c => c.status === 'Active').length;
   const completedCourses = internalCourseData.filter(c => c.status === 'Finished').length;
-  const pausedCourses = internalCourseData.filter(c => c.status === 'Paused' && c.progress > 0).length;
-  const notStartedCourses = totalCourses - inProgressCourses - completedCourses - pausedCourses;
+  const notStartedCourses = internalCourseData.filter(c => c.progress === 0 && c.status !== 'Finished').length;
 
   const allCoursesStatusData = [
     { name: 'Đang học', value: inProgressCourses, fill: statusColors.inProgress },
     { name: 'Hoàn thành', value: completedCourses, fill: statusColors.completed },
-    { name: 'Tạm dừng', value: pausedCourses, fill: statusColors.paused },
     { name: 'Chưa bắt đầu', value: notStartedCourses, fill: statusColors.notStarted },
   ].filter(item => item.value > 0);
 
@@ -255,3 +245,5 @@ export function ProgressOverview() {
     </Card>
   );
 }
+
+    

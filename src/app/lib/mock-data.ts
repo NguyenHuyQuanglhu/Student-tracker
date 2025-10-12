@@ -74,8 +74,10 @@ export const exercises: Exercise[] = [
   { id: 'ex4', title: 'Cấu hình một mạng con đơn giản', course: 'Networking', difficulty: 'Dễ', status: 'Chưa bắt đầu', startTime: null, completionTime: null, score: null, targetTime: 900 },
   { id: 'ex5', title: 'Tấn công SQL Injection và cách phòng chống', course: 'Network Security', difficulty: 'Khó', status: 'Đã hoàn thành', startTime: 1672704000000, completionTime: 2400, score: 75, targetTime: 2100 },
   { id: 'ex6', title: 'Xây dựng mô hình hồi quy tuyến tính', course: 'Machine Learning', difficulty: 'Khó', status: 'Chưa bắt đầu', startTime: null, completionTime: null, score: null, targetTime: 3600 },
+  { id: 'ex7', title: 'Gỡ lỗi một đoạn mã JavaScript phức tạp', course: 'Programming', difficulty: 'Khó', status: 'Đã hoàn thành', startTime: 1672790400000, completionTime: 3000, score: 62, targetTime: 2400 },
+  { id: 'ex8', title: 'Tối ưu hóa truy vấn cơ sở dữ liệu', course: 'IT & Software', difficulty: 'Trung bình', status: 'Đã hoàn thành', startTime: 1672876800000, completionTime: 2000, score: 55, targetTime: 1500 },
 ];
 
 
 // Add a version to the mock data
-export const mockDataVersion = '1.6';
+export const mockDataVersion = '1.11';

@@ -9,20 +9,35 @@ import { Lightbulb, BookOpen } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/hooks/use-toast";
 
+const SUGGESTIONS_CACHE_KEY = 'exerciseSuggestionsCache';
+
 export function ExerciseSuggestions() {
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
 
-  const getSuggestions = async () => {
+  const getSuggestions = async (forceRefresh = false) => {
     setLoading(true);
     try {
+      if (!forceRefresh) {
+        const cachedSuggestions = sessionStorage.getItem(SUGGESTIONS_CACHE_KEY);
+        if (cachedSuggestions) {
+          setSuggestions(JSON.parse(cachedSuggestions));
+          setLoading(false);
+          return;
+        }
+      }
+
       const result: PersonalizedExerciseSuggestionsOutput = await personalizedExerciseSuggestions({
         studentId: "student-123",
         courseId: "course-abc",
         learningProgress: "Student has an 85% in Quantum Physics and 92% in Organic Chemistry, but is struggling in Data Structures (72%) and World History (68%). Needs help with algorithm complexity and historical analysis.",
       });
-      setSuggestions(result.exerciseSuggestions);
+      
+      const newSuggestions = result.exerciseSuggestions;
+      setSuggestions(newSuggestions);
+      sessionStorage.setItem(SUGGESTIONS_CACHE_KEY, JSON.stringify(newSuggestions));
+
     } catch (e) {
       console.error(e);
       toast({
@@ -39,6 +54,10 @@ export function ExerciseSuggestions() {
     getSuggestions();
   }, []);
 
+  const handleRefresh = () => {
+    getSuggestions(true);
+  };
+
   return (
     <Card>
       <CardHeader>
@@ -50,7 +69,7 @@ export function ExerciseSuggestions() {
                 </CardTitle>
                 <CardDescription>Các đề xuất do AI cung cấp để giúp bạn cải thiện.</CardDescription>
             </div>
-            <Button variant="outline" size="sm" onClick={getSuggestions} disabled={loading}>
+            <Button variant="outline" size="sm" onClick={handleRefresh} disabled={loading}>
                 Làm mới
             </Button>
         </div>

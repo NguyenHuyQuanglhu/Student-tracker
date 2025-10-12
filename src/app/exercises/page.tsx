@@ -54,15 +54,12 @@ export default function ExercisesPage() {
 
     const storedState = JSON.parse(sessionStorage.getItem('exerciseState') || '{}');
     
-    // Clear state for exercises that no longer exist in mock data
     const mockExerciseIds = new Set(mockExercises.map(ex => ex.id));
     Object.keys(storedState).forEach(storedId => {
         if (!mockExerciseIds.has(storedId)) {
             delete storedState[storedId];
         }
     });
-    sessionStorage.setItem('exerciseState', JSON.stringify(storedState));
-
 
     const updatedExercises = mockExercises.map(ex => {
       const state = storedState[ex.id];
@@ -124,6 +121,7 @@ export default function ExercisesPage() {
         completionTime: completionTime,
         score: score,
       };
+      
       sessionStorage.setItem('exerciseState', JSON.stringify(storedState));
       window.dispatchEvent(new CustomEvent('exerciseStateChanged'));
 

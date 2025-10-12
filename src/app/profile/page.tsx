@@ -157,19 +157,7 @@ export default function ProfilePage() {
 
               <CardContent className="pt-20 px-6 pb-6">
                 <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-4">
-                        {isEditing ? (
-                            <Input 
-                                name="fullName"
-                                value={formData.fullName}
-                                onChange={handleInputChange}
-                                className="h-10 text-xl font-bold"
-                                style={{width: '250px'}}
-                            />
-                        ) : (
-                            <h1 className="text-2xl font-bold">{formData.fullName}</h1>
-                        )}
-                    </div>
+                    <h1 className="text-2xl font-bold">{formData.fullName}</h1>
                     {!isEditing && (
                         <Button variant="outline" size="sm" onClick={handleEdit}>
                             <Pencil className="mr-2 h-4 w-4"/>
@@ -194,9 +182,9 @@ export default function ProfilePage() {
                             <div key={field.name} className="grid grid-cols-3 gap-4 items-center">
                                 <span className="text-muted-foreground">{field.label}</span>
                                 <div className="col-span-2">
-                                    {isEditing && field.name !== 'fullName' ? (
+                                    {isEditing ? (
                                         <Input name={field.name} value={field.value} onChange={handleInputChange} className="h-8"/>
-                                    ) : field.name !== 'fullName' && (
+                                    ) : (
                                         <span className="font-medium">{field.value}</span>
                                     )}
                                     {field.description && !isEditing && (

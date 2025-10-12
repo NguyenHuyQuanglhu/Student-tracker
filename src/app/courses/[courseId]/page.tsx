@@ -37,9 +37,9 @@ export default function CourseDetailPage() {
   const loadCourseState = () => {
     if (typeof window === 'undefined' || !courseId) return;
 
-    if (sessionStorage.getItem('mockDataVersion') !== mockDataVersion) {
-      sessionStorage.removeItem('courseProgress');
-      sessionStorage.setItem('mockDataVersion', mockDataVersion);
+    if (localStorage.getItem('mockDataVersion') !== mockDataVersion) {
+      localStorage.removeItem('courseProgress');
+      localStorage.setItem('mockDataVersion', mockDataVersion);
     }
     
     const targetCourse = courseData.find(c => c.id === courseId);
@@ -48,7 +48,7 @@ export default function CourseDetailPage() {
       return;
     }
 
-    const progressState = JSON.parse(sessionStorage.getItem('courseProgress') || '{}');
+    const progressState = JSON.parse(localStorage.getItem('courseProgress') || '{}');
     const courseState = progressState[courseId] || { progress: targetCourse.progress, status: targetCourse.status, isLearning: false };
     
     setCourse({ ...targetCourse });
@@ -59,9 +59,9 @@ export default function CourseDetailPage() {
 
   const saveCourseState = (newProgress: number, newStatus: string, newIsLearning: boolean) => {
       if (typeof window === 'undefined' || !courseId) return;
-      const progressState = JSON.parse(sessionStorage.getItem('courseProgress') || '{}');
+      const progressState = JSON.parse(localStorage.getItem('courseProgress') || '{}');
       progressState[courseId] = { progress: newProgress, status: newStatus, isLearning: newIsLearning };
-      sessionStorage.setItem('courseProgress', JSON.stringify(progressState));
+      localStorage.setItem('courseProgress', JSON.stringify(progressState));
       window.dispatchEvent(new CustomEvent('courseStateChanged'));
   };
 

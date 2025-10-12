@@ -40,8 +40,8 @@ export default function ProfilePage() {
         
         const avatarImg = PlaceHolderImages.find(p => p.id === 'profile-avatar');
 
-        const storedAvatar = sessionStorage.getItem('profileAvatarUrl');
-        const storedCover = sessionStorage.getItem('profileCoverUrl');
+        const storedAvatar = localStorage.getItem('profileAvatarUrl');
+        const storedCover = localStorage.getItem('profileCoverUrl');
 
         setCoverImage(coverImg);
         setProfileAvatar(avatarImg);
@@ -84,8 +84,8 @@ export default function ProfilePage() {
     const handleCancel = () => {
         setFormData(initialProfileData);
         
-        const storedAvatar = sessionStorage.getItem('profileAvatarUrl');
-        const storedCover = sessionStorage.getItem('profileCoverUrl');
+        const storedAvatar = localStorage.getItem('profileAvatarUrl');
+        const storedCover = localStorage.getItem('profileCoverUrl');
 
         setTempCoverImageUrl(storedCover || coverImage?.imageUrl || null);
         setTempAvatarImageUrl(storedAvatar || profileAvatar?.imageUrl || null);
@@ -97,10 +97,10 @@ export default function ProfilePage() {
         Object.assign(initialProfileData, formData);
 
         if (tempCoverImageUrl) {
-            sessionStorage.setItem('profileCoverUrl', tempCoverImageUrl);
+            localStorage.setItem('profileCoverUrl', tempCoverImageUrl);
         }
         if (tempAvatarImageUrl) {
-            sessionStorage.setItem('profileAvatarUrl', tempAvatarImageUrl);
+            localStorage.setItem('profileAvatarUrl', tempAvatarImageUrl);
             // Dispatch event to notify header
             window.dispatchEvent(new CustomEvent('profileImageChanged'));
         }

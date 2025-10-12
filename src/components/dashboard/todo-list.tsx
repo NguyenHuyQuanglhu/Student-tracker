@@ -35,14 +35,14 @@ export function TodoList() {
     if (typeof window === 'undefined') return;
 
     // Ensure mock data version is consistent
-    if (sessionStorage.getItem('mockDataVersion') !== mockDataVersion) {
-        sessionStorage.removeItem('courseProgress');
-        sessionStorage.removeItem('exerciseState');
-        sessionStorage.setItem('mockDataVersion', mockDataVersion);
+    if (localStorage.getItem('mockDataVersion') !== mockDataVersion) {
+        localStorage.removeItem('courseProgress');
+        localStorage.removeItem('exerciseState');
+        localStorage.setItem('mockDataVersion', mockDataVersion);
     }
     
-    const courseProgress = JSON.parse(sessionStorage.getItem('courseProgress') || '{}');
-    const exerciseState = JSON.parse(sessionStorage.getItem('exerciseState') || '{}');
+    const courseProgress = JSON.parse(localStorage.getItem('courseProgress') || '{}');
+    const exerciseState = JSON.parse(localStorage.getItem('exerciseState') || '{}');
 
     // Get active courses
     const activeCourses: TodoItem[] = courseData

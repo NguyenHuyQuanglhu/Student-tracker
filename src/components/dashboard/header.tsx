@@ -24,12 +24,12 @@ export function DashboardHeader() {
   const updateAvatar = () => {
       if (typeof window === 'undefined') return;
       
-      const storedAvatar = sessionStorage.getItem('profileAvatarUrl');
+      const storedAvatar = localStorage.getItem('profileAvatarUrl');
       const defaultAvatar = PlaceHolderImages.find(p => p.id === 'user-avatar');
 
       setAvatarUrl(storedAvatar || defaultAvatar?.imageUrl);
 
-      const profileName = sessionStorage.getItem('profileName') || 'Alex Doe';
+      const profileName = localStorage.getItem('profileName') || 'Alex Doe';
       setFallback(profileName.charAt(0).toUpperCase());
   };
 

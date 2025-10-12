@@ -215,12 +215,12 @@ export function ExercisePerformanceChart() {
     const updateChartData = () => {
         if (typeof window === 'undefined') return;
 
-        if (sessionStorage.getItem('mockDataVersion') !== mockDataVersion) {
-            sessionStorage.removeItem('exerciseState');
-            sessionStorage.setItem('mockDataVersion', mockDataVersion);
+        if (localStorage.getItem('mockDataVersion') !== mockDataVersion) {
+            localStorage.removeItem('exerciseState');
+            localStorage.setItem('mockDataVersion', mockDataVersion);
         }
         
-        const storedState = JSON.parse(sessionStorage.getItem('exerciseState') || '{}');
+        const storedState = JSON.parse(localStorage.getItem('exerciseState') || '{}');
 
         const completedExercises = Object.keys(storedState)
             .map(exerciseId => {

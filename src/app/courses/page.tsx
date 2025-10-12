@@ -20,19 +20,19 @@ export default function CoursesPage() {
 
   const updateCourseStates = () => {
     if (typeof window !== 'undefined') {
-        if (sessionStorage.getItem('mockDataVersion') !== mockDataVersion) {
-            sessionStorage.removeItem('courseProgress');
-            sessionStorage.setItem('mockDataVersion', mockDataVersion);
+        if (localStorage.getItem('mockDataVersion') !== mockDataVersion) {
+            localStorage.removeItem('courseProgress');
+            localStorage.setItem('mockDataVersion', mockDataVersion);
         }
         
-        const progressState = JSON.parse(sessionStorage.getItem('courseProgress') || '{}');
+        const progressState = JSON.parse(localStorage.getItem('courseProgress') || '{}');
         
         const updatedCourses = courseData.map(course => {
             const state = progressState[course.id];
             if (state) {
                 return { ...course, progress: state.progress, status: state.status as CourseStatus };
             }
-            // For courses not in session storage, use original data
+            // For courses not in local storage, use original data
             return { ...course };
         });
         setCourses(updatedCourses);

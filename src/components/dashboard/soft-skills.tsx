@@ -18,12 +18,12 @@ export function SoftSkillsDashboard() {
 
   const updateSkillStates = () => {
     if (typeof window !== 'undefined') {
-        if (sessionStorage.getItem('mockDataVersion') !== mockDataVersion) {
-            sessionStorage.removeItem('courseProgress');
-            sessionStorage.setItem('mockDataVersion', mockDataVersion);
+        if (localStorage.getItem('mockDataVersion') !== mockDataVersion) {
+            localStorage.removeItem('courseProgress');
+            localStorage.setItem('mockDataVersion', mockDataVersion);
         }
         
-        const progressState = JSON.parse(sessionStorage.getItem('courseProgress') || '{}');
+        const progressState = JSON.parse(localStorage.getItem('courseProgress') || '{}');
         
         const skillCourses = courseData
             .filter(course => course.category === 'Kỹ năng')

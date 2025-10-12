@@ -27,9 +27,9 @@ export default function SettingsPage() {
   const handleResetProgress = () => {
     try {
       if (typeof window !== 'undefined') {
-        sessionStorage.removeItem('courseProgress');
-        sessionStorage.removeItem('exerciseState');
-        sessionStorage.removeItem('dynamicWarnings'); // Also clear dynamic warnings
+        localStorage.removeItem('courseProgress');
+        localStorage.removeItem('exerciseState');
+        localStorage.removeItem('dynamicWarnings'); // Also clear dynamic warnings
         
         toast({
           title: "Thành công!",

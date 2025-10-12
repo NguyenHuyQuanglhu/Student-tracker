@@ -20,7 +20,7 @@ export function ExerciseSuggestions() {
     setLoading(true);
     try {
       if (!forceRefresh) {
-        const cachedSuggestions = sessionStorage.getItem(SUGGESTIONS_CACHE_KEY);
+        const cachedSuggestions = localStorage.getItem(SUGGESTIONS_CACHE_KEY);
         if (cachedSuggestions) {
           setSuggestions(JSON.parse(cachedSuggestions));
           setLoading(false);
@@ -36,7 +36,7 @@ export function ExerciseSuggestions() {
       
       const newSuggestions = result.exerciseSuggestions;
       setSuggestions(newSuggestions);
-      sessionStorage.setItem(SUGGESTIONS_CACHE_KEY, JSON.stringify(newSuggestions));
+      localStorage.setItem(SUGGESTIONS_CACHE_KEY, JSON.stringify(newSuggestions));
 
     } catch (e) {
       console.error(e);

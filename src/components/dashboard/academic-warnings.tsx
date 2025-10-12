@@ -14,7 +14,7 @@ export function AcademicWarnings() {
   const updateWarnings = () => {
     if (typeof window === 'undefined') return;
 
-    const dynamicWarnings: Warning[] = JSON.parse(sessionStorage.getItem('dynamicWarnings') || '[]');
+    const dynamicWarnings: Warning[] = JSON.parse(localStorage.getItem('dynamicWarnings') || '[]');
     
     // Combine static and dynamic warnings, then sort by reversing to get newest first, and slice to get top 7
     const allWarnings = [...staticWarnings, ...dynamicWarnings].reverse().slice(0, 7);

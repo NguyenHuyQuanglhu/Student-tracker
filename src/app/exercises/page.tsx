@@ -52,7 +52,7 @@ export default function ExercisesPage() {
   const updateExerciseStates = () => {
     if (typeof window === 'undefined') return;
 
-    const storedState = JSON.parse(sessionStorage.getItem('exerciseState') || '{}');
+    const storedState = JSON.parse(localStorage.getItem('exerciseState') || '{}');
     
     const mockExerciseIds = new Set(mockExercises.map(ex => ex.id));
     Object.keys(storedState).forEach(storedId => {
@@ -81,7 +81,7 @@ export default function ExercisesPage() {
   }, []);
 
   const handleStartExercise = (exerciseId: string) => {
-    const storedState = JSON.parse(sessionStorage.getItem('exerciseState') || '{}');
+    const storedState = JSON.parse(localStorage.getItem('exerciseState') || '{}');
     const exerciseState = storedState[exerciseId];
 
     if (!exerciseState || exerciseState.status !== 'Đang làm') {
@@ -91,23 +91,23 @@ export default function ExercisesPage() {
             completionTime: null,
             score: null,
         };
-        sessionStorage.setItem('exerciseState', JSON.stringify(storedState));
+        localStorage.setItem('exerciseState', JSON.stringify(storedState));
         window.dispatchEvent(new CustomEvent('exerciseStateChanged'));
     }
   };
 
   const addDynamicWarning = (warning: Warning) => {
-    const dynamicWarnings: Warning[] = JSON.parse(sessionStorage.getItem('dynamicWarnings') || '[]');
+    const dynamicWarnings: Warning[] = JSON.parse(localStorage.getItem('dynamicWarnings') || '[]');
     // Avoid duplicate warnings
     if (!dynamicWarnings.some(w => w.id === warning.id)) {
       dynamicWarnings.push(warning);
-      sessionStorage.setItem('dynamicWarnings', JSON.stringify(dynamicWarnings));
+      localStorage.setItem('dynamicWarnings', JSON.stringify(dynamicWarnings));
       window.dispatchEvent(new CustomEvent('warningsChanged'));
     }
   };
 
   const handleSubmitExercise = (exerciseId: string) => {
-    const storedState = JSON.parse(sessionStorage.getItem('exerciseState') || '{}');
+    const storedState = JSON.parse(localStorage.getItem('exerciseState') || '{}');
     const originalExercise = mockExercises.find(ex => ex.id === exerciseId);
     const exerciseState = storedState[exerciseId];
     
@@ -122,7 +122,7 @@ export default function ExercisesPage() {
         score: score,
       };
       storedState[exerciseId] = newState;
-      sessionStorage.setItem('exerciseState', JSON.stringify(storedState));
+      localStorage.setItem('exerciseState', JSON.stringify(storedState));
       window.dispatchEvent(new CustomEvent('exerciseStateChanged'));
       
       // Check for low score warning
@@ -145,12 +145,12 @@ export default function ExercisesPage() {
 
   const handleRetryExercise = (exerciseId: string) => {
     if (typeof window === 'undefined') return;
-    const storedState = JSON.parse(sessionStorage.getItem('exerciseState') || '{}');
+    const storedState = JSON.parse(localStorage.getItem('exerciseState') || '{}');
 
     if (storedState[exerciseId]) {
       // Deleting the state will make it fall back to the default "Chưa bắt đầu" state
       delete storedState[exerciseId];
-      sessionStorage.setItem('exerciseState', JSON.stringify(storedState));
+      localStorage.setItem('exerciseState', JSON.stringify(storedState));
       window.dispatchEvent(new CustomEvent('exerciseStateChanged'));
     }
   };

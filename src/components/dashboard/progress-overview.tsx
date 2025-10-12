@@ -61,12 +61,10 @@ export function ProgressOverview() {
   useEffect(() => {
     updateStats();
 
-    window.addEventListener('courseCompleted', updateStats);
-    window.addEventListener('courseStarted', updateStats);
+    window.addEventListener('courseStateChanged', updateStats);
 
     return () => {
-        window.removeEventListener('courseCompleted', updateStats);
-        window.removeEventListener('courseStarted', updateStats);
+        window.removeEventListener('courseStateChanged', updateStats);
     };
   }, []);
 

@@ -40,12 +40,10 @@ export default function CoursesPage() {
   useEffect(() => {
     updateCourseStates();
 
-    window.addEventListener('courseCompleted', updateCourseStates);
-    window.addEventListener('courseStarted', updateCourseStates);
+    window.addEventListener('courseStateChanged', updateCourseStates);
     
     return () => {
-        window.removeEventListener('courseCompleted', updateCourseStates);
-        window.removeEventListener('courseStarted', updateCourseStates);
+        window.removeEventListener('courseStateChanged', updateCourseStates);
     };
   }, []);
 

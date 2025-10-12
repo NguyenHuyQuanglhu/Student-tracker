@@ -18,7 +18,7 @@ export default function CourseDetailPage() {
   const [status, setStatus] = useState(course?.status);
 
   const updateCourseState = () => {
-    if (!courseId) return;
+    if (typeof window === 'undefined' || !courseId) return;
 
     const targetCourse = courseData.find(c => c.id === courseId);
     if (!targetCourse) {
@@ -45,12 +45,10 @@ export default function CourseDetailPage() {
   useEffect(() => {
     updateCourseState();
     
-    window.addEventListener('courseCompleted', updateCourseState);
-    window.addEventListener('courseStarted', updateCourseState);
+    window.addEventListener('courseStateChanged', updateCourseState);
     
     return () => {
-        window.removeEventListener('courseCompleted', updateCourseState);
-        window.removeEventListener('courseStarted', updateCourseState);
+        window.removeEventListener('courseStateChanged', updateCourseState);
     };
   }, [courseId]);
 
@@ -75,7 +73,7 @@ export default function CourseDetailPage() {
             sessionStorage.setItem('activeCourses', JSON.stringify(activeCourses));
         }
 
-        window.dispatchEvent(new CustomEvent('courseCompleted', { detail: completedCourses }));
+        window.dispatchEvent(new CustomEvent('courseStateChanged'));
     }
   };
 
@@ -86,7 +84,7 @@ export default function CourseDetailPage() {
             activeCourses.push(courseId);
             sessionStorage.setItem('activeCourses', JSON.stringify(activeCourses));
         }
-        window.dispatchEvent(new CustomEvent('courseStarted', { detail: activeCourses }));
+        window.dispatchEvent(new CustomEvent('courseStateChanged'));
     }
   };
 
@@ -121,7 +119,7 @@ export default function CourseDetailPage() {
                     >
                       {isCompleted ? 'Đã hoàn thành' : 'Đánh dấu là đã hoàn thành'}
                     </Button>
-                    <Button onClick={handleStartCourse} disabled={isCompleted}>
+                    <Button onClick={handleStartCourse} disabled={status === 'Active' || isCompleted}>
                       {status === 'Active' ? 'Đang học' : 'Bắt đầu học'}
                     </Button>
                   </div>

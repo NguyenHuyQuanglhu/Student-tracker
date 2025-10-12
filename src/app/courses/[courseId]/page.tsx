@@ -68,7 +68,7 @@ export default function CourseDetailPage() {
     
     return () => {
         window.removeEventListener('courseStateChanged', handleStateChange);
-        saveCourseState(progressRef.current, progressRef.current === 100 ? 'Finished' : 'Active', false);
+        saveCourseState(progressRef.current, progressRef.current === 100 ? 'Finished' : (progressRef.current > 0 ? 'Active' : 'Paused'), false);
     };
   }, [courseId]);
 
@@ -93,7 +93,7 @@ export default function CourseDetailPage() {
     return () => {
       if (timer) clearInterval(timer);
     };
-  }, [isLearning]);
+  }, [isLearning, progress]);
 
 
   if (!course) {
@@ -108,19 +108,17 @@ export default function CourseDetailPage() {
   };
 
   const handleStartCourse = () => {
-    if (status === 'Finished') { 
-        const newProgress = 1;
-        setProgress(newProgress);
-        setStatus('Active');
-        setIsLearning(true);
-        saveCourseState(newProgress, 'Active', true);
-    } else if (!isLearning) { 
-        const newProgress = progress === 0 ? 1 : progress;
-        setProgress(newProgress);
-        setStatus('Active');
-        setIsLearning(true);
-        saveCourseState(newProgress, 'Active', true);
-    }
+      let newProgress = progress;
+      if (status === 'Finished') { 
+          newProgress = 1;
+      } else if (progress === 0) {
+          newProgress = 1;
+      }
+      
+      setProgress(newProgress);
+      setStatus('Active');
+      setIsLearning(true);
+      saveCourseState(newProgress, 'Active', true);
   };
 
   const getButtonText = () => {

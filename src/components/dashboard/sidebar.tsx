@@ -42,12 +42,12 @@ export function DashboardSidebar({ children }: { children: React.ReactNode }) {
                 <span className="text-xl font-bold text-primary">MJUI</span>
             </div>
         </SidebarHeader>
-        <SidebarContent>
-          <SidebarMenu>
+        <SidebarContent className="flex-1">
+          <SidebarMenu className="flex flex-col justify-around flex-1">
             {menuItems.map((item) => (
               <SidebarMenuItem key={item.href}>
                 <Link href={item.href} passHref>
-                    <SidebarMenuButton asChild isActive={pathname === item.href}>
+                    <SidebarMenuButton asChild isActive={pathname === item.href} className="text-base">
                       <div>
                         <item.icon />
                         {item.label}
@@ -61,7 +61,7 @@ export function DashboardSidebar({ children }: { children: React.ReactNode }) {
         <SidebarFooter>
             <SidebarMenu>
                 <SidebarMenuItem>
-                     <SidebarMenuButton asChild>
+                     <SidebarMenuButton asChild className="text-base">
                       <div>
                         <LogOut />
                         Log Out

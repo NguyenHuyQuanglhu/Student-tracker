@@ -92,7 +92,7 @@ export default function ProfilePage() {
     <div className="flex min-h-screen w-full flex-col bg-muted/40">
       <DashboardSidebar>
         <main className="flex-1 p-4 sm:p-6">
-          <div className="mx-auto max-w-2xl">
+          <div className="mx-auto max-w-2xl mt-8">
             <Card className="overflow-hidden">
                 <div className="relative">
                     {tempCoverImageUrl && (
@@ -156,6 +156,28 @@ export default function ProfilePage() {
                 </div>
 
               <CardContent className="pt-20 px-6 pb-6">
+                <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-4">
+                        {isEditing ? (
+                            <Input 
+                                name="fullName"
+                                value={formData.fullName}
+                                onChange={handleInputChange}
+                                className="h-10 text-xl font-bold"
+                                style={{width: '250px'}}
+                            />
+                        ) : (
+                            <h1 className="text-2xl font-bold">{formData.fullName}</h1>
+                        )}
+                    </div>
+                    {!isEditing && (
+                        <Button variant="outline" size="sm" onClick={handleEdit}>
+                            <Pencil className="mr-2 h-4 w-4"/>
+                            Chỉnh sửa hồ sơ
+                        </Button>
+                    )}
+                </div>
+
                 <div className="space-y-6 mt-8">
                     <h2 className="text-lg font-semibold border-b pb-2">Thông tin cá nhân</h2>
                     <div className="space-y-4 text-sm">
@@ -172,9 +194,9 @@ export default function ProfilePage() {
                             <div key={field.name} className="grid grid-cols-3 gap-4 items-center">
                                 <span className="text-muted-foreground">{field.label}</span>
                                 <div className="col-span-2">
-                                    {isEditing ? (
+                                    {isEditing && field.name !== 'fullName' ? (
                                         <Input name={field.name} value={field.value} onChange={handleInputChange} className="h-8"/>
-                                    ) : (
+                                    ) : field.name !== 'fullName' && (
                                         <span className="font-medium">{field.value}</span>
                                     )}
                                     {field.description && !isEditing && (

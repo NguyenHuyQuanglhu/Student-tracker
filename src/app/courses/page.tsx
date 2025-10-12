@@ -38,7 +38,9 @@ export default function CoursesPage() {
                  const newProgress = course.progress === 0 ? 10 : course.progress;
                 return { ...course, status: 'Active' as CourseStatus, progress: newProgress };
             }
-            return { ...course };
+            // For courses that are neither completed nor active, reset to their original state from mock-data
+            const originalCourse = courseData.find(c => c.id === course.id);
+            return { ...originalCourse, status: originalCourse?.status || 'Paused', progress: originalCourse?.progress || 0 };
         });
         setCourses(updatedCourses);
     }
@@ -65,8 +67,7 @@ export default function CoursesPage() {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                 {courses.map((course) => {
                     const progress = course.progress;
-                    const isFinished = progress === 100;
-                    const status = isFinished ? 'Finished' : course.status;
+                    const status = progress === 100 ? 'Finished' : course.status;
                     return (
                         <Link href={`/courses/${course.id}`} key={course.id} className="no-underline">
                             <Card className="flex flex-col h-full overflow-hidden hover:shadow-lg transition-shadow">

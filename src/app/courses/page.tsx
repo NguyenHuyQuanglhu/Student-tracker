@@ -18,31 +18,34 @@ const statusColors: Record<CourseStatus, string> = {
 export default function CoursesPage() {
   const [courses, setCourses] = useState(courseData);
 
-  const updateCourseProgress = () => {
+  const updateCourseStates = () => {
     if (typeof window !== 'undefined') {
         const completedCourses = JSON.parse(sessionStorage.getItem('completedCourses') || '[]');
+        const activeCourses = JSON.parse(sessionStorage.getItem('activeCourses') || '[]');
+        
         const updatedCourses = courseData.map(course => {
             if (completedCourses.includes(course.id)) {
-                return { ...course, progress: 100 };
+                return { ...course, progress: 100, status: 'Finished' as CourseStatus };
             }
-            return { ...course }; // Return a new object to ensure re-render
+            if (activeCourses.includes(course.id)) {
+                 const newProgress = course.progress === 0 ? 10 : course.progress;
+                return { ...course, status: 'Active' as CourseStatus, progress: newProgress };
+            }
+            return { ...course };
         });
         setCourses(updatedCourses);
     }
   };
 
-
   useEffect(() => {
-    updateCourseProgress();
+    updateCourseStates();
 
-    const handleStorageChange = () => {
-        updateCourseProgress();
-    };
-    
-    window.addEventListener('courseCompleted', handleStorageChange);
+    window.addEventListener('courseCompleted', updateCourseStates);
+    window.addEventListener('courseStarted', updateCourseStates);
     
     return () => {
-        window.removeEventListener('courseCompleted', handleStorageChange);
+        window.removeEventListener('courseCompleted', updateCourseStates);
+        window.removeEventListener('courseStarted', updateCourseStates);
     };
   }, []);
 

@@ -39,36 +39,34 @@ const StatusLegend = () => (
 export function ProgressOverview() {
   const [internalCourseData, setInternalCourseData] = useState(courseData);
 
+  const updateStats = () => {
+      if (typeof window !== 'undefined') {
+          const completedCourses = JSON.parse(sessionStorage.getItem('completedCourses') || '[]');
+          const activeCourses = JSON.parse(sessionStorage.getItem('activeCourses') || '[]');
+
+          const updatedCourses = courseData.map(course => {
+              if (completedCourses.includes(course.id)) {
+                  return { ...course, progress: 100, status: 'Finished' as const };
+              }
+              if (activeCourses.includes(course.id)) {
+                  const newProgress = course.progress === 0 ? 10 : course.progress;
+                  return { ...course, status: 'Active' as const, progress: newProgress };
+              }
+              return { ...course };
+          });
+          setInternalCourseData(updatedCourses);
+      }
+  }
+
   useEffect(() => {
-    const updateStats = () => {
-        if (typeof window !== 'undefined') {
-            const completedCoursesStr = sessionStorage.getItem('completedCourses');
-            if (completedCoursesStr) {
-                const completedCourses = JSON.parse(completedCoursesStr);
-                const updatedCourses = courseData.map(course => {
-                    if (completedCourses.includes(course.id)) {
-                        return { ...course, progress: 100 };
-                    }
-                    return course;
-                });
-                setInternalCourseData(updatedCourses);
-            } else {
-                // If nothing in session storage, use original data
-                setInternalCourseData(courseData.map(c => ({...c})));
-            }
-        }
-    }
-    
     updateStats();
 
-    const handleStorageChange = () => {
-        updateStats();
-    };
-
-    window.addEventListener('courseCompleted', handleStorageChange);
+    window.addEventListener('courseCompleted', updateStats);
+    window.addEventListener('courseStarted', updateStats);
 
     return () => {
-        window.removeEventListener('courseCompleted', handleStorageChange);
+        window.removeEventListener('courseCompleted', updateStats);
+        window.removeEventListener('courseStarted', updateStats);
     };
   }, []);
 
@@ -77,7 +75,7 @@ export function ProgressOverview() {
 
   const totalSubjects = subjects.length;
   const completedSubjects = subjects.filter(c => c.progress === 100).length;
-  const inProgressSubjects = subjects.filter(c => c.progress > 0 && c.progress < 100).length;
+  const inProgressSubjects = subjects.filter(c => c.status === 'Active' && c.progress < 100).length;
   const notStartedSubjects = totalSubjects - completedSubjects - inProgressSubjects;
   
   const subjectStatusData = [
@@ -88,7 +86,7 @@ export function ProgressOverview() {
 
   const totalSkills = skills.length;
   const completedSkills = skills.filter(c => c.progress === 100).length;
-  const inProgressSkills = skills.filter(c => c.progress > 0 && c.progress < 100).length;
+  const inProgressSkills = skills.filter(c => c.status === 'Active' && c.progress < 100).length;
   const notStartedSkills = totalSkills - completedSkills - inProgressSkills;
 
   const skillStatusData = [
@@ -99,7 +97,7 @@ export function ProgressOverview() {
 
   const totalCourses = internalCourseData.length;
   const completedCourses = internalCourseData.filter(c => c.progress === 100).length;
-  const inProgressCourses = internalCourseData.filter(c => c.progress > 0 && c.progress < 100).length;
+  const inProgressCourses = internalCourseData.filter(c => c.status === 'Active' && c.progress < 100).length;
   const notStartedCourses = totalCourses - completedCourses - inProgressCourses;
 
   const allCoursesStatusData = [

@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { DashboardSidebar } from "@/components/dashboard/sidebar";
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/ui/card";
 import { courseData } from "@/app/lib/mock-data";
-import { notFound, useRouter, useParams } from "next/navigation";
+import { notFound, useParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
@@ -15,8 +15,9 @@ export default function CourseDetailPage() {
   
   const [course, setCourse] = useState(() => courseData.find(c => c.id === courseId));
   const [isCompleted, setIsCompleted] = useState(false);
+  const [status, setStatus] = useState(course?.status);
 
-  useEffect(() => {
+  const updateCourseState = () => {
     if (!courseId) return;
 
     const targetCourse = courseData.find(c => c.id === courseId);
@@ -29,21 +30,27 @@ export default function CourseDetailPage() {
     const completedCourses = completedInSession ? JSON.parse(completedInSession) : [];
     const hasCompleted = completedCourses.includes(courseId);
 
-    setCourse(hasCompleted ? { ...targetCourse, progress: 100 } : { ...targetCourse });
-    setIsCompleted(hasCompleted);
+    const activeInSession = sessionStorage.getItem('activeCourses');
+    const activeCourses = activeInSession ? JSON.parse(activeInSession) : [];
+    const isActive = activeCourses.includes(courseId);
 
-    const handleStorageChange = (event: Event) => {
-        const customEvent = event as CustomEvent;
-        if (customEvent.detail.includes(courseId)) {
-            setCourse({ ...targetCourse, progress: 100 });
-            setIsCompleted(true);
-        }
-    };
+    const newProgress = hasCompleted ? 100 : (isActive && targetCourse.progress === 0 ? 10 : targetCourse.progress);
+    const newStatus = hasCompleted ? 'Finished' : (isActive ? 'Active' : targetCourse.status);
+
+    setCourse({ ...targetCourse, progress: newProgress, status: newStatus });
+    setIsCompleted(hasCompleted);
+    setStatus(newStatus);
+  };
+
+  useEffect(() => {
+    updateCourseState();
     
-    window.addEventListener('courseCompleted', handleStorageChange);
+    window.addEventListener('courseCompleted', updateCourseState);
+    window.addEventListener('courseStarted', updateCourseState);
     
     return () => {
-        window.removeEventListener('courseCompleted', handleStorageChange);
+        window.removeEventListener('courseCompleted', updateCourseState);
+        window.removeEventListener('courseStarted', updateCourseState);
     };
   }, [courseId]);
 
@@ -60,10 +67,26 @@ export default function CourseDetailPage() {
             sessionStorage.setItem('completedCourses', JSON.stringify(completedCourses));
         }
         
+        // Remove from active if it exists there
+        let activeCourses = JSON.parse(sessionStorage.getItem('activeCourses') || '[]');
+        const index = activeCourses.indexOf(courseId);
+        if (index > -1) {
+            activeCourses.splice(index, 1);
+            sessionStorage.setItem('activeCourses', JSON.stringify(activeCourses));
+        }
+
         window.dispatchEvent(new CustomEvent('courseCompleted', { detail: completedCourses }));
-        
-        setCourse({ ...course, progress: 100 });
-        setIsCompleted(true);
+    }
+  };
+
+  const handleStartCourse = () => {
+    if (course.status !== 'Active') {
+        let activeCourses = JSON.parse(sessionStorage.getItem('activeCourses') || '[]');
+        if (!activeCourses.includes(courseId)) {
+            activeCourses.push(courseId);
+            sessionStorage.setItem('activeCourses', JSON.stringify(activeCourses));
+        }
+        window.dispatchEvent(new CustomEvent('courseStarted', { detail: activeCourses }));
     }
   };
 
@@ -98,8 +121,8 @@ export default function CourseDetailPage() {
                     >
                       {isCompleted ? 'Đã hoàn thành' : 'Đánh dấu là đã hoàn thành'}
                     </Button>
-                    <Button>
-                      Đang học
+                    <Button onClick={handleStartCourse} disabled={isCompleted}>
+                      {status === 'Active' ? 'Đang học' : 'Bắt đầu học'}
                     </Button>
                   </div>
                 </div>

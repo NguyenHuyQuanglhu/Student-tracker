@@ -18,11 +18,29 @@ import { useEffect, useState } from "react";
 import type { ImagePlaceholder } from "@/lib/placeholder-images";
 
 export function DashboardHeader() {
-  const [avatar, setAvatar] = useState<ImagePlaceholder | undefined>();
+  const [avatarUrl, setAvatarUrl] = useState<string | undefined>();
+  const [fallback, setFallback] = useState('A');
+
+  const updateAvatar = () => {
+      if (typeof window === 'undefined') return;
+      
+      const storedAvatar = sessionStorage.getItem('profileAvatarUrl');
+      const defaultAvatar = PlaceHolderImages.find(p => p.id === 'user-avatar');
+
+      setAvatarUrl(storedAvatar || defaultAvatar?.imageUrl);
+
+      const profileName = sessionStorage.getItem('profileName') || 'Alex Doe';
+      setFallback(profileName.charAt(0).toUpperCase());
+  };
 
   useEffect(() => {
-    const avatarImg = PlaceHolderImages.find(p => p.id === 'user-avatar');
-    setAvatar(avatarImg);
+    updateAvatar();
+    
+    window.addEventListener('profileImageChanged', updateAvatar);
+    
+    return () => {
+        window.removeEventListener('profileImageChanged', updateAvatar);
+    };
   }, []);
 
   return (
@@ -33,8 +51,8 @@ export function DashboardHeader() {
             <DropdownMenuTrigger asChild>
                 <Button variant="ghost" size="icon" className="rounded-full h-12 w-12">
                     <Avatar className="h-10 w-10">
-                      {avatar && <AvatarImage src={avatar.imageUrl} alt="User Avatar" />}
-                      <AvatarFallback>A</AvatarFallback>
+                      {avatarUrl && <AvatarImage src={avatarUrl} alt="User Avatar" />}
+                      <AvatarFallback>{fallback}</AvatarFallback>
                     </Avatar>
                     <span className="sr-only">Toggle user menu</span>
                 </Button>

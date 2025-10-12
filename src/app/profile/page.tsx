@@ -37,11 +37,23 @@ export default function ProfilePage() {
 
     useEffect(() => {
         const coverImg = PlaceHolderImages.find(p => p.id === 'profile-cover');
+        
         const avatarImg = PlaceHolderImages.find(p => p.id === 'profile-avatar');
+
+        const storedAvatar = sessionStorage.getItem('profileAvatarUrl');
+        const storedCover = sessionStorage.getItem('profileCoverUrl');
+
         setCoverImage(coverImg);
         setProfileAvatar(avatarImg);
-        if (coverImg) setTempCoverImageUrl(coverImg.imageUrl);
-        if (avatarImg) setTempAvatarImageUrl(avatarImg.imageUrl);
+
+        setTempCoverImageUrl(storedCover || coverImg?.imageUrl || null);
+
+        if (storedAvatar) {
+            setTempAvatarImageUrl(storedAvatar);
+        } else if (avatarImg) {
+            setTempAvatarImageUrl(avatarImg.imageUrl);
+        }
+        
     }, []);
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>, imageType: 'cover' | 'avatar') => {
@@ -49,10 +61,11 @@ export default function ProfilePage() {
         if (file) {
             const reader = new FileReader();
             reader.onloadend = () => {
+                const result = reader.result as string;
                 if (imageType === 'cover') {
-                    setTempCoverImageUrl(reader.result as string);
+                    setTempCoverImageUrl(result);
                 } else {
-                    setTempAvatarImageUrl(reader.result as string);
+                    setTempAvatarImageUrl(result);
                 }
             };
             reader.readAsDataURL(file);
@@ -70,20 +83,26 @@ export default function ProfilePage() {
 
     const handleCancel = () => {
         setFormData(initialProfileData);
-        if(coverImage) setTempCoverImageUrl(coverImage.imageUrl);
-        if(profileAvatar) setTempAvatarImageUrl(profileAvatar.imageUrl);
+        
+        const storedAvatar = sessionStorage.getItem('profileAvatarUrl');
+        const storedCover = sessionStorage.getItem('profileCoverUrl');
+
+        setTempCoverImageUrl(storedCover || coverImage?.imageUrl || null);
+        setTempAvatarImageUrl(storedAvatar || profileAvatar?.imageUrl || null);
+        
         setIsEditing(false);
     };
 
     const handleSave = () => {
-        // Here you would typically send the data to a server
-        // For now, we'll just update the initial data to simulate saving
         Object.assign(initialProfileData, formData);
-        if (tempCoverImageUrl && coverImage) {
-            coverImage.imageUrl = tempCoverImageUrl;
+
+        if (tempCoverImageUrl) {
+            sessionStorage.setItem('profileCoverUrl', tempCoverImageUrl);
         }
-        if (tempAvatarImageUrl && profileAvatar) {
-            profileAvatar.imageUrl = tempAvatarImageUrl;
+        if (tempAvatarImageUrl) {
+            sessionStorage.setItem('profileAvatarUrl', tempAvatarImageUrl);
+            // Dispatch event to notify header
+            window.dispatchEvent(new CustomEvent('profileImageChanged'));
         }
         setIsEditing(false);
     };
@@ -156,9 +175,9 @@ export default function ProfilePage() {
                 </div>
 
               <CardContent className="pt-20 px-6 pb-6">
-                <div className="flex items-center justify-between">
+                <div className="flex items-start justify-between">
                     <h1 className="text-2xl font-bold">{formData.fullName}</h1>
-                    {!isEditing && (
+                     {!isEditing && (
                         <Button variant="outline" size="sm" onClick={handleEdit}>
                             <Pencil className="mr-2 h-4 w-4"/>
                             Chỉnh sửa hồ sơ
@@ -182,7 +201,9 @@ export default function ProfilePage() {
                             <div key={field.name} className="grid grid-cols-3 gap-4 items-center">
                                 <span className="text-muted-foreground">{field.label}</span>
                                 <div className="col-span-2">
-                                    {isEditing ? (
+                                    {isEditing && field.name === 'fullName' ? (
+                                         <Input name={field.name} value={field.value} onChange={handleInputChange} className="h-8"/>
+                                    ) : isEditing ? (
                                         <Input name={field.name} value={field.value} onChange={handleInputChange} className="h-8"/>
                                     ) : (
                                         <span className="font-medium">{field.value}</span>

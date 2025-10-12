@@ -198,6 +198,7 @@ export default function ExercisesPage() {
                       variant="outline"
                       className="w-full"
                       onClick={() => handleResetExercise(exercise.id)}
+                      style={{ display: 'none' }}
                     >
                       Làm lại
                     </Button>

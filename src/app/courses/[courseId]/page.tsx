@@ -196,7 +196,7 @@ export default function CourseDetailPage() {
                          Tạm dừng
                        </Button>
                     ) : (
-                       <Button onClick={handleStartCourse} disabled={isCompleted && isSkillCourse}>
+                       <Button onClick={handleStartCourse}>
                          {getButtonText()}
                        </Button>
                     )}

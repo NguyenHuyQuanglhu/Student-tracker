@@ -8,27 +8,28 @@ import { courseData, mockDataVersion } from "@/app/lib/mock-data";
 import { notFound, useParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Pause } from "lucide-react";
 import { Progress } from '@/components/ui/progress';
 
 export default function CourseDetailPage() {
   const params = useParams();
   const courseId = typeof params.courseId === 'string' ? params.courseId : '';
   
-  const [course, setCourse] = useState(() => courseData.find(c => c.id === courseId));
-  const [progress, setProgress] = useState(0);
-  const [status, setStatus] = useState(course?.status);
-  const [isLearning, setIsLearning] = useState(false);
-  
-  // Ref to track if initial load is complete to prevent writing default state to localStorage
-  const isInitialLoadComplete = useRef(false);
+  // Use a ref to ensure initial load logic runs only once
+  const initialLoadDone = useRef(false);
 
-  // 1. Load state from localStorage only once on component mount
+  // State initialization with a function to avoid re-running on every render
+  const [course, setCourse] = useState(() => courseData.find(c => c.id === courseId) || null);
+  const [progress, setProgress] = useState(0);
+  const [status, setStatus] = useState<'Active' | 'Finished' | 'Paused'>('Paused');
+  const [isLearning, setIsLearning] = useState(false);
+
+  // 1. Load state from localStorage on initial component mount
   useEffect(() => {
-    if (typeof window === 'undefined' || !courseId) return;
+    if (typeof window === 'undefined' || !courseId || initialLoadDone.current) return;
 
     if (localStorage.getItem('mockDataVersion') !== mockDataVersion) {
-      localStorage.removeItem('courseProgress');
+      localStorage.clear(); // Clear all old data
       localStorage.setItem('mockDataVersion', mockDataVersion);
     }
     
@@ -39,32 +40,36 @@ export default function CourseDetailPage() {
     }
 
     const progressState = JSON.parse(localStorage.getItem('courseProgress') || '{}');
-    const courseState = progressState[courseId] || { progress: targetCourse.progress, status: targetCourse.status };
+    const courseState = progressState[courseId];
     
     setCourse({ ...targetCourse });
-    setProgress(courseState.progress);
-    setStatus(courseState.status);
-    setIsLearning(false); // Always start in a non-learning state, user must click to resume
-
-    // Mark initial load as complete after a short delay
-    setTimeout(() => {
-        isInitialLoadComplete.current = true;
-    }, 100);
-
+    if (courseState) {
+        setProgress(courseState.progress || 0);
+        setStatus(courseState.status || 'Paused');
+        // Do NOT restore isLearning, user must press play.
+    } else {
+        setProgress(targetCourse.progress);
+        setStatus(targetCourse.status);
+    }
+    
+    initialLoadDone.current = true;
 
   }, [courseId]);
 
-  // 2. Save state to localStorage whenever it changes, but only after the initial load is complete
+  // 2. Save state to localStorage whenever it changes
   useEffect(() => {
-      // Guard against running on initial mount before state is loaded from localStorage
-      if (typeof window === 'undefined' || !courseId || !course || !isInitialLoadComplete.current) {
-          return;
-      }
-      
-      const progressState = JSON.parse(localStorage.getItem('courseProgress') || '{}');
-      progressState[courseId] = { progress: progress, status: status }; // Don't save isLearning
-      localStorage.setItem('courseProgress', JSON.stringify(progressState));
-      window.dispatchEvent(new CustomEvent('courseStateChanged'));
+    // Guard against running on initial mount before state is loaded
+    if (typeof window === 'undefined' || !courseId || !course || !initialLoadDone.current) {
+        return;
+    }
+    
+    const progressState = JSON.parse(localStorage.getItem('courseProgress') || '{}');
+    // Always save isLearning as false when saving, so it doesn't auto-play on reload
+    progressState[courseId] = { progress: progress, status: status };
+    localStorage.setItem('courseProgress', JSON.stringify(progressState));
+
+    // Notify other components (like the main course list) that state has changed
+    window.dispatchEvent(new CustomEvent('courseStateChanged'));
 
   }, [progress, status, courseId, course]);
 
@@ -86,7 +91,7 @@ export default function CourseDetailPage() {
       }, 2000);
     }
     
-    // Cleanup function to stop the timer when the component unmounts or isLearning becomes false
+    // Cleanup function to stop the timer
     return () => {
       if (timer) clearInterval(timer);
     };
@@ -94,9 +99,28 @@ export default function CourseDetailPage() {
 
 
   if (!course) {
-    // This can happen on first render before useEffect runs, so return null or a loader
-    return null;
+    return null; // or a loading skeleton
   }
+
+  const handleStartCourse = () => {
+    if (isLearning) return;
+    
+    let startProgress = progress;
+    if (status === 'Finished') { 
+        startProgress = 1; // Restarting a finished course
+    } else if (progress === 0) {
+        startProgress = 1; // Starting a new course
+    }
+    
+    setProgress(startProgress);
+    setStatus('Active');
+    setIsLearning(true);
+  };
+  
+  const handlePauseCourse = () => {
+    setIsLearning(false);
+    setStatus('Paused');
+  };
 
   const handleMarkAsComplete = () => {
     setIsLearning(false);
@@ -104,28 +128,9 @@ export default function CourseDetailPage() {
     setStatus('Finished');
   };
 
-  const handleStartCourse = () => {
-    if (isLearning) return; // Do nothing if already learning
-
-    setStatus('Active');
-
-    if (status === 'Finished') { 
-        setProgress(1); // Restarting a finished course
-    } else if (progress === 0) {
-        setProgress(1); // Starting a new course
-    }
-    // If progress > 0 and not finished, we just start learning, progress value is already correct.
-
-    setIsLearning(true);
-  };
-
-
   const getButtonText = () => {
     if (status === 'Finished') {
       return 'Học lại';
-    }
-    if (isLearning) {
-      return 'Đang học...';
     }
     if (progress > 0) {
       return 'Tiếp tục học';
@@ -168,9 +173,17 @@ export default function CourseDetailPage() {
                          Đánh dấu là đã hoàn thành
                        </Button>
                     )}
-                    <Button onClick={handleStartCourse} disabled={isLearning}>
-                      {getButtonText()}
-                    </Button>
+                    
+                    {isLearning ? (
+                       <Button onClick={handlePauseCourse} variant="secondary">
+                         <Pause className="mr-2 h-4 w-4" />
+                         Tạm dừng
+                       </Button>
+                    ) : (
+                       <Button onClick={handleStartCourse} disabled={isCompleted}>
+                         {getButtonText()}
+                       </Button>
+                    )}
                   </div>
                 </div>
               </CardContent>

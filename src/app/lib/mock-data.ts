@@ -45,7 +45,8 @@ export const courseData = [
     { id: "leadership", name: "Leadership", progress: 0, status: "Active" as CourseStatus, category: "Kỹ năng" as CourseCategory, imageSeed: "course6", targetHours: 10 },
     { id: "project-management", name: "Project Management", progress: 0, status: "Active" as CourseStatus, category: "Kỹ năng" as CourseCategory, imageSeed: "course9", targetHours: 20 },
     { id: "critical-thinking", name: "Critical Thinking", progress: 0, status: "Active" as CourseStatus, category: "Kỹ năng" as CourseCategory, imageSeed: "course10", targetHours: 12 },
-    { id: "emotional-intelligence", name: "Emotional Intelligence", progress: 0, status: "Active" as CourseStatus, category: "Kỹ năng" as CourseCategory, imageSeed: "course11", targetHours: 18 }
+    { id: "emotional-intelligence", name: "Emotional Intelligence", progress: 0, status: "Active" as CourseStatus, category: "Kỹ năng" as CourseCategory, imageSeed: "course11", targetHours: 18 },
+    { id: "cv-writing", name: "Kỹ năng viết CV", progress: 0, status: "Active" as CourseStatus, category: "Kỹ năng" as CourseCategory, imageSeed: "course12", targetHours: 8 }
   ];
   
 

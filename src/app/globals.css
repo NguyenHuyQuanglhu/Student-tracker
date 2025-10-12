@@ -36,12 +36,12 @@ body {
 
     --sidebar-background: 240 10% 3.9%;
     --sidebar-foreground: 210 40% 98%;
-    --sidebar-primary: 258 91% 60%;
+    --sidebar-primary: 210 90% 60%;
     --sidebar-primary-foreground: 210 40% 98%;
     --sidebar-accent: 240 3.7% 15.9%;
     --sidebar-accent-foreground: 210 40% 98%;
     --sidebar-border: 217 33% 17%;
-    --sidebar-ring: 258 91% 60%;
+    --sidebar-ring: 210 90% 60%;
   }
 
   .dark {
@@ -72,12 +72,12 @@ body {
 
     --sidebar-background: 240 10% 3.9%;
     --sidebar-foreground: 210 40% 98%;
-    --sidebar-primary: 258 91% 60%;
+    --sidebar-primary: 210 90% 60%;
     --sidebar-primary-foreground: 210 40% 98%;
     --sidebar-accent: 240 3.7% 15.9%;
     --sidebar-accent-foreground: 210 40% 98%;
     --sidebar-border: 217 33% 17%;
-    --sidebar-ring: 258 91% 60%;
+    --sidebar-ring: 210 90% 60%;
   }
 }
 

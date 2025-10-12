@@ -11,7 +11,6 @@ import {
   SidebarMenuItem,
   SidebarMenuButton,
   SidebarInset,
-  SidebarFooter,
 } from '@/components/ui/sidebar';
 import {
   LayoutDashboard,
@@ -19,13 +18,6 @@ import {
   User,
   Settings,
   ClipboardList,
-  LogOut,
-  Users,
-  Calendar,
-  CircleDollarSign,
-  Utensils,
-  MessageSquare,
-  Activity,
 } from 'lucide-react';
 import { DashboardHeader } from "@/components/dashboard/header";
 
@@ -37,6 +29,7 @@ export function DashboardSidebar({ children }: { children: React.ReactNode }) {
     { href: '/courses', label: 'Courses', icon: Book },
     { href: '/exercises', label: 'Assignment', icon: ClipboardList },
     { href: '/profile', label: 'User', icon: User },
+    { href: '/settings', label: 'Settings', icon: Settings },
   ];
 
   return (

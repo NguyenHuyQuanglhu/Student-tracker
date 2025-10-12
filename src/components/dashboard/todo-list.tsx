@@ -42,38 +42,23 @@ export function TodoList() {
     }
     
     const courseProgress = JSON.parse(localStorage.getItem('courseProgress') || '{}');
-    const exerciseState = JSON.parse(localStorage.getItem('exerciseState') || '{}');
-
-    // Get active courses
-    const activeCourses: TodoItem[] = courseData
+    
+    // Get courses that have been started but not finished
+    const inProgressCourses: TodoItem[] = courseData
       .filter(course => {
         const state = courseProgress[course.id];
-        const status = state ? state.status as CourseStatus : course.status;
-        return status === 'Active';
+        const progress = state ? state.progress : course.progress;
+        return progress > 0 && progress < 100;
       })
       .map(course => ({
         id: `course-${course.id}`,
         task: `Tiếp tục học ${course.name}`,
         course: course.category,
         type: 'Khóa học',
-        completed: false, // Active courses are not completed
+        completed: false, // In-progress courses are not completed
       }));
     
-    // Get unstarted exercises
-    const unstartedExercises: TodoItem[] = mockExercises
-        .filter(exercise => {
-            const state = exerciseState[exercise.id];
-            return !state || state.status === 'Chưa bắt đầu';
-        })
-        .map(exercise => ({
-            id: `ex-${exercise.id}`,
-            task: exercise.title,
-            course: exercise.course,
-            type: 'Bài tập',
-            completed: false,
-        }));
-    
-    setTodoItems([...activeCourses, ...unstartedExercises]);
+    setTodoItems(inProgressCourses);
     setLoading(false);
   };
   

@@ -89,7 +89,7 @@ const ExerciseSummary = ({ data }: { data: ChartData[] }) => {
     return (
         <div className="mb-6">
              <h3 className="text-lg font-semibold mb-4">Tổng kết hiệu suất</h3>
-             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                 <Card>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                         <CardTitle className="text-sm font-medium">Đã hoàn thành</CardTitle>
@@ -117,20 +117,6 @@ const ExerciseSummary = ({ data }: { data: ChartData[] }) => {
                         <p className="text-xs text-muted-foreground">
                             so với mục tiêu {avgTargetTime.toFixed(2)} phút
                         </p>
-                    </CardContent>
-                </Card>
-                <Card>
-                    <CardHeader className="pb-2">
-                        <CardTitle className="text-sm font-medium">Phân loại đánh giá</CardTitle>
-                    </CardHeader>
-                    <CardContent className="flex flex-wrap gap-2 pt-2">
-                        {gradeOrder.map(grade => (
-                            gradeCounts[grade] > 0 && (
-                                <Badge key={grade} className={`${gradeColors[grade]}`}>
-                                    {grade}: {gradeCounts[grade]}
-                                </Badge>
-                            )
-                        ))}
                     </CardContent>
                 </Card>
             </div>

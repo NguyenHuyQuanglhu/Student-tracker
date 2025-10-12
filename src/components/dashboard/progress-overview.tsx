@@ -2,7 +2,7 @@
 
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import { ChartContainer } from "@/components/ui/chart";
-import { courseData } from "@/app/lib/mock-data";
+import { courseData, mockDataVersion } from "@/app/lib/mock-data";
 import { PieChart, Pie, Cell } from "recharts";
 import { useEffect, useState } from "react";
 
@@ -41,6 +41,13 @@ export function ProgressOverview() {
 
   const updateStats = () => {
       if (typeof window !== 'undefined') {
+          // Clear session storage if version mismatch
+          if (sessionStorage.getItem('mockDataVersion') !== mockDataVersion) {
+              sessionStorage.removeItem('completedCourses');
+              sessionStorage.removeItem('activeCourses');
+              sessionStorage.setItem('mockDataVersion', mockDataVersion);
+          }
+
           const completedCourses = JSON.parse(sessionStorage.getItem('completedCourses') || '[]');
           const activeCourses = JSON.parse(sessionStorage.getItem('activeCourses') || '[]');
 

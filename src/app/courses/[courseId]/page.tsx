@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { DashboardSidebar } from "@/components/dashboard/sidebar";
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/ui/card";
-import { courseData } from "@/app/lib/mock-data";
+import { courseData, mockDataVersion } from "@/app/lib/mock-data";
 import { notFound, useParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
@@ -19,6 +19,13 @@ export default function CourseDetailPage() {
 
   const updateCourseState = () => {
     if (typeof window === 'undefined' || !courseId) return;
+
+    // Clear session storage if version mismatch
+    if (sessionStorage.getItem('mockDataVersion') !== mockDataVersion) {
+      sessionStorage.removeItem('completedCourses');
+      sessionStorage.removeItem('activeCourses');
+      sessionStorage.setItem('mockDataVersion', mockDataVersion);
+    }
 
     const targetCourse = courseData.find(c => c.id === courseId);
     if (!targetCourse) {

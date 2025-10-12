@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import { Card, CardHeader, CardTitle, CardFooter, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { courseData, CourseStatus } from "@/app/lib/mock-data";
+import { courseData, CourseStatus, mockDataVersion } from "@/app/lib/mock-data";
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
 
@@ -19,6 +19,13 @@ export function YourCourses() {
 
     const updateCourseStates = () => {
         if (typeof window !== 'undefined') {
+            // Clear session storage if version mismatch
+            if (sessionStorage.getItem('mockDataVersion') !== mockDataVersion) {
+                sessionStorage.removeItem('completedCourses');
+                sessionStorage.removeItem('activeCourses');
+                sessionStorage.setItem('mockDataVersion', mockDataVersion);
+            }
+            
             const completedCourses = JSON.parse(sessionStorage.getItem('completedCourses') || '[]');
             const activeCourses = JSON.parse(sessionStorage.getItem('activeCourses') || '[]');
             

@@ -58,3 +58,6 @@ export const courseData = [
 ];
 
 export type Status = 'inProgress' | 'completed' | 'notStarted';
+
+// Add a version to the mock data
+export const mockDataVersion = '1.1';

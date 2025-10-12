@@ -19,7 +19,6 @@ export function YourCourses() {
 
     const updateCourseStates = () => {
         if (typeof window !== 'undefined') {
-            // Clear session storage if version mismatch
             if (sessionStorage.getItem('mockDataVersion') !== mockDataVersion) {
                 sessionStorage.removeItem('completedCourses');
                 sessionStorage.removeItem('activeCourses');
@@ -37,7 +36,8 @@ export function YourCourses() {
                     const newProgress = course.progress === 0 ? 10 : course.progress;
                     return { ...course, status: 'Active' as CourseStatus, progress: newProgress };
                 }
-                return { ...course };
+                const originalCourse = courseData.find(c => c.id === course.id);
+                return { ...originalCourse, status: originalCourse?.status || 'Paused', progress: originalCourse?.progress || 0 };
             });
             setCourses(updatedCourses);
         }

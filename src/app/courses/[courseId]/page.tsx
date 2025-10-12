@@ -9,41 +9,63 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 
-const COMPLETED_COURSES_KEY = 'completedCourses';
-
 export default function CourseDetailPage({ params }: { params: { courseId: string } }) {
   const { courseId } = use(params);
   
   const initialCourse = courseData.find(c => c.id === courseId);
   const [course, setCourse] = useState(initialCourse);
+  const [isCompleted, setIsCompleted] = useState(initialCourse?.progress === 100);
 
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const completedCourses = JSON.parse(localStorage.getItem(COMPLETED_COURSES_KEY) || '[]');
-      if (initialCourse && completedCourses.includes(initialCourse.id)) {
-        setCourse({ ...initialCourse, progress: 100 });
-      } else {
-        setCourse(initialCourse);
-      }
+    const targetCourse = courseData.find(c => c.id === courseId);
+    if (!targetCourse) {
+      setCourse(undefined);
+      return;
     }
-  }, [courseId, initialCourse]);
+
+    const handleStorageChange = (event: Event) => {
+        const customEvent = event as CustomEvent;
+        if (customEvent.detail.includes(courseId)) {
+            setCourse({ ...targetCourse, progress: 100 });
+            setIsCompleted(true);
+        }
+    };
+    
+    window.addEventListener('courseCompleted', handleStorageChange);
+    
+    // Check initial state from session storage if needed, or just use mock
+    const completedInSession = sessionStorage.getItem('completedCourses');
+    if (completedInSession && JSON.parse(completedInSession).includes(courseId)) {
+      setCourse({ ...targetCourse, progress: 100 });
+      setIsCompleted(true);
+    } else {
+      setCourse(targetCourse);
+      setIsCompleted(targetCourse.progress === 100);
+    }
+
+    return () => {
+        window.removeEventListener('courseCompleted', handleStorageChange);
+    };
+  }, [courseId]);
+
 
   if (!course) {
     notFound();
   }
 
-  const isCompleted = course.progress === 100;
-
   const handleMarkAsComplete = () => {
-    if (typeof window !== 'undefined') {
-        const completedCourses = JSON.parse(localStorage.getItem(COMPLETED_COURSES_KEY) || '[]');
+    if (!isCompleted) {
+        let completedCourses = JSON.parse(sessionStorage.getItem('completedCourses') || '[]');
         if (!completedCourses.includes(courseId)) {
-            const newCompletedCourses = [...completedCourses, courseId];
-            localStorage.setItem(COMPLETED_COURSES_KEY, JSON.stringify(newCompletedCourses));
-            // Dispatch a storage event to notify other components/tabs
-            window.dispatchEvent(new Event('storage'));
-            setCourse({ ...course, progress: 100 });
+            completedCourses.push(courseId);
+            sessionStorage.setItem('completedCourses', JSON.stringify(completedCourses));
         }
+
+        // Dispatch a custom event to notify other components
+        window.dispatchEvent(new CustomEvent('courseCompleted', { detail: completedCourses }));
+        
+        setCourse({ ...course, progress: 100 });
+        setIsCompleted(true);
     }
   };
 

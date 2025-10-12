@@ -7,8 +7,6 @@ import { BarChart, Bar, XAxis, YAxis, PieChart, Pie, Cell } from "recharts";
 import { TrendingDown, TrendingUp } from "lucide-react";
 import { useEffect, useState } from "react";
 
-const COMPLETED_COURSES_KEY = 'completedCourses';
-
 const chartConfig = {
   score: {
     label: "Score",
@@ -21,12 +19,12 @@ export function ProgressOverview() {
 
   const updateStats = () => {
     if (typeof window !== 'undefined') {
-        const completedCourses = JSON.parse(localStorage.getItem(COMPLETED_COURSES_KEY) || '[]');
+        const completedCourses = JSON.parse(sessionStorage.getItem('completedCourses') || '[]');
         const updatedCourses = courseData.map(course => {
             if (completedCourses.includes(course.id)) {
                 return { ...course, progress: 100 };
             }
-            return course;
+            return { ...course };
         });
         setInternalCourseData(updatedCourses);
     }
@@ -39,10 +37,10 @@ export function ProgressOverview() {
         updateStats();
     };
 
-    window.addEventListener('storage', handleStorageChange);
+    window.addEventListener('courseCompleted', handleStorageChange);
 
     return () => {
-        window.removeEventListener('storage', handleStorageChange);
+        window.removeEventListener('courseCompleted', handleStorageChange);
     };
   }, []);
 

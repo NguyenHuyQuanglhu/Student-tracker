@@ -8,8 +8,6 @@ import { courseData, CourseStatus } from "@/app/lib/mock-data";
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
 
-const COMPLETED_COURSES_KEY = 'completedCourses';
-
 const statusColors: Record<CourseStatus, string> = {
     Active: "bg-blue-100 text-blue-800",
     Finished: "bg-gray-100 text-gray-800",
@@ -21,12 +19,12 @@ export function YourCourses() {
 
     const updateCourseProgress = () => {
         if (typeof window !== 'undefined') {
-            const completedCourses = JSON.parse(localStorage.getItem(COMPLETED_COURSES_KEY) || '[]');
+            const completedCourses = JSON.parse(sessionStorage.getItem('completedCourses') || '[]');
             const updatedCourses = courseData.map(course => {
                 if (completedCourses.includes(course.id)) {
                     return { ...course, progress: 100 };
                 }
-                return course;
+                return { ...course };
             });
             setCourses(updatedCourses);
         }
@@ -39,10 +37,10 @@ export function YourCourses() {
             updateCourseProgress();
         };
 
-        window.addEventListener('storage', handleStorageChange);
+        window.addEventListener('courseCompleted', handleStorageChange);
 
         return () => {
-          window.removeEventListener('storage', handleStorageChange);
+          window.removeEventListener('courseCompleted', handleStorageChange);
         };
       }, []);
       

@@ -6,6 +6,7 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 import { AlertCircle, AlertTriangle } from 'lucide-react';
 import { warnings as staticWarnings, Warning } from '@/app/lib/mock-data';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Badge } from '@/components/ui/badge';
 
 export function AcademicWarnings() {
   const [warnings, setWarnings] = useState<Warning[]>([]);
@@ -60,18 +61,24 @@ export function AcademicWarnings() {
                   </div>
               ) : warnings.length > 0 ? (
                 <ul className="space-y-4">
-                  {warnings.map((warning, index) => (
-                    <li key={index} className="flex items-start">
-                       <div className="flex-shrink-0 mr-4">
-                          <span className="flex h-8 w-8 items-center justify-center rounded-full bg-destructive/10 text-destructive">
-                              <AlertCircle className="h-5 w-5" />
-                          </span>
-                      </div>
-                      <div className="pt-1">
-                          <p className="text-sm font-medium text-foreground">{warning.message}</p>
-                      </div>
-                    </li>
-                  ))}
+                  {warnings.map((warning, index) => {
+                    const isNewest = index === 0;
+                    return (
+                      <li key={index} className="flex items-start">
+                         <div className="flex-shrink-0 mr-4">
+                            <span className={`flex h-8 w-8 items-center justify-center rounded-full ${isNewest ? 'bg-destructive/20 text-destructive' : 'bg-destructive/10 text-destructive'}`}>
+                                <AlertCircle className="h-5 w-5" />
+                            </span>
+                        </div>
+                        <div className="pt-1">
+                            <p className="text-sm font-medium text-foreground">
+                              {warning.message}
+                              {isNewest && <Badge variant="destructive" className="ml-2">Mới</Badge>}
+                            </p>
+                        </div>
+                      </li>
+                    );
+                  })}
                 </ul>
               ) : (
                 <div className="text-center text-muted-foreground py-4">

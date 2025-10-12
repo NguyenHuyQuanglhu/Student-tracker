@@ -56,45 +56,56 @@ export default function CourseDetailPage() {
     loadCourseState();
     
     // Listen for external state changes
-    window.addEventListener('courseStateChanged', loadCourseState);
+    const handleStateChange = () => loadCourseState();
+    window.addEventListener('courseStateChanged', handleStateChange);
     
     return () => {
-        window.removeEventListener('courseStateChanged', loadCourseState);
+        window.removeEventListener('courseStateChanged', handleStateChange);
     };
   }, [courseId]);
 
   // Effect for dynamic progress increase
   useEffect(() => {
-    let timer: NodeJS.Timeout;
+    let timer: NodeJS.Timeout | undefined;
 
-    if (isLearning.current && progress < 100) {
+    if (status === 'Active' && progress < 100) {
+      isLearning.current = true;
       timer = setInterval(() => {
         setProgress(prevProgress => {
           const newProgress = Math.min(prevProgress + 1, 100);
           if (newProgress === 100) {
             isLearning.current = false;
+            setStatus('Finished');
             saveCourseState(100, 'Finished');
+            if (timer) clearInterval(timer);
           }
           return newProgress;
         });
       }, 2000); // Increase progress every 2 seconds
+    } else {
+        isLearning.current = false;
     }
     
-    // Cleanup function: This will run when the component unmounts
+    // Cleanup function: This will run when the component unmounts or status changes
     return () => {
-      clearInterval(timer);
+      if (timer) clearInterval(timer);
       // Save progress when leaving the page if learning was in progress
       if (isLearning.current) {
-        // Since setProgress is async, we get the latest value from the DOM or a ref
-        // But for simplicity, we'll just save the progress value from the state
-        // A more robust solution might use a ref to track progress for saving.
-         const finalProgress = progress; // This might not be the absolute latest value.
-         if (finalProgress < 100) {
-            saveCourseState(finalProgress, 'Active');
-         }
+         // We need to read the latest progress value. Since `progress` state is stale in cleanup,
+         // we pass it to a ref or read it differently. A simple way is to use setProgress's callback
+         // to get the latest value, but that's for updating. For saving on unmount, we
+         // might need a ref to hold the latest progress.
+         // For simplicity here, we'll tell React to save the current progress value from state.
+         // A more robust implementation would use a ref updated alongside state.
+         setProgress(currentProgress => {
+            if(currentProgress < 100) {
+                saveCourseState(currentProgress, 'Active');
+            }
+            return currentProgress;
+         });
       }
     };
-  }, [status, progress]); // Rerun when status or progress changes
+  }, [status, courseId]); // Only re-run when status or courseId changes
 
 
   if (!course) {
@@ -111,7 +122,6 @@ export default function CourseDetailPage() {
   const handleStartCourse = () => {
     if (status !== 'Active') {
         const newProgress = progress === 0 ? 1 : progress;
-        isLearning.current = true;
         setProgress(newProgress);
         setStatus('Active');
         saveCourseState(newProgress, 'Active');

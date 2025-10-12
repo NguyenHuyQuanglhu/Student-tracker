@@ -57,7 +57,17 @@ export default function ExercisesPage() {
       sessionStorage.setItem('mockDataVersion', mockDataVersion);
     }
     
-    const storedState = JSON.parse(sessionStorage.getItem('exerciseState') || '{}');
+    let storedState = JSON.parse(sessionStorage.getItem('exerciseState') || '{}');
+    
+    // Clean up storedState: remove exercises that are no longer in mockExercises
+    const mockExerciseIds = new Set(mockExercises.map(ex => ex.id));
+    Object.keys(storedState).forEach(storedId => {
+        if (!mockExerciseIds.has(storedId)) {
+            delete storedState[storedId];
+        }
+    });
+    sessionStorage.setItem('exerciseState', JSON.stringify(storedState));
+
 
     const updatedExercises = mockExercises.map(ex => {
       const state = storedState[ex.id];
@@ -189,7 +199,7 @@ export default function ExercisesPage() {
                       className="w-full"
                       onClick={() => handleResetExercise(exercise.id)}
                     >
-                      Bắt đầu
+                      Làm lại
                     </Button>
                   )}
                 </CardFooter>

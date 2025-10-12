@@ -34,8 +34,8 @@ export function DashboardSidebar({ children }: { children: React.ReactNode }) {
 
   const menuItems = [
     { href: '/', label: 'Dashboard', icon: LayoutDashboard },
-    { href: '/courses', label: 'Students', icon: Book },
-    { href: '/exercises', label: 'Teachers', icon: ClipboardList },
+    { href: '/courses', label: 'Courses', icon: Book },
+    { href: '/exercises', label: 'Assignment', icon: ClipboardList },
     { href: '/events', label: 'Event', icon: Calendar },
     { href: '/finance', label: 'Finance', icon: CircleDollarSign },
     { href: '/food', label: 'Food', icon: Utensils },

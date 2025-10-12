@@ -25,16 +25,12 @@ export default function SettingsPage() {
         sessionStorage.removeItem('courseProgress');
         sessionStorage.removeItem('exerciseState');
         
-        // Dispatch events to notify components
-        window.dispatchEvent(new CustomEvent('courseStateChanged'));
-        window.dispatchEvent(new CustomEvent('exerciseStateChanged'));
-        
         toast({
           title: "Thành công!",
-          description: "Toàn bộ tiến trình đã được đặt lại. Tải lại trang...",
+          description: "Toàn bộ tiến trình đã được đặt lại. Đang tải lại trang...",
         });
 
-        // Reload the page to ensure all components reset
+        // Reload the page to ensure all components reset from a clean state
         setTimeout(() => {
           window.location.href = '/';
         }, 1500);

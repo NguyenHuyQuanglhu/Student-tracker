@@ -52,14 +52,12 @@ export default function ExercisesPage() {
   const updateExerciseStates = () => {
     if (typeof window === 'undefined') return;
 
-    if (sessionStorage.getItem('mockDataVersion') !== mockDataVersion) {
-      sessionStorage.removeItem('exerciseState');
-      sessionStorage.setItem('mockDataVersion', mockDataVersion);
-    }
+    // Force reset all exercises on page load
+    sessionStorage.removeItem('exerciseState');
     
     let storedState = JSON.parse(sessionStorage.getItem('exerciseState') || '{}');
     
-    // Clean up storedState: remove exercises that are no longer in mockExercises
+    // This part is now less critical for cleanup but good to have for future integrity checks
     const mockExerciseIds = new Set(mockExercises.map(ex => ex.id));
     Object.keys(storedState).forEach(storedId => {
         if (!mockExerciseIds.has(storedId)) {
@@ -198,9 +196,8 @@ export default function ExercisesPage() {
                       variant="outline"
                       className="w-full"
                       onClick={() => handleResetExercise(exercise.id)}
-                      style={{ display: 'none' }}
                     >
-                      Làm lại
+                      Bắt đầu
                     </Button>
                   )}
                 </CardFooter>

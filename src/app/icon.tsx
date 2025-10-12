@@ -30,7 +30,7 @@ export default function Icon() {
           height="24"
           viewBox="0 0 24 24"
           fill="none"
-          stroke="hsl(207, 88%, 74%)"
+          stroke="hsl(210, 90%, 50%)"
           strokeWidth="2"
           strokeLinecap="round"
           strokeLinejoin="round"

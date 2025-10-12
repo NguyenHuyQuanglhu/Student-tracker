@@ -20,6 +20,12 @@ import {
   Settings,
   ClipboardList,
   LogOut,
+  Users,
+  Calendar,
+  CircleDollarSign,
+  Utensils,
+  MessageSquare,
+  Activity,
 } from 'lucide-react';
 import { DashboardHeader } from "@/components/dashboard/header";
 
@@ -38,7 +44,7 @@ export function DashboardSidebar({ children }: { children: React.ReactNode }) {
       <Sidebar>
         <SidebarHeader>
             <div className="flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-orange-500 text-white text-xl font-bold">A</div>
+                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary text-white text-xl font-bold">A</div>
                 <span className="text-xl font-bold text-sidebar-foreground">Akademi</span>
             </div>
         </SidebarHeader>

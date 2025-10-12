@@ -44,8 +44,12 @@ export const courseData = [
     { id: "programming", name: "Programming", progress: 75, status: "Active" as CourseStatus, category: "Môn học" as CourseCategory, imageSeed: "course2" },
     { id: "networking", name: "Networking", progress: 50, status: "Active" as CourseStatus, category: "Môn học" as CourseCategory, imageSeed: "course3" },
     { id: "network-security", name: "Network Security", progress: 0, status: "Paused" as CourseStatus, category: "Môn học" as CourseCategory, imageSeed: "course4" },
+    { id: "data-structures", name: "Data Structures", progress: 100, status: "Finished" as CourseStatus, category: "Môn học" as CourseCategory, imageSeed: "course7" },
+    { id: "machine-learning", name: "Machine Learning", progress: 0, status: "Paused" as CourseStatus, category: "Môn học" as CourseCategory, imageSeed: "course8" },
     { id: "public-speaking", name: "Public Speaking", progress: 25, status: "Active" as CourseStatus, category: "Kỹ năng" as CourseCategory, imageSeed: "course5" },
     { id: "leadership", name: "Leadership", progress: 50, status: "Active" as CourseStatus, category: "Kỹ năng" as CourseCategory, imageSeed: "course6" },
+    { id: "project-management", name: "Project Management", progress: 100, status: "Finished" as CourseStatus, category: "Kỹ năng" as CourseCategory, imageSeed: "course9" },
+    { id: "critical-thinking", name: "Critical Thinking", progress: 0, status: "Paused" as CourseStatus, category: "Kỹ năng" as CourseCategory, imageSeed: "course10" }
 ];
 
 export type Status = 'inProgress' | 'completed' | 'notStarted';

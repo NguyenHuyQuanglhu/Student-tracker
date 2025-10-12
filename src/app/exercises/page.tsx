@@ -5,7 +5,7 @@ import { DashboardSidebar } from "@/components/dashboard/sidebar";
 import { Card, CardHeader, CardTitle, CardContent, CardDescription, CardFooter } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { exercises as mockExercises, Exercise, mockDataVersion } from "@/app/lib/mock-data";
+import { exercises as mockExercises, Exercise } from "@/app/lib/mock-data";
 import { Timer, CheckCircle2 } from 'lucide-react';
 
 const difficultyColors: Record<Exercise['difficulty'], string> = {
@@ -47,17 +47,17 @@ const ExerciseTimer = ({ startTime }: { startTime: number }) => {
 };
 
 export default function ExercisesPage() {
-  const [exercises, setExercises] = useState<Exercise[]>(mockExercises);
+  const [exercises, setExercises] = useState<Exercise[]>([]);
 
   const updateExerciseStates = () => {
     if (typeof window === 'undefined') return;
 
-    // Force reset all exercises on page load
+    // Reset exercise state on load to ensure clean start
     sessionStorage.removeItem('exerciseState');
+
+    const storedState = JSON.parse(sessionStorage.getItem('exerciseState') || '{}');
     
-    let storedState = JSON.parse(sessionStorage.getItem('exerciseState') || '{}');
-    
-    // This part is now less critical for cleanup but good to have for future integrity checks
+    // Integrity check for mock data consistency
     const mockExerciseIds = new Set(mockExercises.map(ex => ex.id));
     Object.keys(storedState).forEach(storedId => {
         if (!mockExerciseIds.has(storedId)) {
@@ -72,16 +72,16 @@ export default function ExercisesPage() {
       if (state) {
         return { ...ex, ...state };
       }
-      // Reset to default if not in session storage
-      const originalExercise = mockExercises.find(mockEx => mockEx.id === ex.id)!;
-      return { ...originalExercise };
+      return { ...ex };
     });
     setExercises(updatedExercises);
   };
 
   useEffect(() => {
+    // Initial state setup and listener registration
     updateExerciseStates();
     window.addEventListener('exerciseStateChanged', updateExerciseStates);
+    
     return () => {
       window.removeEventListener('exerciseStateChanged', updateExerciseStates);
     };
@@ -92,7 +92,6 @@ export default function ExercisesPage() {
     const exercise = exercises.find(ex => ex.id === exerciseId);
 
     if (exercise && exercise.status !== 'Đang làm') {
-        // If the exercise is completed, reset it first.
         if(exercise.status === 'Đã hoàn thành') {
             delete storedState[exerciseId];
         }
@@ -128,7 +127,7 @@ export default function ExercisesPage() {
   const handleResetExercise = (exerciseId: string) => {
     const storedState = JSON.parse(sessionStorage.getItem('exerciseState') || '{}');
     if (storedState[exerciseId]) {
-      delete storedState[exerciseId]; // Or set to initial state
+      delete storedState[exerciseId]; 
       sessionStorage.setItem('exerciseState', JSON.stringify(storedState));
       window.dispatchEvent(new CustomEvent('exerciseStateChanged'));
     }
@@ -197,7 +196,7 @@ export default function ExercisesPage() {
                       className="w-full"
                       onClick={() => handleResetExercise(exercise.id)}
                     >
-                      Bắt đầu
+                      Làm lại
                     </Button>
                   )}
                 </CardFooter>

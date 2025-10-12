@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
@@ -19,10 +20,10 @@ export default function CourseDetailPage() {
   const [status, setStatus] = useState(course?.status);
   const [isLearning, setIsLearning] = useState(false);
   
-  // Ref to track if initial load is complete
+  // Ref to track if initial load is complete to prevent writing default state to localStorage
   const isInitialLoadComplete = useRef(false);
 
-  // Load state from localStorage only once on component mount
+  // 1. Load state from localStorage only once on component mount
   useEffect(() => {
     if (typeof window === 'undefined' || !courseId) return;
 
@@ -38,30 +39,36 @@ export default function CourseDetailPage() {
     }
 
     const progressState = JSON.parse(localStorage.getItem('courseProgress') || '{}');
-    const courseState = progressState[courseId] || { progress: targetCourse.progress, status: targetCourse.status, isLearning: false };
+    const courseState = progressState[courseId] || { progress: targetCourse.progress, status: targetCourse.status };
     
     setCourse({ ...targetCourse });
     setProgress(courseState.progress);
     setStatus(courseState.status);
-    setIsLearning(courseState.isLearning);
+    setIsLearning(false); // Always start in a non-learning state, user must click to resume
 
-    // Mark initial load as complete
-    isInitialLoadComplete.current = true;
+    // Mark initial load as complete after a short delay
+    setTimeout(() => {
+        isInitialLoadComplete.current = true;
+    }, 100);
+
 
   }, [courseId]);
 
-  // Save state to localStorage whenever it changes, but only after initial load
+  // 2. Save state to localStorage whenever it changes, but only after the initial load is complete
   useEffect(() => {
-      if (typeof window === 'undefined' || !courseId || !course || !isInitialLoadComplete.current) return;
+      // Guard against running on initial mount before state is loaded from localStorage
+      if (typeof window === 'undefined' || !courseId || !course || !isInitialLoadComplete.current) {
+          return;
+      }
       
       const progressState = JSON.parse(localStorage.getItem('courseProgress') || '{}');
-      progressState[courseId] = { progress: progress, status: status, isLearning: isLearning };
+      progressState[courseId] = { progress: progress, status: status }; // Don't save isLearning
       localStorage.setItem('courseProgress', JSON.stringify(progressState));
       window.dispatchEvent(new CustomEvent('courseStateChanged'));
 
-  }, [progress, status, isLearning, courseId, course]);
+  }, [progress, status, courseId, course]);
 
-  // Handle learning progress simulation
+  // 3. Handle learning progress simulation (the timer)
   useEffect(() => {
     let timer: NodeJS.Timeout | undefined;
 
@@ -79,6 +86,7 @@ export default function CourseDetailPage() {
       }, 2000);
     }
     
+    // Cleanup function to stop the timer when the component unmounts or isLearning becomes false
     return () => {
       if (timer) clearInterval(timer);
     };
@@ -86,6 +94,7 @@ export default function CourseDetailPage() {
 
 
   if (!course) {
+    // This can happen on first render before useEffect runs, so return null or a loader
     return null;
   }
 
@@ -98,14 +107,15 @@ export default function CourseDetailPage() {
   const handleStartCourse = () => {
     if (isLearning) return; // Do nothing if already learning
 
-    if (status === 'Finished') { 
-        setProgress(1); // Restart course
-    } else if (progress === 0) {
-        setProgress(1); // Start new course
-    }
-    // If progress > 0 and not finished, just start learning, don't change progress
-    
     setStatus('Active');
+
+    if (status === 'Finished') { 
+        setProgress(1); // Restarting a finished course
+    } else if (progress === 0) {
+        setProgress(1); // Starting a new course
+    }
+    // If progress > 0 and not finished, we just start learning, progress value is already correct.
+
     setIsLearning(true);
   };
 

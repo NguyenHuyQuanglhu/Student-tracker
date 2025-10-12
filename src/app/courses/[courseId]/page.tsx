@@ -127,7 +127,7 @@ export default function CourseDetailPage() {
   return (
     <div className="flex min-h-screen w-full flex-col">
       <DashboardSidebar>
-        <main className="flex-1 p-4 sm:p-8">
+        <main className="flex-1 p-4">
             <div className="mb-6">
                  <Link href="/" passHref>
                     <Button variant="outline" size="sm" className="mb-4">

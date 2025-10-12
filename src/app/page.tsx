@@ -11,7 +11,7 @@ export default function Home() {
   return (
     <div className="flex min-h-screen w-full flex-col bg-muted/40">
       <DashboardSidebar>
-        <main className="flex-1 p-4 sm:p-6">
+        <main className="flex-1 p-4">
           <div className="space-y-6">
             <YourCourses />
             <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">

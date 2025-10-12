@@ -110,7 +110,7 @@ export default function ProfilePage() {
   return (
     <div className="flex min-h-screen w-full flex-col bg-muted/40">
       <DashboardSidebar>
-        <main className="flex-1 p-4 sm:p-6">
+        <main className="flex-1 p-4">
           <div className="mx-auto max-w-2xl mt-8">
             <Card className="overflow-hidden">
                 <div className="relative">
@@ -119,8 +119,8 @@ export default function ProfilePage() {
                             src={tempCoverImageUrl}
                             alt="Cover image"
                             width={800}
-                            height={300}
-                            className="w-full h-48 object-cover"
+                            height={200}
+                            className="w-full h-32 sm:h-48 object-cover"
                         />
                     )}
                     {isEditing && (
@@ -144,7 +144,7 @@ export default function ProfilePage() {
                     )}
                     <div className="absolute bottom-0 left-6 translate-y-1/2">
                         <div className="relative">
-                            <Avatar className="h-28 w-28 border-4 border-card">
+                            <Avatar className="h-24 w-24 sm:h-28 sm:w-28 border-4 border-card">
                                 {tempAvatarImageUrl && (
                                      <AvatarImage src={tempAvatarImageUrl} alt="User Avatar" />
                                 )}

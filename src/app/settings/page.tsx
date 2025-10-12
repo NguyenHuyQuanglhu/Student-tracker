@@ -54,7 +54,7 @@ export default function SettingsPage() {
   return (
     <div className="flex min-h-screen w-full flex-col">
       <DashboardSidebar>
-        <main className="flex-1 p-4 sm:p-8">
+        <main className="flex-1 p-4">
           <div className="mx-auto max-w-7xl space-y-6">
             <Card>
               <CardHeader>

@@ -52,7 +52,7 @@ export default function CoursesPage() {
   return (
     <div className="flex min-h-screen w-full flex-col">
       <DashboardSidebar>
-        <main className="flex-1 p-4 sm:p-8">
+        <main className="flex-1 p-4">
             <div className="mb-6">
                 <h1 className="text-3xl font-bold font-headline">All Courses</h1>
                 <p className="text-muted-foreground">Browse all your available courses below.</p>

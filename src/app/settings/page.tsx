@@ -15,9 +15,14 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { useToast } from "@/hooks/use-toast";
+import { useTheme } from "next-themes";
+import { Moon, Sun } from "lucide-react";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
 
 export default function SettingsPage() {
   const { toast } = useToast();
+  const { theme, setTheme } = useTheme();
 
   const handleResetProgress = () => {
     try {
@@ -55,21 +60,36 @@ export default function SettingsPage() {
     <div className="flex min-h-screen w-full flex-col">
       <DashboardSidebar>
         <main className="flex-1 p-4">
-          <div className="mx-auto max-w-7xl space-y-6">
+          <div className="mx-auto max-w-2xl space-y-6">
             <Card>
               <CardHeader>
                 <CardTitle className="font-headline">Cài đặt</CardTitle>
                 <CardDescription>Định cấu hình tùy chọn ứng dụng của bạn.</CardDescription>
               </CardHeader>
-              <CardContent>
+              <CardContent className="space-y-8">
                 <div className="space-y-4">
-                  <div>
-                    <h3 className="text-lg font-medium">Đặt lại tiến trình</h3>
-                    <p className="text-sm text-muted-foreground">
-                      Thao tác này sẽ xóa tất cả dữ liệu về tiến độ khóa học và bài tập của bạn. 
-                      Hành động này không thể được hoàn tác.
-                    </p>
+                  <h3 className="text-lg font-medium">Giao diện</h3>
+                  <div className="flex items-center justify-between rounded-lg border p-4">
+                    <div className="space-y-0.5">
+                      <Label htmlFor="dark-mode" className="text-base">Chế độ tối</Label>
+                      <p className="text-sm text-muted-foreground">
+                        Bật để chuyển sang giao diện tối.
+                      </p>
+                    </div>
+                    <Switch
+                      id="dark-mode"
+                      checked={theme === 'dark'}
+                      onCheckedChange={(checked) => setTheme(checked ? 'dark' : 'light')}
+                    />
                   </div>
+                </div>
+
+                <div className="space-y-4">
+                  <h3 className="text-lg font-medium">Đặt lại tiến trình</h3>
+                  <p className="text-sm text-muted-foreground">
+                    Thao tác này sẽ xóa tất cả dữ liệu về tiến độ khóa học và bài tập của bạn. 
+                    Hành động này không thể được hoàn tác.
+                  </p>
                   <AlertDialog>
                     <AlertDialogTrigger asChild>
                       <Button variant="destructive">Đặt lại toàn bộ tiến trình</Button>
@@ -88,10 +108,6 @@ export default function SettingsPage() {
                       </AlertDialogFooter>
                     </AlertDialogContent>
                   </AlertDialog>
-                </div>
-                <div className="text-center py-12 mt-8">
-                  <h3 className="text-lg font-semibold">Các cài đặt khác sắp có!</h3>
-                  <p className="text-muted-foreground">Bạn sẽ sớm có thể điều chỉnh các cài đặt khác của mình tại đây.</p>
                 </div>
               </CardContent>
             </Card>

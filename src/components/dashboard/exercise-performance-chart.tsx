@@ -6,7 +6,8 @@ import { exercises as mockExercises, mockDataVersion } from "@/app/lib/mock-data
 import { ChartContainer } from "@/components/ui/chart";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { FileText } from "lucide-react";
 
 const chartConfig = {
     completionTime: {
@@ -20,8 +21,6 @@ const chartConfig = {
 };
 
 type Grade = 'S' | 'A' | 'B' | 'C' | 'D' | 'E' | 'F';
-
-const gradeOrder: Grade[] = ['S', 'A', 'B', 'C', 'D', 'E', 'F'];
 
 const gradeColors: Record<Grade, string> = {
     S: 'bg-purple-100 text-purple-800',
@@ -81,15 +80,39 @@ const ExerciseSummary = ({ data }: { data: ChartData[] }) => {
     const avgCompletionTime = data.reduce((acc, item) => acc + item.completionTime, 0) / totalExercises;
     const avgTargetTime = data.reduce((acc, item) => acc + item.targetTime, 0) / totalExercises;
 
-    const gradeCounts = data.reduce((acc, item) => {
-        acc[item.grade] = (acc[item.grade] || 0) + 1;
-        return acc;
-    }, {} as Record<Grade, number>);
+    const getEvaluation = () => {
+        let scoreFeedback = '';
+        if (avgScore >= 90) {
+            scoreFeedback = "Xuất sắc! Điểm trung bình của bạn rất cao.";
+        } else if (avgScore >= 75) {
+            scoreFeedback = "Làm tốt lắm! Bạn đang nắm vững kiến thức.";
+        } else if (avgScore >= 60) {
+            scoreFeedback = "Khá tốt! Hãy tiếp tục cố gắng để cải thiện hơn nữa.";
+        } else {
+            scoreFeedback = "Cần cố gắng hơn. Hãy xem lại các bài tập có điểm thấp.";
+        }
+
+        let timeFeedback = '';
+        const timeRatio = avgCompletionTime / avgTargetTime;
+        if (timeRatio <= 0.8) {
+            timeFeedback = "Tốc độ của bạn rất ấn tượng, nhanh hơn đáng kể so với mục tiêu.";
+        } else if (timeRatio <= 1) {
+            timeFeedback = "Bạn quản lý thời gian rất tốt.";
+        } else if (timeRatio <= 1.2) {
+            timeFeedback = "Tốc độ của bạn khá ổn, gần với thời gian mục tiêu.";
+        } else {
+            timeFeedback = "Có vẻ bạn cần thêm thời gian. Hãy thử luyện tập để tăng tốc độ.";
+        }
+
+        return { scoreFeedback, timeFeedback };
+    };
+
+    const { scoreFeedback, timeFeedback } = getEvaluation();
 
     return (
         <div className="mb-6">
              <h3 className="text-lg font-semibold mb-4">Tổng kết hiệu suất</h3>
-             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-2">
                 <Card>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                         <CardTitle className="text-sm font-medium">Đã hoàn thành</CardTitle>
@@ -119,6 +142,16 @@ const ExerciseSummary = ({ data }: { data: ChartData[] }) => {
                         </p>
                     </CardContent>
                 </Card>
+                <Card>
+                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                        <CardTitle className="text-sm font-medium">Nhận xét & Đánh giá</CardTitle>
+                         <FileText className="h-4 w-4 text-muted-foreground" />
+                    </CardHeader>
+                    <CardContent>
+                        <div className="text-sm font-medium">{scoreFeedback}</div>
+                        <p className="text-xs text-muted-foreground mt-1">{timeFeedback}</p>
+                    </CardContent>
+                </Card>
             </div>
         </div>
     );
@@ -143,13 +176,10 @@ export function ExercisePerformanceChart() {
                 const originalExercise = mockExercises.find(ex => ex.id === exerciseId);
 
                 if (originalExercise && state.status === 'Đã hoàn thành' && state.completionTime !== null && state.score !== null) {
-                    const completionTimeMinutes = parseFloat((state.completionTime / 60).toFixed(2));
-                    const targetTimeMinutes = parseFloat((originalExercise.targetTime / 60).toFixed(2));
-                    
                     return { 
                         title: originalExercise.title,
-                        completionTime: completionTimeMinutes,
-                        targetTime: targetTimeMinutes,
+                        completionTime: parseFloat((state.completionTime / 60).toFixed(2)),
+                        targetTime: parseFloat((originalExercise.targetTime / 60).toFixed(2)),
                         score: state.score,
                         grade: calculateGrade(state.score, state.completionTime, originalExercise.targetTime),
                     };

@@ -38,20 +38,19 @@ export function ExercisePerformanceChart() {
                 const state = storedState[exerciseId];
                 const originalExercise = mockExercises.find(ex => ex.id === exerciseId);
 
-                if (originalExercise && state.status === 'Đã hoàn thành' && state.completionTime !== null) {
+                if (originalExercise && state.status === 'Đã hoàn thành' && state.completionTime !== null && state.score !== null) {
                     return { 
-                        ...originalExercise, 
-                        ...state,
                         title: originalExercise.title.split(' ').slice(0, 3).join(' ') + '...', // Shorten title
-                        completionTime: parseFloat((state.completionTime / 60).toFixed(2)), // to minutes from state
-                        targetTime: parseFloat((originalExercise.targetTime / 60).toFixed(2)), // to minutes from mock
+                        completionTime: parseFloat((state.completionTime / 60).toFixed(2)),
+                        targetTime: parseFloat((originalExercise.targetTime / 60).toFixed(2)),
+                        score: state.score,
                     };
                 }
                 return null;
             })
-            .filter(Boolean);
+            .filter((ex): ex is NonNullable<typeof ex> => ex !== null);
         
-        setChartData(completedExercises as any[]);
+        setChartData(completedExercises);
     };
 
     useEffect(() => {
@@ -83,8 +82,8 @@ export function ExercisePerformanceChart() {
                         interval={0}
                         tick={{ fontSize: 12 }}
                     />
-                    <YAxis yAxisId="left" orientation="left" stroke={chartConfig.completionTime.color} />
-                    <YAxis yAxisId="right" orientation="right" stroke={chartConfig.score.color} domain={[0, 100]} />
+                    <YAxis yAxisId="left" orientation="left" stroke="var(--color-completionTime)" />
+                    <YAxis yAxisId="right" orientation="right" stroke="var(--color-score)" domain={[0, 100]} />
                     <Tooltip
                         contentStyle={{ backgroundColor: 'hsl(var(--background))', border: '1px solid hsl(var(--border))' }}
                         cursor={{ fill: 'hsl(var(--muted))' }}

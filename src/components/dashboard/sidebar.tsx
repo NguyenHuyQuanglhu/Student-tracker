@@ -32,6 +32,13 @@ export function DashboardSidebar({ children }: { children: React.ReactNode }) {
     { href: '/settings', label: 'Settings', icon: Settings },
   ];
 
+  const isActive = (href: string) => {
+    if (href === '/') {
+      return pathname === href;
+    }
+    return pathname.startsWith(href);
+  };
+
   return (
     <SidebarProvider>
       <Sidebar>
@@ -46,7 +53,7 @@ export function DashboardSidebar({ children }: { children: React.ReactNode }) {
             {menuItems.map((item) => (
               <SidebarMenuItem key={item.href}>
                 <Link href={item.href} passHref>
-                    <SidebarMenuButton asChild isActive={pathname === item.href} className="text-base" variant="ghost">
+                    <SidebarMenuButton asChild isActive={isActive(item.href)} className="text-base" variant="ghost">
                       <div>
                         <item.icon className="h-5 w-5" />
                         {item.label}

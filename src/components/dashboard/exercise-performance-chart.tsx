@@ -28,20 +28,19 @@ export function ExercisePerformanceChart() {
 
         if (sessionStorage.getItem('mockDataVersion') !== mockDataVersion) {
             sessionStorage.removeItem('exerciseState');
+            sessionStorage.setItem('mockDataVersion', mockDataVersion);
         }
         
         const storedState = JSON.parse(sessionStorage.getItem('exerciseState') || '{}');
 
         const updatedExercises = mockExercises.map(ex => {
             const state = storedState[ex.id];
-            if (state && state.status === 'Đã hoàn thành') {
+            if (state) {
                 return { ...ex, ...state };
             }
-            // For chart, only include completed exercises from original mock data if not in session
-            if (!state && ex.status === 'Đã hoàn thành') {
-                return ex;
-            }
-            return { ...ex, status: 'Chưa bắt đầu' }; // Default to not completed if no state
+            // If not in session, use original mock data state
+            const originalExercise = mockExercises.find(mockEx => mockEx.id === ex.id)!;
+            return { ...originalExercise };
         });
         setExercises(updatedExercises);
     };

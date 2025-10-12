@@ -5,19 +5,19 @@ import { useState, useEffect, useRef } from 'react';
 import { DashboardSidebar } from "@/components/dashboard/sidebar";
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/ui/card";
 import { courseData, mockDataVersion } from "@/app/lib/mock-data";
-import { notFound, useParams } from "next/navigation";
+import { notFound, useParams, useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import Link from "next/link";
-import { ArrowLeft, Pause } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import { Progress } from '@/components/ui/progress';
 
 export default function CourseDetailPage() {
   const params = useParams();
+  const router = useRouter();
   const courseId = typeof params.courseId === 'string' ? params.courseId : '';
   
   const [course, setCourse] = useState(() => courseData.find(c => c.id === courseId) || null);
   const [progress, setProgress] = useState(0);
-  const [status, setStatus] = useState<'Active' | 'Finished' | 'Paused'>('Paused');
+  const [status, setStatus] = useState<'Active' | 'Finished'>('Active');
   const [isLearning, setIsLearning] = useState(false);
 
   const initialLoadDone = useRef(false);
@@ -44,7 +44,7 @@ export default function CourseDetailPage() {
     setCourse({ ...targetCourse });
     if (courseState) {
         setProgress(courseState.progress || 0);
-        setStatus(courseState.status || 'Paused');
+        setStatus(courseState.status || 'Active');
         setIsLearning(false); // Always start in a non-learning state
     } else {
         setProgress(targetCourse.progress);
@@ -131,7 +131,6 @@ export default function CourseDetailPage() {
   
   const handlePauseCourse = () => {
     setIsLearning(false);
-    setStatus('Paused');
   };
 
   const handleMarkAsComplete = () => {
@@ -154,19 +153,16 @@ export default function CourseDetailPage() {
   };
 
   const isCompleted = status === 'Finished';
-  const isSkillCourse = course.category === 'Kỹ năng';
 
   return (
     <div className="flex min-h-screen w-full flex-col">
       <DashboardSidebar>
         <main className="flex-1 p-4">
             <div className="mb-6">
-                 <Link href="/" passHref>
-                    <Button variant="outline" size="sm" className="mb-4">
-                        <ArrowLeft className="mr-2 h-4 w-4" />
-                        Quay lại trang chính
-                    </Button>
-                </Link>
+                <Button variant="outline" size="sm" className="mb-4" onClick={() => router.back()}>
+                    <ArrowLeft className="mr-2 h-4 w-4" />
+                    Quay lại
+                </Button>
                 <h1 className="text-3xl font-bold font-headline">Khóa học: {course.name}</h1>
                 <p className="text-muted-foreground">Đây là trang chi tiết cho khóa học của bạn.</p>
             </div>
@@ -192,7 +188,6 @@ export default function CourseDetailPage() {
                     
                     {isLearning ? (
                        <Button onClick={handlePauseCourse} variant="secondary">
-                         <Pause className="mr-2 h-4 w-4" />
                          Tạm dừng
                        </Button>
                     ) : (

@@ -41,7 +41,7 @@ export function DashboardSidebar({ children }: { children: React.ReactNode }) {
 
   return (
     <SidebarProvider>
-      <Sidebar>
+      <Sidebar variant="inset">
         <SidebarHeader>
             <div className="flex items-center gap-3">
                 <Link href="/" className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary text-white text-xl font-bold no-underline">A</Link>

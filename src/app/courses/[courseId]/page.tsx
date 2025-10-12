@@ -24,7 +24,10 @@ export default function CourseDetailPage() {
 
   // 1. Load state from localStorage on initial component mount
   useEffect(() => {
-    if (typeof window === 'undefined' || !courseId || initialLoadDone.current) return;
+    if (typeof window === 'undefined' || !courseId) return;
+    
+    // Only run this once on initial load
+    if (initialLoadDone.current) return;
 
     if (localStorage.getItem('mockDataVersion') !== mockDataVersion) {
       localStorage.clear();
@@ -61,12 +64,12 @@ export default function CourseDetailPage() {
     }
     
     const progressState = JSON.parse(localStorage.getItem('courseProgress') || '{}');
-    progressState[courseId] = { progress: progress, status: status, isLearning: isLearning };
+    progressState[courseId] = { progress: progress, status: status };
     localStorage.setItem('courseProgress', JSON.stringify(progressState));
 
     window.dispatchEvent(new CustomEvent('courseStateChanged'));
 
-  }, [progress, status, isLearning, courseId, course]);
+  }, [progress, status, courseId, course]);
 
   // 3. Handle learning progress simulation (the timer)
   useEffect(() => {
@@ -98,23 +101,23 @@ export default function CourseDetailPage() {
 
   const handleStartCourse = () => {
     if (isLearning) return;
-
+  
     // Rule: Completed "Kỹ năng" courses cannot be restarted.
     if (course.category === 'Kỹ năng' && status === 'Finished') {
       return;
     }
-    
+  
     let startProgress = progress;
-
-    // Rule: If a "Môn học" is finished, restart it from 1.
-    if (status === 'Finished') { 
-        startProgress = 1;
+  
+    // Rule: If it's a finished "Môn học", restart it from 1.
+    if (status === 'Finished' && course.category === 'Môn học') {
+      startProgress = 1;
     // Rule: If it's a new course, start from 1.
     } else if (progress === 0) {
-        startProgress = 1; 
+      startProgress = 1;
     }
     // Otherwise, continue from the current progress.
-    
+  
     setProgress(startProgress);
     setStatus('Active');
     setIsLearning(true);
@@ -135,10 +138,10 @@ export default function CourseDetailPage() {
     if (status === 'Finished') {
       return 'Học lại';
     }
-    if (progress > 0 && status !== 'Active') {
+    if (progress > 0 && !isLearning) {
       return 'Tiếp tục học';
     }
-    if (status === 'Active') {
+    if (isLearning) {
       return 'Đang học...';
     }
     return 'Bắt đầu học';

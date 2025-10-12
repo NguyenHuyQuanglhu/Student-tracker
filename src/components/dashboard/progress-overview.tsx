@@ -134,39 +134,35 @@ export function ProgressOverview() {
   const subjects = internalCourseData.filter(c => c.category === 'Môn học');
   const skills = internalCourseData.filter(c => c.category === 'Kỹ năng');
 
-  const totalSubjects = subjects.length;
-  const inProgressSubjects = subjects.filter(c => c.status === 'Active').length;
-  const completedSubjects = subjects.filter(c => c.status === 'Finished').length;
-  const notStartedSubjects = subjects.filter(c => c.progress === 0 && c.status !== 'Finished').length;
+  const calculateStatus = (data: typeof courseData) => {
+    const completed = data.filter(c => c.progress === 100).length;
+    const inProgress = data.filter(c => c.progress > 0 && c.progress < 100).length;
+    const notStarted = data.length - completed - inProgress;
+    
+    return { completed, inProgress, notStarted, total: data.length };
+  };
+
+  const subjectStats = calculateStatus(subjects);
+  const skillStats = calculateStatus(skills);
+  const allCoursesStats = calculateStatus(internalCourseData);
 
   const subjectStatusData = [
-    { name: 'Đang học', value: inProgressSubjects, fill: statusColors.inProgress },
-    { name: 'Hoàn thành', value: completedSubjects, fill: statusColors.completed },
-    { name: 'Chưa bắt đầu', value: notStartedSubjects, fill: statusColors.notStarted },
+    { name: 'Đang học', value: subjectStats.inProgress, fill: statusColors.inProgress },
+    { name: 'Hoàn thành', value: subjectStats.completed, fill: statusColors.completed },
+    { name: 'Chưa bắt đầu', value: subjectStats.notStarted, fill: statusColors.notStarted },
   ].filter(item => item.value > 0);
-
-  const totalSkills = skills.length;
-  const inProgressSkills = skills.filter(c => c.status === 'Active').length;
-  const completedSkills = skills.filter(c => c.status === 'Finished').length;
-  const notStartedSkills = skills.filter(c => c.progress === 0 && c.status !== 'Finished').length;
 
   const skillStatusData = [
-    { name: 'Đang học', value: inProgressSkills, fill: statusColors.inProgress },
-    { name: 'Hoàn thành', value: completedSkills, fill: statusColors.completed },
-    { name: 'Chưa bắt đầu', value: notStartedSkills, fill: statusColors.notStarted },
+    { name: 'Đang học', value: skillStats.inProgress, fill: statusColors.inProgress },
+    { name: 'Hoàn thành', value: skillStats.completed, fill: statusColors.completed },
+    { name: 'Chưa bắt đầu', value: skillStats.notStarted, fill: statusColors.notStarted },
   ].filter(item => item.value > 0);
-
-  const totalCourses = internalCourseData.length;
-  const inProgressCourses = internalCourseData.filter(c => c.status === 'Active').length;
-  const completedCourses = internalCourseData.filter(c => c.status === 'Finished').length;
-  const notStartedCourses = internalCourseData.filter(c => c.progress === 0 && c.status !== 'Finished').length;
 
   const allCoursesStatusData = [
-    { name: 'Đang học', value: inProgressCourses, fill: statusColors.inProgress },
-    { name: 'Hoàn thành', value: completedCourses, fill: statusColors.completed },
-    { name: 'Chưa bắt đầu', value: notStartedCourses, fill: statusColors.notStarted },
+    { name: 'Đang học', value: allCoursesStats.inProgress, fill: statusColors.inProgress },
+    { name: 'Hoàn thành', value: allCoursesStats.completed, fill: statusColors.completed },
+    { name: 'Chưa bắt đầu', value: allCoursesStats.notStarted, fill: statusColors.notStarted },
   ].filter(item => item.value > 0);
-
 
   return (
     <Card className="h-full">
@@ -187,7 +183,7 @@ export function ProgressOverview() {
                     <div>
                         <h3 className="text-lg font-semibold">Tổng khóa học</h3>
                         <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
-                            <span className="text-2xl font-bold text-foreground">{totalCourses}</span>
+                            <span className="text-2xl font-bold text-foreground">{allCoursesStats.total}</span>
                         </div>
                         <ChartContainer config={chartConfig} className="min-h-[150px] w-full mt-4 mx-auto">
                             <PieChart accessibilityLayer >
@@ -202,7 +198,7 @@ export function ProgressOverview() {
                     <div>
                         <h3 className="text-lg font-semibold">Tổng số môn học</h3>
                         <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
-                            <span className="text-2xl font-bold text-foreground">{totalSubjects}</span>
+                            <span className="text-2xl font-bold text-foreground">{subjectStats.total}</span>
                         </div>
                         <ChartContainer config={{}} className="min-h-[150px] w-full mt-4 mx-auto">
                             <PieChart accessibilityLayer >
@@ -217,7 +213,7 @@ export function ProgressOverview() {
                     <div>
                         <h3 className="text-lg font-semibold">Tổng số kỹ năng</h3>
                         <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
-                            <span className="text-2xl font-bold text-foreground">{totalSkills}</span>
+                            <span className="text-2xl font-bold text-foreground">{skillStats.total}</span>
                         </div>
                         <ChartContainer config={chartConfig} className="min-h-[150px] w-full mt-4 mx-auto">
                             <PieChart accessibilityLayer >
@@ -245,5 +241,3 @@ export function ProgressOverview() {
     </Card>
   );
 }
-
-    

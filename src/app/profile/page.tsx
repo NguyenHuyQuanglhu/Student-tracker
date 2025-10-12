@@ -1,4 +1,3 @@
-
 'use client';
 
 import { DashboardSidebar } from "@/components/dashboard/sidebar";
@@ -215,5 +214,3 @@ export default function ProfilePage() {
     </div>
   );
 }
-
-    

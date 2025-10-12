@@ -43,7 +43,7 @@ export function DashboardSidebar({ children }: { children: React.ReactNode }) {
             </div>
         </SidebarHeader>
         <SidebarContent className="flex-1">
-          <SidebarMenu className="flex flex-col justify-around flex-1">
+          <SidebarMenu>
             {menuItems.map((item) => (
               <SidebarMenuItem key={item.href}>
                 <Link href={item.href} passHref>

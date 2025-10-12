@@ -145,6 +145,19 @@ export default function ExercisesPage() {
     }
   };
 
+  const handleRetryExercise = (exerciseId: string) => {
+    if (typeof window === 'undefined') return;
+    const storedState = JSON.parse(sessionStorage.getItem('exerciseState') || '{}');
+
+    if (storedState[exerciseId]) {
+      // Deleting the state will make it fall back to the default "Chưa bắt đầu" state
+      delete storedState[exerciseId];
+      sessionStorage.setItem('exerciseState', JSON.stringify(storedState));
+      window.dispatchEvent(new CustomEvent('exerciseStateChanged'));
+    }
+  };
+
+
   return (
     <div className="flex min-h-screen w-full flex-col">
       <DashboardSidebar>
@@ -206,9 +219,9 @@ export default function ExercisesPage() {
                      <Button 
                       variant="outline"
                       className="w-full"
-                      disabled
+                      onClick={() => handleRetryExercise(exercise.id)}
                     >
-                      Đã hoàn thành
+                      Làm lại
                     </Button>
                   )}
                 </CardFooter>

@@ -26,7 +26,6 @@ export default function CourseDetailPage() {
   useEffect(() => {
     if (typeof window === 'undefined' || !courseId) return;
     
-    // Only run this once on initial load
     if (initialLoadDone.current) return;
 
     if (localStorage.getItem('mockDataVersion') !== mockDataVersion) {

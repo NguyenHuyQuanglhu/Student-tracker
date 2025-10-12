@@ -20,7 +20,6 @@ const initialProfileData = {
     gender: "Nam",
     dob: "03 tháng 03, 2004",
     phone: "+84 588 845 537",
-    name: "Capybara"
 };
 
 export default function ProfilePage() {
@@ -131,7 +130,7 @@ export default function ProfilePage() {
                                 {tempAvatarImageUrl && (
                                      <AvatarImage src={tempAvatarImageUrl} alt="User Avatar" />
                                 )}
-                                <AvatarFallback>{formData.name.charAt(0)}</AvatarFallback>
+                                <AvatarFallback>{formData.fullName.charAt(0)}</AvatarFallback>
                             </Avatar>
                              {isEditing && (
                                 <>
@@ -158,23 +157,7 @@ export default function ProfilePage() {
                 </div>
 
               <CardContent className="pt-20 px-6 pb-6">
-                 <div className="grid grid-cols-3 gap-4 items-center mb-8">
-                     <span className="text-muted-foreground col-span-1">Biệt danh</span>
-                    <div className="col-span-2">
-                        {isEditing ? (
-                            <Input
-                                name="name"
-                                value={formData.name}
-                                onChange={handleInputChange}
-                                className="h-8"
-                            />
-                        ) : (
-                            <span className="text-xl font-bold">{formData.name}</span>
-                        )}
-                    </div>
-                </div>
-
-                <div className="space-y-6">
+                <div className="space-y-6 mt-8">
                     <h2 className="text-lg font-semibold border-b pb-2">Thông tin cá nhân</h2>
                     <div className="space-y-4 text-sm">
                         {[

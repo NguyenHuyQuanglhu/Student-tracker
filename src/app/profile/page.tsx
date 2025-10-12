@@ -158,17 +158,20 @@ export default function ProfilePage() {
                 </div>
 
               <CardContent className="pt-20 px-6 pb-6">
-                 <div className="flex items-center gap-2 mb-8">
-                    {isEditing ? (
-                        <Input
-                            name="name"
-                            value={formData.name}
-                            onChange={handleInputChange}
-                            className="text-2xl font-bold h-auto p-0 border-0 shadow-none focus-visible:ring-0"
-                        />
-                    ) : (
-                        <h1 className="text-2xl font-bold">{formData.name}</h1>
-                    )}
+                 <div className="grid grid-cols-3 gap-4 items-center mb-8">
+                     <span className="text-muted-foreground col-span-1">Biệt danh</span>
+                    <div className="col-span-2">
+                        {isEditing ? (
+                            <Input
+                                name="name"
+                                value={formData.name}
+                                onChange={handleInputChange}
+                                className="h-8"
+                            />
+                        ) : (
+                            <span className="text-xl font-bold">{formData.name}</span>
+                        )}
+                    </div>
                 </div>
 
                 <div className="space-y-6">

@@ -81,12 +81,20 @@ const calculateGrade = (score: number, completionTimeInSeconds: number, targetTi
 
 type ChartData = {
     title: string;
-    completionTime: number; // in minutes
-    targetTime: number; // in minutes
+    completionTime: number; // in seconds
+    targetTime: number; // in seconds
     score: number | null;
     grade: Grade;
     difficulty: Exercise['difficulty'];
 }
+
+const formatDuration = (seconds: number) => {
+    if (seconds < 0) seconds = 0;
+    const h = Math.floor(seconds / 3600).toString().padStart(2, '0');
+    const m = Math.floor((seconds % 3600) / 60).toString().padStart(2, '0');
+    const s = Math.floor(seconds % 60).toString().padStart(2, '0');
+    return `${h}:${m}:${s}`;
+};
 
 const ExerciseSummary = ({ data }: { data: ChartData[] }) => {
     if (data.length === 0) {
@@ -168,9 +176,9 @@ const ExerciseSummary = ({ data }: { data: ChartData[] }) => {
                         <CardTitle className="text-sm font-medium">Thời gian trung bình</CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <div className="text-2xl font-bold">{avgCompletionTime.toFixed(2)} phút</div>
+                        <div className="text-2xl font-bold">{formatDuration(avgCompletionTime)}</div>
                         <p className="text-xs text-muted-foreground">
-                            so với mục tiêu {avgTargetTime.toFixed(2)} phút
+                            so với mục tiêu {formatDuration(avgTargetTime)}
                         </p>
                     </CardContent>
                 </Card>
@@ -210,10 +218,9 @@ export function ExercisePerformanceChart() {
                 if (originalExercise && state.status === 'Đã hoàn thành' && state.completionTime !== null && state.score !== null) {
                     return { 
                         title: originalExercise.title,
-                        completionTime: parseFloat((state.completionTime / 60).toFixed(2)), // For display in minutes
-                        targetTime: parseFloat((originalExercise.targetTime / 60).toFixed(2)), // For display in minutes
+                        completionTime: state.completionTime, // in seconds
+                        targetTime: originalExercise.targetTime, // in seconds
                         score: state.score,
-                        // Pass time in SECONDS to calculateGrade
                         grade: calculateGrade(state.score, state.completionTime, originalExercise.targetTime, originalExercise.difficulty),
                         difficulty: originalExercise.difficulty,
                     };
@@ -241,7 +248,12 @@ export function ExercisePerformanceChart() {
         )
     }
 
-    const chartDisplayData = chartData.map(d => ({ ...d, shortTitle: d.title.split(' ').slice(0, 3).join(' ') + '...' }));
+    const chartDisplayData = chartData.map(d => ({ 
+        ...d, 
+        shortTitle: d.title.split(' ').slice(0, 3).join(' ') + '...',
+        completionTimeMinutes: parseFloat((d.completionTime / 60).toFixed(2)),
+        targetTimeMinutes: parseFloat((d.targetTime / 60).toFixed(2))
+    }));
 
     const difficultyColors: Record<Exercise['difficulty'], string> = {
       'Dễ': 'bg-green-100 text-green-800',
@@ -271,8 +283,8 @@ export function ExercisePerformanceChart() {
                             cursor={{ fill: 'hsl(var(--muted))' }}
                         />
                         <Legend verticalAlign="top" wrapperStyle={{ paddingBottom: '20px' }}/>
-                        <Bar yAxisId="left" dataKey="completionTime" fill="var(--color-completionTime)" name="Thời gian làm bài (phút)" />
-                        <Bar yAxisId="left" dataKey="targetTime" fill="var(--color-targetTime)" name="Thời gian mục tiêu (phút)" />
+                        <Bar yAxisId="left" dataKey="completionTimeMinutes" fill="var(--color-completionTime)" name="Thời gian làm bài (phút)" />
+                        <Bar yAxisId="left" dataKey="targetTimeMinutes" fill="var(--color-targetTime)" name="Thời gian mục tiêu (phút)" />
                     </BarChart>
                 </ResponsiveContainer>
             </ChartContainer>
@@ -285,8 +297,8 @@ export function ExercisePerformanceChart() {
                             <TableRow>
                                 <TableHead>Bài tập</TableHead>
                                 <TableHead>Mức độ</TableHead>
-                                <TableHead className="text-right">Thời gian làm (phút)</TableHead>
-                                <TableHead className="text-right">Thời gian mục tiêu (phút)</TableHead>
+                                <TableHead className="text-right">Thời gian làm</TableHead>
+                                <TableHead className="text-right">Thời gian mục tiêu</TableHead>
                                 <TableHead className="text-right">Điểm (/100)</TableHead>
                                 <TableHead className="text-center">Đánh giá</TableHead>
                             </TableRow>
@@ -298,8 +310,8 @@ export function ExercisePerformanceChart() {
                                     <TableCell>
                                         <Badge className={`${difficultyColors[item.difficulty]}`}>{item.difficulty}</Badge>
                                     </TableCell>
-                                    <TableCell className="text-right">{item.completionTime.toFixed(2)}</TableCell>
-                                    <TableCell className="text-right">{item.targetTime.toFixed(2)}</TableCell>
+                                    <TableCell className="text-right">{formatDuration(item.completionTime)}</TableCell>
+                                    <TableCell className="text-right">{formatDuration(item.targetTime)}</TableCell>
                                     <TableCell className="text-right">{item.score}</TableCell>
                                     <TableCell className="text-center">
                                         <Badge className={`${gradeColors[item.grade]}`}>{item.grade}</Badge>

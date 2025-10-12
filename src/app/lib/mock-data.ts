@@ -23,14 +23,6 @@ export const softSkills = [
   { skill: 'Time Management', value: 70 },
 ];
 
-export const todoList = [
-  { id: '1', task: 'Submit IT & Software project', course: 'IT & Software', dueDate: '3 ngày', completed: false },
-  { id: '2', task: 'Complete Programming assignment', course: 'Programming', dueDate: '5 ngày', completed: false },
-  { id: '3', task: 'Networking lab report', course: 'Networking', dueDate: '1 tuần', completed: false },
-  { id: '4', task: 'Read Chapter 5', course: 'Network Security', dueDate: '2 tuần', completed: true },
-  { id: '5', task: 'Prepare presentation', course: 'Public Speaking', dueDate: '1 ngày', completed: false },
-];
-
 export type Warning = {
   id: string;
   message: string;

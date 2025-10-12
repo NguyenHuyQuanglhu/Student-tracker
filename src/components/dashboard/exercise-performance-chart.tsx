@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer } from "recharts";
-import { exercises as mockExercises, Exercise, mockDataVersion } from "@/app/lib/mock-data";
+import { exercises as mockExercises, mockDataVersion } from "@/app/lib/mock-data";
 import { ChartContainer } from "@/components/ui/chart";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 

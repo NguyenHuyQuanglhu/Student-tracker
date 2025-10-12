@@ -28,11 +28,18 @@ export default function SettingsPage() {
   const handleResetProgress = () => {
     try {
       if (typeof window !== 'undefined') {
+        // Course and exercise progress
         localStorage.removeItem('courseProgress');
         localStorage.removeItem('exerciseState');
+        
+        // Dynamic data
         localStorage.removeItem('dynamicWarnings');
-        localStorage.removeItem('skillMastery'); // Also clear skill mastery
+        localStorage.removeItem('skillMastery');
 
+        // Profile customizations
+        localStorage.removeItem('profileAvatarUrl');
+        localStorage.removeItem('profileCoverUrl');
+        
         toast({
           title: "Thành công!",
           description: "Toàn bộ tiến trình đã được đặt lại. Đang tải lại trang...",
@@ -43,6 +50,7 @@ export default function SettingsPage() {
         window.dispatchEvent(new CustomEvent('exerciseStateChanged'));
         window.dispatchEvent(new CustomEvent('warningsChanged'));
         window.dispatchEvent(new CustomEvent('skillMasteryChanged'));
+        window.dispatchEvent(new CustomEvent('profileImageChanged')); // For header/profile avatar
 
         // Reload the page to ensure all components reset from a clean state
         setTimeout(() => {

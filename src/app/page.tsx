@@ -1,6 +1,6 @@
 import { DashboardSidebar } from "@/components/dashboard/sidebar";
 import { EarlyWarnings } from "@/components/dashboard/early-warnings";
-import { ExerciseSuggestions } from "@/components/dashboard/exercise-suggestions";
+// import { ExerciseSuggestions } from "@/components/dashboard/exercise-suggestions";
 import { ProgressOverview } from "@/components/dashboard/progress-overview";
 import { SoftSkillsDashboard } from "@/components/dashboard/soft-skills";
 import { TodoList } from "@/components/dashboard/todo-list";
@@ -28,7 +28,7 @@ export default function Home() {
               <div className="lg:col-span-2">
                 <TodoList />
               </div>
-              <ExerciseSuggestions />
+              {/* <ExerciseSuggestions /> */}
             </div>
           </div>
         </main>

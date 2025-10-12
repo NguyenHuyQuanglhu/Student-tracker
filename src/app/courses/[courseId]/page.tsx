@@ -101,7 +101,7 @@ export default function CourseDetailPage() {
                     <Button
                       disabled
                     >
-                      Hoàn thành
+                      Đang học
                     </Button>
                   </div>
                 </div>

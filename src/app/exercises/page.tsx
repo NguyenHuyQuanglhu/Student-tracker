@@ -105,7 +105,7 @@ export default function ExercisesPage() {
         ...storedState[exerciseId],
         status: 'Đã hoàn thành',
         completionTime,
-        score: exercise.score ?? Math.floor(Math.random() * 31) + 70, // Assign random score
+        score: exercise.score ?? Math.floor(Math.random() * 50), // Assign random score below 50
       };
       sessionStorage.setItem('exerciseState', JSON.stringify(storedState));
       window.dispatchEvent(new CustomEvent('exerciseStateChanged'));

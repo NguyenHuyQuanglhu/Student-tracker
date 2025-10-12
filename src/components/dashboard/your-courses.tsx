@@ -26,13 +26,13 @@ export function YourCourses() {
             }
             
             const completedCourses = JSON.parse(sessionStorage.getItem('completedCourses') || '[]');
-            const activeCourses = JSON.parse(sessionStorage.getItem('activeCourses') || '[]');
+            const activeCoursesSession = JSON.parse(sessionStorage.getItem('activeCourses') || '[]');
             
             const updatedCourses = courseData.map(course => {
                 if (completedCourses.includes(course.id)) {
                     return { ...course, progress: 100, status: 'Finished' as CourseStatus };
                 }
-                if (activeCourses.includes(course.id)) {
+                if (activeCoursesSession.includes(course.id)) {
                     const newProgress = course.progress === 0 ? 10 : course.progress;
                     return { ...course, status: 'Active' as CourseStatus, progress: newProgress };
                 }
@@ -57,9 +57,14 @@ export function YourCourses() {
 
   return (
     <div>
-        <h3 className="text-xl font-bold mb-4">Các khóa học của bạn</h3>
+        <div className="flex justify-between items-center mb-4">
+            <h3 className="text-xl font-bold">Các khóa học của bạn</h3>
+            <Link href="/courses">
+                <Button variant="link">Xem tất cả</Button>
+            </Link>
+        </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {activeCourses.map((course) => {
+            {activeCourses.slice(0, 4).map((course) => {
                 const progress = course.progress;
                 return (
                     <Link href={`/courses/${course.id}`} key={course.id} className="no-underline">

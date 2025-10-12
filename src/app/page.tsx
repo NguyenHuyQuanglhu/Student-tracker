@@ -21,14 +21,14 @@ export default function Home() {
                 <ProgressOverview />
               </div>
               <div className="flex flex-col gap-6">
-                <SoftSkillsDashboard />
+                <AcademicWarnings />
               </div>
             </div>
             <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
               <div className="lg:col-span-2">
                 <TodoList />
               </div>
-               <AcademicWarnings />
+               <SoftSkillsDashboard />
             </div>
           </div>
         </main>

@@ -54,5 +54,23 @@ export const courseData = [
 
 export type Status = 'inProgress' | 'completed' | 'notStarted';
 
+export type Exercise = {
+  id: string;
+  title: string;
+  course: string;
+  difficulty: 'Dễ' | 'Trung bình' | 'Khó';
+  status: 'Đã hoàn thành' | 'Đang làm' | 'Chưa bắt đầu';
+};
+
+export const exercises: Exercise[] = [
+  { id: 'ex1', title: 'Viết thuật toán sắp xếp nổi bọt', course: 'Programming', difficulty: 'Dễ', status: 'Chưa bắt đầu' },
+  { id: 'ex2', title: 'Xây dựng một API RESTful đơn giản', course: 'IT & Software', difficulty: 'Trung bình', status: 'Chưa bắt đầu' },
+  { id: 'ex3', title: 'Triển khai danh sách liên kết kép', course: 'Data Structures', difficulty: 'Trung bình', status: 'Chưa bắt đầu' },
+  { id: 'ex4', title: 'Cấu hình một mạng con đơn giản', course: 'Networking', difficulty: 'Dễ', status: 'Chưa bắt đầu' },
+  { id: 'ex5', title: 'Tấn công SQL Injection và cách phòng chống', course: 'Network Security', difficulty: 'Khó', status: 'Chưa bắt đầu' },
+  { id: 'ex6', title: 'Xây dựng mô hình hồi quy tuyến tính', course: 'Machine Learning', difficulty: 'Khó', status: 'Chưa bắt đầu' },
+];
+
+
 // Add a version to the mock data
-export const mockDataVersion = '1.3';
+export const mockDataVersion = '1.4';

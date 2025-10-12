@@ -52,9 +52,6 @@ export default function ExercisesPage() {
   const updateExerciseStates = () => {
     if (typeof window === 'undefined') return;
 
-    // Reset exercise state on load to ensure clean start
-    sessionStorage.removeItem('exerciseState');
-
     const storedState = JSON.parse(sessionStorage.getItem('exerciseState') || '{}');
     
     // Integrity check for mock data consistency
@@ -78,7 +75,6 @@ export default function ExercisesPage() {
   };
 
   useEffect(() => {
-    // Initial state setup and listener registration
     updateExerciseStates();
     window.addEventListener('exerciseStateChanged', updateExerciseStates);
     
@@ -89,13 +85,9 @@ export default function ExercisesPage() {
 
   const handleStartExercise = (exerciseId: string) => {
     const storedState = JSON.parse(sessionStorage.getItem('exerciseState') || '{}');
-    const exercise = exercises.find(ex => ex.id === exerciseId);
+    const exerciseState = storedState[exerciseId];
 
-    if (exercise && exercise.status !== 'Đang làm') {
-        if(exercise.status === 'Đã hoàn thành') {
-            delete storedState[exerciseId];
-        }
-
+    if (!exerciseState || exerciseState.status !== 'Đang làm') {
         storedState[exerciseId] = {
             status: 'Đang làm',
             startTime: Date.now(),
@@ -117,7 +109,7 @@ export default function ExercisesPage() {
         ...exerciseState,
         status: 'Đã hoàn thành',
         completionTime: completionTime,
-        score: Math.floor(Math.random() * 71) + 30, // Assign random score between 30 and 100
+        score: Math.floor(Math.random() * 71) + 30,
       };
       sessionStorage.setItem('exerciseState', JSON.stringify(storedState));
       window.dispatchEvent(new CustomEvent('exerciseStateChanged'));

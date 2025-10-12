@@ -41,19 +41,21 @@ export function ProgressOverview() {
 
   useEffect(() => {
     const updateStats = () => {
-        const completedCourses = JSON.parse(sessionStorage.getItem('completedCourses') || '[]');
-        const updatedCourses = courseData.map(course => {
-            if (completedCourses.includes(course.id)) {
-                return { ...course, progress: 100 };
-            }
-            return course;
-        });
-        setInternalCourseData(updatedCourses);
+        if (typeof window !== 'undefined') {
+            const completedCourses = JSON.parse(sessionStorage.getItem('completedCourses') || '[]');
+            const updatedCourses = courseData.map(course => {
+                if (completedCourses.includes(course.id)) {
+                    return { ...course, progress: 100 };
+                }
+                return course;
+            });
+            setInternalCourseData(updatedCourses);
+        }
     }
     
     updateStats();
 
-    const handleStorageChange = () => {
+    const handleStorageChange = (event: Event) => {
         updateStats();
     };
 

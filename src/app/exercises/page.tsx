@@ -136,7 +136,7 @@ export default function ExercisesPage() {
       }
 
       // Check for finishing too fast warning, independently of the score
-      if ((originalExercise.difficulty === 'Trung bình' || originalExercise.difficulty === 'Khó') && completionTime <= 300) { // Less than or equal to 5 minutes
+      if ((originalExercise.difficulty === 'Trung bình' || originalExercise.difficulty === 'Khó') && completionTime < 1500) { // Less than 25 minutes
          addDynamicWarning({
           id: `too-fast-${exerciseId}`,
           message: `Bạn đã hoàn thành bài tập khó "${originalExercise.title}" quá nhanh. Hãy chắc chắn rằng bạn đã hiểu kỹ.`

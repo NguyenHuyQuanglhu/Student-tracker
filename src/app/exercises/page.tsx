@@ -97,15 +97,15 @@ export default function ExercisesPage() {
 
   const handleSubmitExercise = (exerciseId: string) => {
     const storedState = JSON.parse(sessionStorage.getItem('exerciseState') || '{}');
-    const exercise = exercises.find(ex => ex.id === exerciseId);
+    const exerciseState = storedState[exerciseId];
     
-    if (exercise && exercise.status === 'Đang làm' && exercise.startTime) {
-      const completionTime = Math.floor((Date.now() - exercise.startTime) / 1000);
+    if (exerciseState && exerciseState.status === 'Đang làm' && exerciseState.startTime) {
+      const completionTime = Math.floor((Date.now() - exerciseState.startTime) / 1000);
       storedState[exerciseId] = {
-        ...storedState[exerciseId],
+        ...exerciseState,
         status: 'Đã hoàn thành',
-        completionTime,
-        score: exercise.score ?? Math.floor(Math.random() * 71) + 30, // Assign random score between 30 and 100
+        completionTime: completionTime,
+        score: Math.floor(Math.random() * 71) + 30, // Assign random score between 30 and 100
       };
       sessionStorage.setItem('exerciseState', JSON.stringify(storedState));
       window.dispatchEvent(new CustomEvent('exerciseStateChanged'));
@@ -135,16 +135,20 @@ export default function ExercisesPage() {
                    {exercise.status === 'Đang làm' && exercise.startTime && (
                      <ExerciseTimer startTime={exercise.startTime} />
                    )}
-                   {exercise.status === 'Đã hoàn thành' && exercise.completionTime !== null && (
+                   {exercise.status === 'Đã hoàn thành' && (
                       <div className="flex flex-col space-y-2">
-                        <div className="flex items-center text-sm text-muted-foreground mt-2">
-                          <Timer className="w-4 h-4 mr-1" />
-                          <span>Thời gian hoàn thành: {formatDuration(exercise.completionTime)}</span>
-                        </div>
-                        <div className="flex items-center text-sm text-muted-foreground mt-1">
-                          <CheckCircle2 className="w-4 h-4 mr-1" />
-                          <span>Điểm: {exercise.score}/100</span>
-                        </div>
+                        {exercise.completionTime !== null && (
+                          <div className="flex items-center text-sm text-muted-foreground mt-2">
+                            <Timer className="w-4 h-4 mr-1" />
+                            <span>Thời gian hoàn thành: {formatDuration(exercise.completionTime)}</span>
+                          </div>
+                        )}
+                        {exercise.score !== null && (
+                          <div className="flex items-center text-sm text-muted-foreground mt-1">
+                            <CheckCircle2 className="w-4 h-4 mr-1" />
+                            <span>Điểm: {exercise.score}/100</span>
+                          </div>
+                        )}
                       </div>
                    )}
                 </CardContent>

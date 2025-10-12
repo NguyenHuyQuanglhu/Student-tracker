@@ -34,7 +34,8 @@ export default function CourseDetailPage() {
     isLearningRef.current = isLearning;
   }, [isLearning]);
   
-  const loadCourseState = () => {
+  // Load state from localStorage only once on component mount
+  useEffect(() => {
     if (typeof window === 'undefined' || !courseId) return;
 
     if (localStorage.getItem('mockDataVersion') !== mockDataVersion) {
@@ -55,28 +56,18 @@ export default function CourseDetailPage() {
     setProgress(courseState.progress);
     setStatus(courseState.status);
     setIsLearning(courseState.isLearning);
-  };
-
-  const saveCourseState = (newProgress: number, newStatus: string, newIsLearning: boolean) => {
-      if (typeof window === 'undefined' || !courseId) return;
-      const progressState = JSON.parse(localStorage.getItem('courseProgress') || '{}');
-      progressState[courseId] = { progress: newProgress, status: newStatus, isLearning: newIsLearning };
-      localStorage.setItem('courseProgress', JSON.stringify(progressState));
-      window.dispatchEvent(new CustomEvent('courseStateChanged'));
-  };
-
-  useEffect(() => {
-    loadCourseState();
-    
-    const handleStateChange = () => loadCourseState();
-    window.addEventListener('courseStateChanged', handleStateChange);
-    
-    return () => {
-        window.removeEventListener('courseStateChanged', handleStateChange);
-        saveCourseState(progressRef.current, statusRef.current ?? 'Paused', false);
-    };
   }, [courseId]);
 
+  // Save state to localStorage whenever it changes
+  useEffect(() => {
+      if (typeof window === 'undefined' || !courseId) return;
+      const progressState = JSON.parse(localStorage.getItem('courseProgress') || '{}');
+      progressState[courseId] = { progress: progress, status: status, isLearning: isLearning };
+      localStorage.setItem('courseProgress', JSON.stringify(progressState));
+      window.dispatchEvent(new CustomEvent('courseStateChanged'));
+  }, [progress, status, isLearning, courseId]);
+
+  // Handle learning progress simulation
   useEffect(() => {
     let timer: NodeJS.Timeout | undefined;
 
@@ -87,7 +78,6 @@ export default function CourseDetailPage() {
           if (newProgress === 100) {
             setIsLearning(false);
             setStatus('Finished');
-            saveCourseState(100, 'Finished', false);
             if (timer) clearInterval(timer);
           }
           return newProgress;
@@ -100,6 +90,18 @@ export default function CourseDetailPage() {
     };
   }, [isLearning, progress]);
 
+  // Final save on unmount
+  useEffect(() => {
+    return () => {
+        if (typeof window !== 'undefined' && courseId) {
+            const progressState = JSON.parse(localStorage.getItem('courseProgress') || '{}');
+            progressState[courseId] = { progress: progressRef.current, status: statusRef.current, isLearning: false }; // Always set isLearning to false on unmount
+            localStorage.setItem('courseProgress', JSON.stringify(progressState));
+            window.dispatchEvent(new CustomEvent('courseStateChanged'));
+        }
+    };
+  }, [courseId]);
+
 
   if (!course) {
     return null;
@@ -109,7 +111,6 @@ export default function CourseDetailPage() {
     setIsLearning(false);
     setProgress(100);
     setStatus('Finished');
-    saveCourseState(100, 'Finished', false);
   };
 
   const handleStartCourse = () => {
@@ -118,17 +119,13 @@ export default function CourseDetailPage() {
 
     if (status === 'Finished') { 
         newProgress = 1;
-    } else if (progress > 0) {
-        // Just continue, don't reset progress
-        newProgress = progress;
-    } else { // progress is 0
+    } else if (progress === 0) {
         newProgress = 1;
     }
     
     setProgress(newProgress);
     setStatus(newStatus);
     setIsLearning(true);
-    saveCourseState(newProgress, newStatus, true);
   };
 
 

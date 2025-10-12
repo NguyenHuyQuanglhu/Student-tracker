@@ -43,6 +43,7 @@ export const courseData = [
     { id: "it-software", name: "IT & Software", progress: 25, status: "Active" as CourseStatus, category: "Môn học" as CourseCategory, imageSeed: "course1" },
     { id: "programming", name: "Programming", progress: 75, status: "Active" as CourseStatus, category: "Môn học" as CourseCategory, imageSeed: "course2" },
     { id: "networking", name: "Networking", progress: 50, status: "Active" as CourseStatus, category: "Môn học" as CourseCategory, imageSeed: "course3" },
+    { id: "network-security", name: "Network Security", progress: 0, status: "Paused" as CourseStatus, category: "Môn học" as CourseCategory, imageSeed: "course4" },
     { id: "public-speaking", name: "Public Speaking", progress: 25, status: "Active" as CourseStatus, category: "Kỹ năng" as CourseCategory, imageSeed: "course5" },
     { id: "leadership", name: "Leadership", progress: 50, status: "Active" as CourseStatus, category: "Kỹ năng" as CourseCategory, imageSeed: "course6" },
 ];

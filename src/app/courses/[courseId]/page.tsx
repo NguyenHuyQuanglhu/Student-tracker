@@ -115,9 +115,9 @@ export default function CourseDetailPage() {
   
     let startProgress = progress;
   
-    // If it's a finished course (Môn học OR Kỹ năng), restart it from 1.
+    // If it's a finished course (Môn học OR Kỹ năng), restart it from 0.
     if (status === 'Finished') {
-      startProgress = 1;
+      startProgress = 0;
     // Rule: If it's a new course, start from 1.
     } else if (progress === 0) {
       startProgress = 1;
@@ -154,6 +154,7 @@ export default function CourseDetailPage() {
   };
 
   const isCompleted = status === 'Finished';
+  const isSkillCourse = course.category === 'Kỹ năng';
 
   return (
     <div className="flex min-h-screen w-full flex-col">
@@ -195,7 +196,7 @@ export default function CourseDetailPage() {
                          Tạm dừng
                        </Button>
                     ) : (
-                       <Button onClick={handleStartCourse}>
+                       <Button onClick={handleStartCourse} disabled={isCompleted && isSkillCourse}>
                          {getButtonText()}
                        </Button>
                     )}
@@ -209,4 +210,3 @@ export default function CourseDetailPage() {
     </div>
   );
 }
-

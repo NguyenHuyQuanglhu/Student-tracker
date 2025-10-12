@@ -5,6 +5,18 @@
       "description": "User avatar placeholder",
       "imageUrl": "https://picsum.photos/seed/avatar1/100/100",
       "imageHint": "person portrait"
+    },
+    {
+      "id": "profile-cover",
+      "description": "Profile cover image with a hamster lifting weights",
+      "imageUrl": "https://picsum.photos/seed/hamster-lift/800/300",
+      "imageHint": "hamster gym"
+    },
+    {
+      "id": "profile-avatar",
+      "description": "Capybara cartoon avatar for profile",
+      "imageUrl": "https://picsum.photos/seed/capybara-avatar/128/128",
+      "imageHint": "capybara cartoon"
     }
   ]
 }

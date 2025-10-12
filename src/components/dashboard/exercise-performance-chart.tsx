@@ -79,6 +79,7 @@ type ChartData = {
     targetTime: number;
     score: number | null;
     grade: Grade;
+    difficulty: Exercise['difficulty'];
 }
 
 const ExerciseSummary = ({ data }: { data: ChartData[] }) => {
@@ -193,6 +194,7 @@ export function ExercisePerformanceChart() {
                         targetTime: parseFloat((originalExercise.targetTime / 60).toFixed(2)),
                         score: state.score,
                         grade: calculateGrade(state.score, state.completionTime, originalExercise.targetTime, originalExercise.difficulty),
+                        difficulty: originalExercise.difficulty,
                     };
                 }
                 return null;
@@ -219,6 +221,12 @@ export function ExercisePerformanceChart() {
     }
 
     const chartDisplayData = chartData.map(d => ({ ...d, shortTitle: d.title.split(' ').slice(0, 3).join(' ') + '...' }));
+
+    const difficultyColors: Record<Exercise['difficulty'], string> = {
+      'Dễ': 'bg-green-100 text-green-800',
+      'Trung bình': 'bg-yellow-100 text-yellow-800',
+      'Khó': 'bg-red-100 text-red-800',
+    };
 
     return (
         <div className="space-y-6">
@@ -255,6 +263,7 @@ export function ExercisePerformanceChart() {
                         <TableHeader>
                             <TableRow>
                                 <TableHead>Bài tập</TableHead>
+                                <TableHead>Mức độ</TableHead>
                                 <TableHead className="text-right">Thời gian làm (phút)</TableHead>
                                 <TableHead className="text-right">Thời gian mục tiêu (phút)</TableHead>
                                 <TableHead className="text-right">Điểm (/100)</TableHead>
@@ -265,6 +274,9 @@ export function ExercisePerformanceChart() {
                             {chartData.map((item, index) => (
                                 <TableRow key={index}>
                                     <TableCell className="font-medium">{item.title}</TableCell>
+                                    <TableCell>
+                                        <Badge className={`${difficultyColors[item.difficulty]}`}>{item.difficulty}</Badge>
+                                    </TableCell>
                                     <TableCell className="text-right">{item.completionTime.toFixed(2)}</TableCell>
                                     <TableCell className="text-right">{item.targetTime.toFixed(2)}</TableCell>
                                     <TableCell className="text-right">{item.score}</TableCell>

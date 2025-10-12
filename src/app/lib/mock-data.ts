@@ -44,14 +44,17 @@ export const courseData = [
     { id: "programming", name: "Programming", progress: 75, status: "Active" as CourseStatus, category: "Môn học" as CourseCategory, imageSeed: "course2" },
     { id: "networking", name: "Networking", progress: 50, status: "Active" as CourseStatus, category: "Môn học" as CourseCategory, imageSeed: "course3" },
     { id: "network-security", name: "Network Security", progress: 100, status: "Finished" as CourseStatus, category: "Môn học" as CourseCategory, imageSeed: "course4" },
-    { id: "public-speaking", name: "Public Speaking", progress: 25, status: "Active" as CourseStatus, category: "Kỹ năng" as CourseCategory, imageSeed: "course5" },
-    { id: "leadership", name: "Leadership", progress: 50, status: "Active" as CourseStatus, category: "Kỹ năng" as CourseCategory, imageSeed: "course6" },
-    { id: "teamwork", name: "Teamwork", progress: 75, status: "Active" as CourseStatus, category: "Kỹ năng" as CourseCategory, imageSeed: "course7" },
     { id: "data-structures", name: "Cấu trúc dữ liệu & Thuật toán", progress: 0, status: "Active" as CourseStatus, category: "Môn học" as CourseCategory, imageSeed: "course8" },
     { id: "web-development", name: "Phát triển Web", progress: 0, status: "Active" as CourseStatus, category: "Môn học" as CourseCategory, imageSeed: "course9" },
     { id: "python-programming", name: "Lập trình Python", progress: 0, status: "Active" as CourseStatus, category: "Môn học" as CourseCategory, imageSeed: "course10" },
     { id: "mobile-development", name: "Phát triển di động", progress: 0, status: "Active" as CourseStatus, category: "Môn học" as CourseCategory, imageSeed: "course11" },
     { id: "cloud-computing", name: "Điện toán đám mây", progress: 0, status: "Active" as CourseStatus, category: "Môn học" as CourseCategory, imageSeed: "course12" },
+    { id: "public-speaking", name: "Public Speaking", progress: 25, status: "Active" as CourseStatus, category: "Kỹ năng" as CourseCategory, imageSeed: "course5" },
+    { id: "leadership", name: "Leadership", progress: 50, status: "Active" as CourseStatus, category: "Kỹ năng" as CourseCategory, imageSeed: "course6" },
+    { id: "teamwork", name: "Teamwork", progress: 75, status: "Active" as CourseStatus, category: "Kỹ năng" as CourseCategory, imageSeed: "course7" },
+    { id: "time-management", name: "Time Management", progress: 0, status: "Active" as CourseStatus, category: "Kỹ năng" as CourseCategory, imageSeed: "course13" },
+    { id: "problem-solving", name: "Problem Solving", progress: 0, status: "Active" as CourseStatus, category: "Kỹ năng" as CourseCategory, imageSeed: "course14" },
+    { id: "critical-thinking", name: "Critical Thinking", progress: 0, status: "Active" as CourseStatus, category: "Kỹ năng" as CourseCategory, imageSeed: "course15" },
 ];
 
 export type Status = 'inProgress' | 'completed' | 'notStarted';

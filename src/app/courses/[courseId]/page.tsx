@@ -68,6 +68,7 @@ export default function CourseDetailPage() {
     
     return () => {
         window.removeEventListener('courseStateChanged', handleStateChange);
+        saveCourseState(progressRef.current, progressRef.current === 100 ? 'Finished' : 'Active', false);
     };
   }, [courseId]);
 
@@ -89,19 +90,10 @@ export default function CourseDetailPage() {
       }, 2000);
     }
     
-    const handleBeforeUnload = () => {
-        if (isLearningRef.current) {
-            saveCourseState(progressRef.current, 'Active', false);
-        }
-    };
-    
-    window.addEventListener('beforeunload', handleBeforeUnload);
-
     return () => {
       if (timer) clearInterval(timer);
-      window.removeEventListener('beforeunload', handleBeforeUnload);
     };
-  }, [isLearning, courseId]);
+  }, [isLearning]);
 
 
   if (!course) {

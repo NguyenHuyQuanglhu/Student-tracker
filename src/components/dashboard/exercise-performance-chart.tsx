@@ -21,7 +21,7 @@ const chartConfig = {
 };
 
 export function ExercisePerformanceChart() {
-    const [exercises, setExercises] = useState<Exercise[]>(mockExercises);
+    const [chartData, setChartData] = useState<any[]>([]);
 
     const updateChartData = () => {
         if (typeof window === 'undefined') return;
@@ -33,16 +33,23 @@ export function ExercisePerformanceChart() {
         
         const storedState = JSON.parse(sessionStorage.getItem('exerciseState') || '{}');
 
-        const updatedExercises = mockExercises.map(ex => {
-            const state = storedState[ex.id];
-            if (state) {
-                return { ...ex, ...state };
-            }
-            // If not in session, use original mock data state
-            const originalExercise = mockExercises.find(mockEx => mockEx.id === ex.id)!;
-            return { ...originalExercise };
-        });
-        setExercises(updatedExercises);
+        const completedExercises = mockExercises
+            .map(ex => {
+                const state = storedState[ex.id];
+                if (state && state.status === 'Đã hoàn thành' && state.completionTime !== null && state.completionTime > 0) {
+                    return { 
+                        ...ex, 
+                        ...state,
+                        title: ex.title.split(' ').slice(0, 3).join(' ') + '...', // Shorten title
+                        completionTime: parseFloat((state.completionTime / 60).toFixed(2)), // to minutes from state
+                        targetTime: parseFloat((ex.targetTime / 60).toFixed(2)), // to minutes from mock
+                    };
+                }
+                return null;
+            })
+            .filter(Boolean);
+        
+        setChartData(completedExercises as any[]);
     };
 
     useEffect(() => {
@@ -52,17 +59,8 @@ export function ExercisePerformanceChart() {
             window.removeEventListener('exerciseStateChanged', updateChartData);
         };
     }, []);
-
-    const completedExercises = exercises
-        .filter(ex => ex.status === 'Đã hoàn thành' && ex.completionTime !== null && ex.completionTime > 0)
-        .map(ex => ({
-            ...ex,
-            title: ex.title.split(' ').slice(0, 3).join(' ') + '...', // Shorten title
-            completionTime: parseFloat((ex.completionTime! / 60).toFixed(2)), // to minutes
-            targetTime: parseFloat((ex.targetTime / 60).toFixed(2)), // to minutes
-        }));
     
-    if (completedExercises.length === 0) {
+    if (chartData.length === 0) {
         return (
             <div className="flex items-center justify-center h-60">
                 <p className="text-muted-foreground">Chưa có bài tập nào được hoàn thành để hiển thị thống kê.</p>
@@ -73,7 +71,7 @@ export function ExercisePerformanceChart() {
     return (
         <ChartContainer config={chartConfig} className="min-h-[300px] w-full">
             <ResponsiveContainer width="100%" height={300}>
-                <BarChart data={completedExercises} margin={{ top: 5, right: 20, left: 20, bottom: 50 }}>
+                <BarChart data={chartData} margin={{ top: 5, right: 20, left: 20, bottom: 50 }}>
                     <CartesianGrid strokeDasharray="3 3" />
                     <XAxis 
                         dataKey="title" 

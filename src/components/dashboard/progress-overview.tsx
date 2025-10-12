@@ -4,7 +4,7 @@
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import { ChartContainer } from "@/components/ui/chart";
 import { courseData, mockDataVersion } from "@/app/lib/mock-data";
-import { PieChart, Pie, Cell } from "recharts";
+import { PieChart, Pie, Cell, Tooltip } from "recharts";
 import { useEffect, useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ExercisePerformanceChart } from "./exercise-performance-chart";
@@ -164,6 +164,8 @@ export function ProgressOverview() {
     { name: 'Chưa bắt đầu', value: allCoursesStats.notStarted, fill: statusColors.notStarted },
   ].filter(item => item.value > 0);
 
+  const tooltipFormatter = (value: number, name: string) => [`${value} khóa`, name];
+
   return (
     <Card className="h-full">
       <CardHeader>
@@ -187,6 +189,11 @@ export function ProgressOverview() {
                         </div>
                         <ChartContainer config={chartConfig} className="min-h-[150px] w-full mt-4 mx-auto">
                             <PieChart accessibilityLayer >
+                                <Tooltip
+                                  cursor={{ fill: 'hsl(var(--muted))' }}
+                                  contentStyle={{ backgroundColor: 'hsl(var(--background))' }}
+                                  formatter={tooltipFormatter}
+                                />
                                 <Pie data={allCoursesStatusData} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={60} >
                                     {allCoursesStatusData.map((entry, index) => (
                                         <Cell key={`cell-${index}`} fill={entry.fill} />
@@ -202,6 +209,11 @@ export function ProgressOverview() {
                         </div>
                         <ChartContainer config={{}} className="min-h-[150px] w-full mt-4 mx-auto">
                             <PieChart accessibilityLayer >
+                                <Tooltip
+                                  cursor={{ fill: 'hsl(var(--muted))' }}
+                                  contentStyle={{ backgroundColor: 'hsl(var(--background))' }}
+                                  formatter={tooltipFormatter}
+                                />
                                 <Pie data={subjectStatusData} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={60} >
                                     {subjectStatusData.map((entry, index) => (
                                         <Cell key={`cell-${index}`} fill={entry.fill} />
@@ -217,6 +229,11 @@ export function ProgressOverview() {
                         </div>
                         <ChartContainer config={chartConfig} className="min-h-[150px] w-full mt-4 mx-auto">
                             <PieChart accessibilityLayer >
+                                <Tooltip
+                                  cursor={{ fill: 'hsl(var(--muted))' }}
+                                  contentStyle={{ backgroundColor: 'hsl(var(--background))' }}
+                                  formatter={tooltipFormatter}
+                                />
                                 <Pie data={skillStatusData} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={60} >
                                     {skillStatusData.map((entry, index) => (
                                         <Cell key={`cell-${index}`} fill={entry.fill} />

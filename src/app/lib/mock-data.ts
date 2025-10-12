@@ -1,3 +1,4 @@
+
 export const user = {
   name: 'Alex Doe',
   email: 'alex.doe@university.edu',
@@ -30,20 +31,21 @@ export type Warning = {
 
 export const warnings: Warning[] = [];
 
-export type CourseStatus = 'Active' | 'Finished' | 'Paused';
+export type CourseStatus = 'Active' | 'Finished';
 export type CourseCategory = 'Môn học' | 'Kỹ năng';
 
 export const courseData = [
-    { id: "it-software", name: "IT & Software", progress: 0, status: "Paused" as CourseStatus, category: "Môn học" as CourseCategory, imageSeed: "course1", targetHours: 20 },
-    { id: "programming", name: "Programming", progress: 0, status: "Paused" as CourseStatus, category: "Môn học" as CourseCategory, imageSeed: "course2", targetHours: 30 },
-    { id: "networking", name: "Networking", progress: 0, status: "Paused" as CourseStatus, category: "Môn học" as CourseCategory, imageSeed: "course3", targetHours: 25 },
-    { id: "network-security", name: "Network Security", progress: 0, status: "Paused" as CourseStatus, category: "Môn học" as CourseCategory, imageSeed: "course4", targetHours: 35 },
-    { id: "data-structures", name: "Data Structures", progress: 0, status: "Paused" as CourseStatus, category: "Môn học" as CourseCategory, imageSeed: "course7", targetHours: 40 },
-    { id: "machine-learning", name: "Machine Learning", progress: 0, status: "Paused" as CourseStatus, category: "Môn học" as CourseCategory, imageSeed: "course8", targetHours: 50 },
-    { id: "public-speaking", name: "Public Speaking", progress: 0, status: "Paused" as CourseStatus, category: "Kỹ năng" as CourseCategory, imageSeed: "course5", targetHours: 15 },
-    { id: "leadership", name: "Leadership", progress: 0, status: "Paused" as CourseStatus, category: "Kỹ năng" as CourseCategory, imageSeed: "course6", targetHours: 10 },
-    { id: "project-management", name: "Project Management", progress: 0, status: "Paused" as CourseStatus, category: "Kỹ năng" as CourseCategory, imageSeed: "course9", targetHours: 20 },
-    { id: "critical-thinking", name: "Critical Thinking", progress: 0, status: "Paused" as CourseStatus, category: "Kỹ năng" as CourseCategory, imageSeed: "course10", targetHours: 12 }
+    { id: "it-software", name: "IT & Software", progress: 0, status: "Active" as CourseStatus, category: "Môn học" as CourseCategory, imageSeed: "course1", targetHours: 20 },
+    { id: "programming", name: "Programming", progress: 0, status: "Active" as CourseStatus, category: "Môn học" as CourseCategory, imageSeed: "course2", targetHours: 30 },
+    { id: "networking", name: "Networking", progress: 0, status: "Active" as CourseStatus, category: "Môn học" as CourseCategory, imageSeed: "course3", targetHours: 25 },
+    { id: "network-security", name: "Network Security", progress: 0, status: "Active" as CourseStatus, category: "Môn học" as CourseCategory, imageSeed: "course4", targetHours: 35 },
+    { id: "data-structures", name: "Data Structures", progress: 0, status: "Active" as CourseStatus, category: "Môn học" as CourseCategory, imageSeed: "course7", targetHours: 40 },
+    { id: "machine-learning", name: "Machine Learning", progress: 0, status: "Active" as CourseStatus, category: "Môn học" as CourseCategory, imageSeed: "course8", targetHours: 50 },
+    { id: "public-speaking", name: "Public Speaking", progress: 0, status: "Active" as CourseStatus, category: "Kỹ năng" as CourseCategory, imageSeed: "course5", targetHours: 15 },
+    { id: "leadership", name: "Leadership", progress: 0, status: "Active" as CourseStatus, category: "Kỹ năng" as CourseCategory, imageSeed: "course6", targetHours: 10 },
+    { id: "project-management", name: "Project Management", progress: 0, status: "Active" as CourseStatus, category: "Kỹ năng" as CourseCategory, imageSeed: "course9", targetHours: 20 },
+    { id: "critical-thinking", name: "Critical Thinking", progress: 0, status: "Active" as CourseStatus, category: "Kỹ năng" as CourseCategory, imageSeed: "course10", targetHours: 12 },
+    { id: "emotional-intelligence", name: "Emotional Intelligence", progress: 0, status: "Active" as CourseStatus, category: "Kỹ năng" as CourseCategory, imageSeed: "course11", targetHours: 18 }
   ];
   
 

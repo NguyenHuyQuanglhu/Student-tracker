@@ -19,13 +19,16 @@ export default function CourseDetailPage() {
   const [status, setStatus] = useState(course?.status);
   const [isLearning, setIsLearning] = useState(false);
   
-  // Use a ref to store the latest progress value for saving in cleanup
   const progressRef = useRef(progress);
   useEffect(() => {
     progressRef.current = progress;
   }, [progress]);
+
+  const isLearningRef = useRef(isLearning);
+  useEffect(() => {
+    isLearningRef.current = isLearning;
+  }, [isLearning]);
   
-  // Function to load state from sessionStorage
   const loadCourseState = () => {
     if (typeof window === 'undefined' || !courseId) return;
 
@@ -41,24 +44,22 @@ export default function CourseDetailPage() {
     }
 
     const progressState = JSON.parse(sessionStorage.getItem('courseProgress') || '{}');
-    const courseState = progressState[courseId] || { progress: targetCourse.progress, status: targetCourse.status };
+    const courseState = progressState[courseId] || { progress: targetCourse.progress, status: targetCourse.status, isLearning: false };
     
     setCourse({ ...targetCourse });
     setProgress(courseState.progress);
     setStatus(courseState.status);
-    setIsLearning(courseState.status === 'Active');
+    setIsLearning(courseState.isLearning);
   };
 
-  // Function to save state to sessionStorage
-  const saveCourseState = (newProgress: number, newStatus: string) => {
+  const saveCourseState = (newProgress: number, newStatus: string, newIsLearning: boolean) => {
       if (typeof window === 'undefined' || !courseId) return;
       const progressState = JSON.parse(sessionStorage.getItem('courseProgress') || '{}');
-      progressState[courseId] = { progress: newProgress, status: newStatus };
+      progressState[courseId] = { progress: newProgress, status: newStatus, isLearning: newIsLearning };
       sessionStorage.setItem('courseProgress', JSON.stringify(progressState));
       window.dispatchEvent(new CustomEvent('courseStateChanged'));
   };
 
-  // Load state on initial render and on courseId change
   useEffect(() => {
     loadCourseState();
     
@@ -70,7 +71,6 @@ export default function CourseDetailPage() {
     };
   }, [courseId]);
 
-  // Effect for dynamic progress increase
   useEffect(() => {
     let timer: NodeJS.Timeout | undefined;
 
@@ -81,7 +81,7 @@ export default function CourseDetailPage() {
           if (newProgress === 100) {
             setIsLearning(false);
             setStatus('Finished');
-            saveCourseState(100, 'Finished');
+            saveCourseState(100, 'Finished', false);
             if (timer) clearInterval(timer);
           }
           return newProgress;
@@ -89,12 +89,17 @@ export default function CourseDetailPage() {
       }, 2000);
     }
     
-    // Cleanup function
+    const handleBeforeUnload = () => {
+        if (isLearningRef.current) {
+            saveCourseState(progressRef.current, 'Active', false);
+        }
+    };
+    
+    window.addEventListener('beforeunload', handleBeforeUnload);
+
     return () => {
       if (timer) clearInterval(timer);
-      if (isLearning) { // Only save if it was learning
-        saveCourseState(progressRef.current, 'Active');
-      }
+      window.removeEventListener('beforeunload', handleBeforeUnload);
     };
   }, [isLearning, courseId]);
 
@@ -107,22 +112,22 @@ export default function CourseDetailPage() {
     setIsLearning(false);
     setProgress(100);
     setStatus('Finished');
-    saveCourseState(100, 'Finished');
+    saveCourseState(100, 'Finished', false);
   };
 
   const handleStartCourse = () => {
-    if (status === 'Finished') { // Restart course
+    if (status === 'Finished') { 
         const newProgress = 1;
         setProgress(newProgress);
         setStatus('Active');
         setIsLearning(true);
-        saveCourseState(newProgress, 'Active');
-    } else if (!isLearning) { // Start or resume
+        saveCourseState(newProgress, 'Active', true);
+    } else if (!isLearning) { 
         const newProgress = progress === 0 ? 1 : progress;
         setProgress(newProgress);
         setStatus('Active');
         setIsLearning(true);
-        saveCourseState(newProgress, 'Active');
+        saveCourseState(newProgress, 'Active', true);
     }
   };
 

@@ -96,7 +96,9 @@ const SidebarProvider = React.forwardRef<
     
     // This sets the cookie to keep the sidebar state.
     React.useEffect(() => {
-        document.cookie = `${SIDEBAR_COOKIE_NAME}=${open}; path=/; max-age=${SIDEBAR_COOKIE_MAX_AGE}`
+      if (typeof window !== 'undefined') {
+        document.cookie = `${SIDEBAR_COOKIE_NAME}=${open}; path=/; max-age=${SIDEBAR_COOKIE_MAX_AGE}`;
+      }
     }, [open]);
 
     // Adds a keyboard shortcut to toggle the sidebar.
@@ -765,3 +767,5 @@ export {
   SidebarTrigger,
   useSidebar,
 }
+
+    

@@ -1,0 +1,483 @@
+{
+  "entities": {
+    "Student": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Student",
+      "type": "object",
+      "description": "Represents a student in the learning management system.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the student."
+        },
+        "name": {
+          "type": "string",
+          "description": "The student's full name."
+        },
+        "email": {
+          "type": "string",
+          "description": "The student's email address.",
+          "format": "email"
+        },
+        "dateOfBirth": {
+          "type": "string",
+          "description": "The student's date of birth.",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "email"
+      ]
+    },
+    "Course": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Course",
+      "type": "object",
+      "description": "Represents a course offered in the learning management system.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the course."
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the course."
+        },
+        "description": {
+          "type": "string",
+          "description": "A description of the course content."
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "description"
+      ]
+    },
+    "Enrollment": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Enrollment",
+      "type": "object",
+      "description": "Represents a student's enrollment in a specific course.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the enrollment record."
+        },
+        "studentId": {
+          "type": "string",
+          "description": "Reference to Student. (Relationship: Student 1:N Enrollment)"
+        },
+        "courseId": {
+          "type": "string",
+          "description": "Reference to Course. (Relationship: Course 1:N Enrollment)"
+        },
+        "enrollmentDate": {
+          "type": "string",
+          "description": "The date when the student enrolled in the course.",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "id",
+        "studentId",
+        "courseId",
+        "enrollmentDate"
+      ]
+    },
+    "Assignment": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Assignment",
+      "type": "object",
+      "description": "Represents an assignment within a course.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the assignment."
+        },
+        "courseId": {
+          "type": "string",
+          "description": "Reference to Course. (Relationship: Course 1:N Assignment)"
+        },
+        "title": {
+          "type": "string",
+          "description": "The title of the assignment."
+        },
+        "dueDate": {
+          "type": "string",
+          "description": "The due date for the assignment.",
+          "format": "date-time"
+        },
+        "pointsPossible": {
+          "type": "number",
+          "description": "The maximum points possible for the assignment."
+        }
+      },
+      "required": [
+        "id",
+        "courseId",
+        "title",
+        "dueDate",
+        "pointsPossible"
+      ]
+    },
+    "Submission": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Submission",
+      "type": "object",
+      "description": "Represents a student's submission for an assignment.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the submission."
+        },
+        "studentId": {
+          "type": "string",
+          "description": "Reference to Student. (Relationship: Student 1:N Submission)"
+        },
+        "assignmentId": {
+          "type": "string",
+          "description": "Reference to Assignment. (Relationship: Assignment 1:N Submission)"
+        },
+        "submissionDate": {
+          "type": "string",
+          "description": "The date when the assignment was submitted.",
+          "format": "date-time"
+        },
+        "grade": {
+          "type": "number",
+          "description": "The grade received for the submission."
+        }
+      },
+      "required": [
+        "id",
+        "studentId",
+        "assignmentId",
+        "submissionDate"
+      ]
+    },
+    "ExerciseSuggestion": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "ExerciseSuggestion",
+      "type": "object",
+      "description": "Represents a personalized exercise suggestion for a student.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the exercise suggestion."
+        },
+        "studentId": {
+          "type": "string",
+          "description": "Reference to Student. (Relationship: Student 1:N ExerciseSuggestion)"
+        },
+        "content": {
+          "type": "string",
+          "description": "The content or description of the exercise suggestion."
+        },
+        "link": {
+          "type": "string",
+          "description": "A link to the suggested exercise resource.",
+          "format": "uri"
+        },
+        "reason": {
+          "type": "string",
+          "description": "The reason for suggesting this exercise (e.g., based on performance, learning habits)."
+        }
+      },
+      "required": [
+        "id",
+        "studentId",
+        "content",
+        "link",
+        "reason"
+      ]
+    },
+    "EarlyWarning": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "EarlyWarning",
+      "type": "object",
+      "description": "Represents an early warning indicator for a student's academic performance.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the early warning."
+        },
+        "studentId": {
+          "type": "string",
+          "description": "Reference to Student. (Relationship: Student 1:N EarlyWarning)"
+        },
+        "warningMessage": {
+          "type": "string",
+          "description": "The message of the early warning (e.g., 'Potential risk of failing')."
+        },
+        "severity": {
+          "type": "string",
+          "description": "The severity level of the warning (e.g., 'High', 'Medium', 'Low')."
+        },
+        "dateIssued": {
+          "type": "string",
+          "description": "The date when the early warning was issued.",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "id",
+        "studentId",
+        "warningMessage",
+        "severity",
+        "dateIssued"
+      ]
+    },
+    "SoftSkillAssessment": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "SoftSkillAssessment",
+      "type": "object",
+      "description": "Represents the assessment of a student's soft skills.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the soft skill assessment."
+        },
+        "studentId": {
+          "type": "string",
+          "description": "Reference to Student. (Relationship: Student 1:N SoftSkillAssessment)"
+        },
+        "teamworkScore": {
+          "type": "number",
+          "description": "The score for teamwork skills."
+        },
+        "communicationScore": {
+          "type": "number",
+          "description": "The score for communication skills."
+        },
+        "leadershipScore": {
+          "type": "number",
+          "description": "The score for leadership skills."
+        },
+        "assessmentDate": {
+          "type": "string",
+          "description": "The date when the soft skills were assessed.",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "id",
+        "studentId",
+        "teamworkScore",
+        "communicationScore",
+        "leadershipScore",
+        "assessmentDate"
+      ]
+    },
+    "Login": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Login",
+      "type": "object",
+      "description": "Stores login credentials.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the login."
+        },
+        "studentId": {
+          "type": "string",
+          "description": "Reference to Student. (Relationship: Student 1:1 Login)"
+        },
+        "lastLogin": {
+          "type": "string",
+          "description": "Date time of the last login",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "id",
+        "studentId"
+      ]
+    }
+  },
+  "auth": {
+    "providers": [
+      "password",
+      "anonymous"
+    ]
+  },
+  "firestore": {
+    "structure": [
+      {
+        "path": "/users/{userId}/student/{studentId}",
+        "definition": {
+          "entityName": "Student",
+          "schema": {
+            "$ref": "#/backend/entities/Student"
+          },
+          "description": "Stores student profile information. Enforces path-based ownership: only the user can access their own profile.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique identifier for the user (student)."
+            },
+            {
+              "name": "studentId",
+              "description": "The unique identifier for the student.  Should match userId."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/courses/{courseId}",
+        "definition": {
+          "entityName": "Course",
+          "schema": {
+            "$ref": "#/backend/entities/Course"
+          },
+          "description": "Stores course information.",
+          "params": [
+            {
+              "name": "courseId",
+              "description": "The unique identifier for the course."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/users/{userId}/enrollments/{enrollmentId}",
+        "definition": {
+          "entityName": "Enrollment",
+          "schema": {
+            "$ref": "#/backend/entities/Enrollment"
+          },
+          "description": "Stores enrollment records for students. Enforces path-based ownership: only the user can access their own enrollment records.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique identifier for the user (student)."
+            },
+            {
+              "name": "enrollmentId",
+              "description": "The unique identifier for the enrollment record."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/courses/{courseId}/assignments/{assignmentId}",
+        "definition": {
+          "entityName": "Assignment",
+          "schema": {
+            "$ref": "#/backend/entities/Assignment"
+          },
+          "description": "Stores assignments for each course.",
+          "params": [
+            {
+              "name": "courseId",
+              "description": "The unique identifier for the course."
+            },
+            {
+              "name": "assignmentId",
+              "description": "The unique identifier for the assignment."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/users/{userId}/submissions/{submissionId}",
+        "definition": {
+          "entityName": "Submission",
+          "schema": {
+            "$ref": "#/backend/entities/Submission"
+          },
+          "description": "Stores submissions made by a student. Enforces path-based ownership: only the user can access their own submissions.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique identifier for the user (student)."
+            },
+            {
+              "name": "submissionId",
+              "description": "The unique identifier for the submission."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/users/{userId}/exerciseSuggestions/{exerciseSuggestionId}",
+        "definition": {
+          "entityName": "ExerciseSuggestion",
+          "schema": {
+            "$ref": "#/backend/entities/ExerciseSuggestion"
+          },
+          "description": "Stores exercise suggestions for a student. Enforces path-based ownership: only the user can access their own suggestions.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique identifier for the user (student)."
+            },
+            {
+              "name": "exerciseSuggestionId",
+              "description": "The unique identifier for the exercise suggestion."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/users/{userId}/earlyWarnings/{earlyWarningId}",
+        "definition": {
+          "entityName": "EarlyWarning",
+          "schema": {
+            "$ref": "#/backend/entities/EarlyWarning"
+          },
+          "description": "Stores early warning data for students. Enforces path-based ownership: only the user can access their own early warnings.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique identifier for the user (student)."
+            },
+            {
+              "name": "earlyWarningId",
+              "description": "The unique identifier for the early warning."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/users/{userId}/softSkillAssessments/{softSkillAssessmentId}",
+        "definition": {
+          "entityName": "SoftSkillAssessment",
+          "schema": {
+            "$ref": "#/backend/entities/SoftSkillAssessment"
+          },
+          "description": "Stores soft skill assessment data for students. Enforces path-based ownership: only the user can access their own assessments.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique identifier for the user (student)."
+            },
+            {
+              "name": "softSkillAssessmentId",
+              "description": "The unique identifier for the soft skill assessment."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/logins/{loginId}",
+        "definition": {
+          "entityName": "Login",
+          "schema": {
+            "$ref": "#/backend/entities/Login"
+          },
+          "description": "Stores login information.",
+          "params": [
+            {
+              "name": "loginId",
+              "description": "The unique identifier for the login."
+            }
+          ]
+        }
+      }
+    ],
+    "reasoning": "The Firestore structure is designed to support the Student Hub application, focusing on visualizing student progress, providing early warnings, and suggesting personalized exercises.  It emphasizes path-based ownership for student-related data and denormalization where necessary for authorization independence. The structure avoids `get()` calls in security rules and enables secure `list` operations. The structure facilitates clear and debuggable security rules by adhering to Structural Segregation (all documents in a collection have similar security needs) and Access Modeling (consistent patterns for authorization). Specifically:\n\n*   **Students:** Student data is stored under `/users/{userId}/student`. This structure is highly secure and makes ownership-based security rules simple and efficient. This path provides the basis for all user-owned data, thus greatly simplifying security rules.\n*   **Courses:** Course data is stored in the `/courses/{courseId}` collection. This design assumes courses are globally accessible with read permissions appropriately controlled, or further access controls would need to be designed into the data model based on the nature of the permissions for the course.\n*   **Enrollments:** Enrollment data is stored under `/users/{userId}/enrollments/{enrollmentId}`.  Since enrollments are directly tied to a student, this path-based ownership enforces that only the student (or admin roles not defined in this model) can access their enrollment records.\n*   **Assignments:** Assignments are stored under `/courses/{courseId}/assignments/{assignmentId}`. Each document in this subcollection will contain the courseId.\n*   **Submissions:** Submission documents are stored under `/users/{userId}/submissions/{submissionId}`. This enforces that only the student (or admin roles not defined in this model) can access their submissions.\n*   **Exercise Suggestions:** Exercise suggestion data is stored under `/users/{userId}/exerciseSuggestions/{exerciseSuggestionId}`. This reinforces path-based ownership, ensuring only the student can access their exercise suggestions. This structure facilitates easy listing and querying of suggestions for a specific student.\n*   **Early Warnings:** Early warning data is stored under `/users/{userId}/earlyWarnings/{earlyWarningId}`. Path-based ownership ensures that only the student has direct access to their early warning data. This structure enables efficient retrieval of warnings for a given student.\n*   **Soft Skill Assessments:** Soft skill assessment data is stored under `/users/{userId}/softSkillAssessments/{softSkillAssessmentId}`. This continues the pattern of path-based ownership, ensuring student privacy and control over their assessment data.\n*   **Logins:** Login data is stored under `/logins/{loginId}`. All documents in this collection have similar security needs.\n\nThis structure ensures that all collections contain documents with the same security posture. Authorization Independence is achieved via path-based ownership which completely removes the need for `get()` calls in the Firestore rules. The design supports the required QAPs by using structural segregation, avoiding mixed data types within collections, and utilizing clear ownership patterns."
+  }
+}

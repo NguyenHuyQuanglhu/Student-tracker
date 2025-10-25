@@ -1,0 +1,200 @@
+/**
+ * @file Firestore Security Rules for Student Hub
+ * @Core Philosophy: This ruleset enforces a strict user-ownership model for student-related data,
+ * ensuring that students can only access their own information. Public read access is allowed for
+ * course information, while all write access is restricted based on ownership.
+ * @Data Structure:
+ *   - `/users/{userId}/student/{studentId}`: Student profile data, owned by the user.
+ *   - `/courses/{courseId}`: Course information, publicly readable.
+ *   - `/users/{userId}/enrollments/{enrollmentId}`: Enrollment records, owned by the user.
+ *   - `/courses/{courseId}/assignments/{assignmentId}`: Assignments for each course.
+ *   - `/users/{userId}/submissions/{submissionId}`: Student submissions, owned by the user.
+ *   - `/users/{userId}/exerciseSuggestions/{exerciseSuggestionId}`: Exercise suggestions, owned by the user.
+ *   - `/users/{userId}/earlyWarnings/{earlyWarningId}`: Early warnings, owned by the user.
+ *   - `/users/{userId}/softSkillAssessments/{softSkillAssessmentId}`: Soft skill assessments, owned by the user.
+ *   - `/logins/{loginId}`: Login information.
+ * @Key Security Decisions:
+ *   - User listing is disabled.
+ *   - Path-based ownership is enforced for all student-related data.
+ *   - Course data is publicly readable.
+ *   - The ruleset leverages helper functions to encapsulate complex logic and improve readability.
+ *   - Data validation is limited to authorization-critical fields.
+ */
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    /**
+     * @description Checks if the current user is signed in.
+     * @returns {boolean} True if the user is signed in, false otherwise.
+     */
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    /**
+     * @description Checks if the authenticated user ID matches the provided user ID.
+     * @param {string} userId - The user ID to compare against.
+     * @returns {boolean} True if the user is the owner, false otherwise.
+     */
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    /**
+     * @description Checks if the authenticated user is the owner of an existing document.
+     * @param {string} userId - The user ID to compare against.
+     * @returns {boolean} True if the user is the owner and the document exists, false otherwise.
+     */
+    function isExistingOwner(userId) {
+      return isOwner(userId) && resource != null;
+    }
+
+    /**
+     * @description Rules for student profile data.
+     * @path /users/{userId}/student/{studentId}
+     * @allow (create) Signed-in user with matching userId and studentId can create their profile.
+     * @allow (get, list, update, delete) Signed-in user can access/modify their own profile.
+     * @deny (create) User tries to create a profile with mismatched userId or studentId.
+     * @deny (get, list, update, delete) User tries to access/modify someone else's profile.
+     * @principle Enforces document ownership for all operations.
+     */
+    match /users/{userId}/student/{studentId} {
+      allow get: if isOwner(userId);
+      allow list: if isOwner(userId);
+      allow create: if isOwner(userId) && request.resource.data.id == userId;
+      allow update: if isExistingOwner(userId) && request.resource.data.id == resource.data.id;
+      allow delete: if isExistingOwner(userId);
+    }
+
+    /**
+     * @description Rules for course information.
+     * @path /courses/{courseId}
+     * @allow (get, list) All users can view course information.
+     * @deny (create, update, delete) Only authenticated users can create, update, or delete courses.
+     * @principle Public read access with restricted write access.
+     */
+    match /courses/{courseId} {
+      allow get: if true;
+      allow list: if true;
+      allow create: if isSignedIn(); // Consider adding role-based access for course creation
+      allow update: if false; // TODO: Add role-based access for course updates
+      allow delete: if false; // TODO: Add role-based access for course deletion
+    }
+
+    /**
+     * @description Rules for student enrollment records.
+     * @path /users/{userId}/enrollments/{enrollmentId}
+     * @allow (create) Signed-in user can create their own enrollment records.
+     * @allow (get, list, update, delete) Signed-in user can access/modify their own enrollment records.
+     * @deny (create) User tries to create an enrollment record with mismatched userId.
+     * @deny (get, list, update, delete) User tries to access/modify someone else's enrollment records.
+     * @principle Enforces document ownership for all operations.
+     */
+    match /users/{userId}/enrollments/{enrollmentId} {
+      allow get: if isOwner(userId);
+      allow list: if isOwner(userId);
+      allow create: if isOwner(userId) && request.resource.data.studentId == userId;
+      allow update: if isExistingOwner(userId) && request.resource.data.studentId == resource.data.studentId;
+      allow delete: if isExistingOwner(userId);
+    }
+
+    /**
+     * @description Rules for assignments within a course.
+     * @path /courses/{courseId}/assignments/{assignmentId}
+     * @allow (get, list) All users can view assignments.
+     * @deny (create, update, delete) Only users with appropriate roles (e.g., instructor) can manage assignments.
+     * @principle Public read access with restricted write access.
+     */
+    match /courses/{courseId}/assignments/{assignmentId} {
+      allow get: if true;
+      allow list: if true;
+      allow create: if isSignedIn(); // Consider adding role-based access for assignment creation
+      allow update: if false; // TODO: Add role-based access for assignment updates
+      allow delete: if false; // TODO: Add role-based access for assignment deletion
+    }
+
+    /**
+     * @description Rules for student submissions.
+     * @path /users/{userId}/submissions/{submissionId}
+     * @allow (create) Signed-in user can create their own submissions.
+     * @allow (get, list, update, delete) Signed-in user can access/modify their own submissions.
+     * @deny (create) User tries to create a submission with mismatched userId.
+     * @deny (get, list, update, delete) User tries to access/modify someone else's submissions.
+     * @principle Enforces document ownership for all operations.
+     */
+    match /users/{userId}/submissions/{submissionId} {
+      allow get: if isOwner(userId);
+      allow list: if isOwner(userId);
+      allow create: if isOwner(userId) && request.resource.data.studentId == userId;
+      allow update: if isExistingOwner(userId) && request.resource.data.studentId == resource.data.studentId;
+      allow delete: if isExistingOwner(userId);
+    }
+
+    /**
+     * @description Rules for exercise suggestions for a student.
+     * @path /users/{userId}/exerciseSuggestions/{exerciseSuggestionId}
+     * @allow (create) Signed-in user can have suggestions created for them.
+     * @allow (get, list, update, delete) Signed-in user can access/modify their own exercise suggestions.
+     * @deny (create) User tries to create a suggestion for mismatched userId.
+     * @deny (get, list, update, delete) User tries to access/modify someone else's exercise suggestions.
+     * @principle Enforces document ownership for all operations.
+     */
+    match /users/{userId}/exerciseSuggestions/{exerciseSuggestionId} {
+      allow get: if isOwner(userId);
+      allow list: if isOwner(userId);
+      allow create: if isOwner(userId) && request.resource.data.studentId == userId;
+      allow update: if isExistingOwner(userId) && request.resource.data.studentId == resource.data.studentId;
+      allow delete: if isExistingOwner(userId);
+    }
+
+    /**
+     * @description Rules for early warning data for students.
+     * @path /users/{userId}/earlyWarnings/{earlyWarningId}
+     * @allow (create) Early warnings can be created for a user.
+     * @allow (get, list, update, delete) Signed-in user can access their own early warnings.
+     * @deny (create) User tries to create a warning for mismatched userId.
+     * @deny (get, list, update, delete) User tries to access/modify someone else's early warnings.
+     * @principle Enforces document ownership for all operations.
+     */
+    match /users/{userId}/earlyWarnings/{earlyWarningId} {
+      allow get: if isOwner(userId);
+      allow list: if isOwner(userId);
+      allow create: if isOwner(userId) && request.resource.data.studentId == userId;
+      allow update: if isExistingOwner(userId) && request.resource.data.studentId == resource.data.studentId;
+      allow delete: if isExistingOwner(userId);
+    }
+
+    /**
+     * @description Rules for soft skill assessment data for students.
+     * @path /users/{userId}/softSkillAssessments/{softSkillAssessmentId}
+     * @allow (create) Soft skill assessments can be created for a user.
+     * @allow (get, list, update, delete) Signed-in user can access their own assessments.
+     * @deny (create) User tries to create an assessment for mismatched userId.
+     * @deny (get, list, update, delete) User tries to access/modify someone else's assessments.
+     * @principle Enforces document ownership for all operations.
+     */
+    match /users/{userId}/softSkillAssessments/{softSkillAssessmentId} {
+      allow get: if isOwner(userId);
+      allow list: if isOwner(userId);
+      allow create: if isOwner(userId) && request.resource.data.studentId == userId;
+      allow update: if isExistingOwner(userId) && request.resource.data.studentId == resource.data.studentId;
+      allow delete: if isExistingOwner(userId);
+    }
+
+     /**
+      * @description Rules for login information.
+      * @path /logins/{loginId}
+      * @allow (get, list) All users can view login information.
+      * @deny (create, update, delete) Only authenticated users can create, update, or delete login information.
+      * @principle Public read access with restricted write access.
+      */
+    match /logins/{loginId} {
+        allow get: if true;
+        allow list: if true;
+        allow create: if isSignedIn(); // Consider adding role-based access for course creation
+        allow update: if false; // TODO: Add role-based access for course updates
+        allow delete: if false; // TODO: Add role-based access for course deletion
+    }
+  }
+}

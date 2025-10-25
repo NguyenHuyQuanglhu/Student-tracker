@@ -35,11 +35,11 @@ export type CourseStatus = 'Active' | 'Finished';
 export type CourseCategory = 'Môn học' | 'Kỹ năng';
 
 export const courseData = [
-    { id: "it-software", name: "IT & Software", progress: 0, status: "Active" as CourseStatus, category: "Môn học" as CourseCategory, imageSeed: "course1", targetHours: 20 },
-    { id: "programming", name: "Programming", progress: 0, status: "Active" as CourseStatus, category: "Môn học" as CourseCategory, imageSeed: "course2", targetHours: 30 },
-    { id: "networking", name: "Networking", progress: 0, status: "Active" as CourseStatus, category: "Môn học" as CourseCategory, imageSeed: "course3", targetHours: 25 },
+    { id: "nhap-mon-lap-trinh", name: "Nhập môn lập trình", progress: 0, status: "Active" as CourseStatus, category: "Môn học" as CourseCategory, imageSeed: "course1", targetHours: 20 },
+    { id: "ki-thuat-lap-trinh", name: "Kĩ thuật lập trình", progress: 0, status: "Active" as CourseStatus, category: "Môn học" as CourseCategory, imageSeed: "course2", targetHours: 30 },
+    { id: "lap-trinh-huong-doi-tuong", name: "Lập trình hướng đối tượng", progress: 0, status: "Active" as CourseStatus, category: "Môn học" as CourseCategory, imageSeed: "course3", targetHours: 25 },
+    { id: "cau-truc-du-lieu-va-giai-thuat", name: "Cấu trúc dữ liệu và giải thuật", progress: 0, status: "Active" as CourseStatus, category: "Môn học" as CourseCategory, imageSeed: "course7", targetHours: 40 },
     { id: "network-security", name: "Network Security", progress: 0, status: "Active" as CourseStatus, category: "Môn học" as CourseCategory, imageSeed: "course4", targetHours: 35 },
-    { id: "data-structures", name: "Data Structures", progress: 0, status: "Active" as CourseStatus, category: "Môn học" as CourseCategory, imageSeed: "course7", targetHours: 40 },
     { id: "machine-learning", name: "Machine Learning", progress: 0, status: "Active" as CourseStatus, category: "Môn học" as CourseCategory, imageSeed: "course8", targetHours: 50 },
     { id: "public-speaking", name: "Public Speaking", progress: 0, status: "Active" as CourseStatus, category: "Kỹ năng" as CourseCategory, imageSeed: "course5", targetHours: 15 },
     { id: "leadership", name: "Leadership", progress: 0, status: "Active" as CourseStatus, category: "Kỹ năng" as CourseCategory, imageSeed: "course6", targetHours: 10 },
@@ -65,14 +65,14 @@ export type Exercise = {
 };
 
 export const exercises: Exercise[] = [
-  { id: 'ex1', title: 'Viết thuật toán sắp xếp nổi bọt', course: 'Programming', difficulty: 'Dễ', status: 'Chưa bắt đầu', startTime: null, completionTime: null, score: null, targetTime: 600 },
-  { id: 'ex2', title: 'Xây dựng một API RESTful đơn giản', course: 'IT & Software', difficulty: 'Trung bình', status: 'Chưa bắt đầu', startTime: null, completionTime: null, score: null, targetTime: 1800 },
-  { id: 'ex3', title: 'Triển khai danh sách liên kết kép', course: 'Data Structures', difficulty: 'Trung bình', status: 'Chưa bắt đầu', startTime: null, completionTime: null, score: null, targetTime: 1200 },
+  { id: 'ex1', title: 'Viết thuật toán sắp xếp nổi bọt', course: 'Kĩ thuật lập trình', difficulty: 'Dễ', status: 'Chưa bắt đầu', startTime: null, completionTime: null, score: null, targetTime: 600 },
+  { id: 'ex2', title: 'Xây dựng một API RESTful đơn giản', course: 'Nhập môn lập trình', difficulty: 'Trung bình', status: 'Chưa bắt đầu', startTime: null, completionTime: null, score: null, targetTime: 1800 },
+  { id: 'ex3', title: 'Triển khai danh sách liên kết kép', course: 'Cấu trúc dữ liệu và giải thuật', difficulty: 'Trung bình', status: 'Chưa bắt đầu', startTime: null, completionTime: null, score: null, targetTime: 1200 },
   { id: 'ex4', title: 'Cấu hình một mạng con đơn giản', course: 'Networking', difficulty: 'Dễ', status: 'Chưa bắt đầu', startTime: null, completionTime: null, score: null, targetTime: 900 },
   { id: 'ex5', title: 'Tấn công SQL Injection và cách phòng chống', course: 'Network Security', difficulty: 'Khó', status: 'Chưa bắt đầu', startTime: null, completionTime: null, score: null, targetTime: 2100 },
   { id: 'ex6', title: 'Xây dựng mô hình hồi quy tuyến tính', course: 'Machine Learning', difficulty: 'Khó', status: 'Chưa bắt đầu', startTime: null, completionTime: null, score: null, targetTime: 3600 },
-  { id: 'ex7', title: 'Gỡ lỗi một đoạn mã JavaScript phức tạp', course: 'Programming', difficulty: 'Khó', status: 'Chưa bắt đầu', startTime: null, completionTime: null, score: null, targetTime: 2400 },
-  { id: 'ex8', title: 'Tối ưu hóa truy vấn cơ sở dữ liệu', course: 'IT & Software', difficulty: 'Trung bình', status: 'Chưa bắt đầu', startTime: null, completionTime: null, score: null, targetTime: 1500 },
+  { id: 'ex7', title: 'Gỡ lỗi một đoạn mã JavaScript phức tạp', course: 'Kĩ thuật lập trình', difficulty: 'Khó', status: 'Chưa bắt đầu', startTime: null, completionTime: null, score: null, targetTime: 2400 },
+  { id: 'ex8', title: 'Tối ưu hóa truy vấn cơ sở dữ liệu', course: 'Nhập môn lập trình', difficulty: 'Trung bình', status: 'Chưa bắt đầu', startTime: null, completionTime: null, score: null, targetTime: 1500 },
 ];
 
 

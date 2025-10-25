@@ -69,7 +69,7 @@ export function DashboardSidebar({ children }: { children: React.ReactNode }) {
                 <span className="text-xl font-bold text-sidebar-foreground">huy quang</span>
             </Link>
         </SidebarHeader>
-        <SidebarContent>
+        <SidebarContent className="flex-grow">
           <SidebarMenu>
             {menuItems.map((item) => (
               <SidebarMenuItem key={item.href}>

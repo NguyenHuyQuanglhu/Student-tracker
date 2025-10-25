@@ -65,8 +65,8 @@ export function DashboardSidebar({ children }: { children: React.ReactNode }) {
       <Sidebar variant="inset">
         <SidebarHeader>
             <Link href="/" className="flex items-center gap-3 no-underline">
-                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary text-white text-xl font-bold">A</div>
-                <span className="text-xl font-bold text-sidebar-foreground">Akademi</span>
+                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary text-white text-xl font-bold">H</div>
+                <span className="text-xl font-bold text-sidebar-foreground">huy quang</span>
             </Link>
         </SidebarHeader>
         <SidebarContent>

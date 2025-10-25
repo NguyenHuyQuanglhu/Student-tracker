@@ -9,6 +9,7 @@ import Image from "next/image";
 import { Pencil, Camera, Save, X } from "lucide-react";
 import { PlaceHolderImages, type ImagePlaceholder } from "@/lib/placeholder-images";
 import { useState, useEffect, useRef } from "react";
+import { useUser } from "@/firebase";
 
 const initialProfileData = {
     fullName: "Nguyễn Văn A",
@@ -22,6 +23,7 @@ const initialProfileData = {
 };
 
 export default function ProfilePage() {
+    const { user } = useUser();
     const [isEditing, setIsEditing] = useState(false);
     
     const [coverImage, setCoverImage] = useState<ImagePlaceholder | undefined>();
@@ -37,24 +39,32 @@ export default function ProfilePage() {
 
     useEffect(() => {
         const coverImg = PlaceHolderImages.find(p => p.id === 'profile-cover');
-        
-        const avatarImg = PlaceHolderImages.find(p => p.id === 'profile-avatar');
+        const defaultAvatarImg = PlaceHolderImages.find(p => p.id === 'profile-avatar');
 
-        const storedAvatar = localStorage.getItem('profileAvatarUrl');
         const storedCover = localStorage.getItem('profileCoverUrl');
+        const storedAvatar = localStorage.getItem('profileAvatarUrl');
 
         setCoverImage(coverImg);
-        setProfileAvatar(avatarImg);
+        setProfileAvatar(defaultAvatarImg);
 
         setTempCoverImageUrl(storedCover || coverImg?.imageUrl || null);
-
+        
         if (storedAvatar) {
             setTempAvatarImageUrl(storedAvatar);
-        } else if (avatarImg) {
-            setTempAvatarImageUrl(avatarImg.imageUrl);
+        } else if (user?.photoURL) {
+            setTempAvatarImageUrl(user.photoURL);
+        } else if (defaultAvatarImg) {
+            setTempAvatarImageUrl(defaultAvatarImg.imageUrl);
         }
-        
-    }, []);
+
+        if (user) {
+            setFormData(prev => ({
+                ...prev,
+                fullName: user.displayName || prev.fullName,
+            }));
+        }
+
+    }, [user]);
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>, imageType: 'cover' | 'avatar') => {
         const file = e.target.files?.[0];
@@ -82,26 +92,39 @@ export default function ProfilePage() {
     };
 
     const handleCancel = () => {
-        setFormData(initialProfileData);
+        if (user) {
+            setFormData(prev => ({ ...initialProfileData, fullName: user.displayName || initialProfileData.fullName }));
+        } else {
+            setFormData(initialProfileData);
+        }
         
         const storedAvatar = localStorage.getItem('profileAvatarUrl');
         const storedCover = localStorage.getItem('profileCoverUrl');
+        const defaultAvatarImg = PlaceHolderImages.find(p => p.id === 'profile-avatar');
 
         setTempCoverImageUrl(storedCover || coverImage?.imageUrl || null);
-        setTempAvatarImageUrl(storedAvatar || profileAvatar?.imageUrl || null);
+        setTempAvatarImageUrl(storedAvatar || user?.photoURL || defaultAvatarImg?.imageUrl || null);
         
         setIsEditing(false);
     };
 
     const handleSave = () => {
-        Object.assign(initialProfileData, formData);
+        // In a real app, you would save formData to a database.
+        // For now, we just update the local state and localStorage.
+        
+        // This is a mock save for the demo
+        if (user) {
+             Object.assign(initialProfileData, { ...formData, fullName: formData.fullName });
+        } else {
+            Object.assign(initialProfileData, formData);
+        }
+
 
         if (tempCoverImageUrl) {
             localStorage.setItem('profileCoverUrl', tempCoverImageUrl);
         }
         if (tempAvatarImageUrl) {
             localStorage.setItem('profileAvatarUrl', tempAvatarImageUrl);
-            // Dispatch event to notify header
             window.dispatchEvent(new CustomEvent('profileImageChanged'));
         }
         setIsEditing(false);
@@ -201,9 +224,7 @@ export default function ProfilePage() {
                             <div key={field.name} className="grid grid-cols-3 gap-4 items-center">
                                 <span className="text-muted-foreground">{field.label}</span>
                                 <div className="col-span-2">
-                                    {isEditing && field.name === 'fullName' ? (
-                                         <Input name={field.name} value={field.value} onChange={handleInputChange} className="h-8"/>
-                                    ) : isEditing ? (
+                                    {isEditing ? (
                                         <Input name={field.name} value={field.value} onChange={handleInputChange} className="h-8"/>
                                     ) : (
                                         <span className="font-medium">{field.value}</span>

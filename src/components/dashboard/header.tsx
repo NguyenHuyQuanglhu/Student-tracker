@@ -13,35 +13,52 @@ import {
 import { User, Settings, LogOut } from "lucide-react";
 import Link from "next/link";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { PlaceHolderImages } from "@/lib/placeholder-images";
+import { useAuth, useUser } from "@/firebase";
+import { signOut } from "firebase/auth";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import type { ImagePlaceholder } from "@/lib/placeholder-images";
 
 export function DashboardHeader() {
+  const { user } = useUser();
+  const auth = useAuth();
+  const router = useRouter();
+
   const [avatarUrl, setAvatarUrl] = useState<string | undefined>();
   const [fallback, setFallback] = useState('A');
 
-  const updateAvatar = () => {
-      if (typeof window === 'undefined') return;
-      
-      const storedAvatar = localStorage.getItem('profileAvatarUrl');
-      const defaultAvatar = PlaceHolderImages.find(p => p.id === 'user-avatar');
-
-      setAvatarUrl(storedAvatar || defaultAvatar?.imageUrl);
-
-      const profileName = localStorage.getItem('profileName') || 'Alex Doe';
-      setFallback(profileName.charAt(0).toUpperCase());
-  };
-
   useEffect(() => {
-    updateAvatar();
+    const updateAvatarDisplay = () => {
+        const storedAvatar = localStorage.getItem('profileAvatarUrl');
+        
+        if (storedAvatar) {
+            setAvatarUrl(storedAvatar);
+        } else if (user?.photoURL) {
+            setAvatarUrl(user.photoURL);
+        } else {
+            setAvatarUrl(undefined);
+        }
+
+        if (user) {
+            setFallback(user.displayName?.charAt(0).toUpperCase() || user.email?.charAt(0).toUpperCase() || 'A');
+        } else {
+            const profileName = localStorage.getItem('profileName') || 'Alex Doe';
+            setFallback(profileName.charAt(0).toUpperCase());
+        }
+    };
     
-    window.addEventListener('profileImageChanged', updateAvatar);
+    updateAvatarDisplay();
+
+    window.addEventListener('profileImageChanged', updateAvatarDisplay);
     
     return () => {
-        window.removeEventListener('profileImageChanged', updateAvatar);
+        window.removeEventListener('profileImageChanged', updateAvatarDisplay);
     };
-  }, []);
+  }, [user]);
+
+  const handleSignOut = async () => {
+    await signOut(auth);
+    router.push('/login');
+  };
 
   return (
     <header className="sticky top-0 z-30 flex h-14 items-center justify-between gap-4 border-b bg-background/95 px-4 backdrop-blur supports-[backdrop-filter]:bg-background/60 sm:static sm:h-auto sm:border-0 sm:bg-transparent sm:px-6">
@@ -73,7 +90,7 @@ export function DashboardHeader() {
                   </DropdownMenuItem>
                 </Link>
                 <DropdownMenuSeparator />
-                 <DropdownMenuItem>
+                 <DropdownMenuItem onClick={handleSignOut}>
                     <LogOut className="mr-2 h-4 w-4" />
                     <span>Đăng xuất</span>
                 </DropdownMenuItem>

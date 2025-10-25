@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import {
   Sidebar,
   SidebarProvider,
@@ -20,9 +20,20 @@ import {
   ClipboardList,
 } from 'lucide-react';
 import { DashboardHeader } from "@/components/dashboard/header";
+import { useUser } from '@/firebase';
+import { useEffect } from 'react';
+import { Skeleton } from '@/components/ui/skeleton';
 
 export function DashboardSidebar({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
+  const router = useRouter();
+  const { user, isUserLoading } = useUser();
+
+  useEffect(() => {
+    if (!isUserLoading && !user) {
+      router.push('/login');
+    }
+  }, [user, isUserLoading, router]);
 
   const menuItems = [
     { href: '/', label: 'Dashboard', icon: LayoutDashboard },
@@ -38,6 +49,16 @@ export function DashboardSidebar({ children }: { children: React.ReactNode }) {
     }
     return pathname.startsWith(href);
   };
+  
+  if (isUserLoading || !user) {
+    return (
+        <div className="flex min-h-screen w-full items-center justify-center">
+            <div className="flex flex-col items-center space-y-4">
+                <p className="text-muted-foreground">Đang tải dữ liệu người dùng...</p>
+            </div>
+        </div>
+    )
+  }
 
   return (
     <SidebarProvider>

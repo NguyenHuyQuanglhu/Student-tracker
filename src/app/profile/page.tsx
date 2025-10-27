@@ -1,6 +1,6 @@
 'use client';
 
-import { DashboardSidebar } from "@/components/dashboard/sidebar";
+import { DashboardLayout } from "@/components/dashboard/sidebar";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -43,7 +43,9 @@ export default function ProfilePage() {
 
         const storedCover = localStorage.getItem('profileCoverUrl');
         const storedAvatar = localStorage.getItem('profileAvatarUrl');
+        const storedProfileData = JSON.parse(localStorage.getItem('profileData') || JSON.stringify(initialProfileData));
 
+        setFormData(storedProfileData);
         setCoverImage(coverImg);
         setProfileAvatar(defaultAvatarImg);
 
@@ -58,7 +60,7 @@ export default function ProfilePage() {
         }
 
         if (user) {
-            setFormData(prev => ({
+             setFormData(prev => ({
                 ...prev,
                 fullName: user.displayName || prev.fullName,
             }));
@@ -92,10 +94,11 @@ export default function ProfilePage() {
     };
 
     const handleCancel = () => {
+        const storedProfileData = JSON.parse(localStorage.getItem('profileData') || JSON.stringify(initialProfileData));
         if (user) {
-            setFormData(prev => ({ ...initialProfileData, fullName: user.displayName || initialProfileData.fullName }));
+            setFormData({ ...storedProfileData, fullName: user.displayName || storedProfileData.fullName });
         } else {
-            setFormData(initialProfileData);
+            setFormData(storedProfileData);
         }
         
         const storedAvatar = localStorage.getItem('profileAvatarUrl');
@@ -109,15 +112,8 @@ export default function ProfilePage() {
     };
 
     const handleSave = () => {
-        // In a real app, you would save formData to a database.
-        // For now, we just update the local state and localStorage.
-        
-        // This is a mock save for the demo
-        if (user) {
-             Object.assign(initialProfileData, { ...formData, fullName: formData.fullName });
-        } else {
-            Object.assign(initialProfileData, formData);
-        }
+        localStorage.setItem('profileData', JSON.stringify(formData));
+        localStorage.setItem('profileName', formData.fullName);
 
 
         if (tempCoverImageUrl) {
@@ -125,16 +121,21 @@ export default function ProfilePage() {
         }
         if (tempAvatarImageUrl) {
             localStorage.setItem('profileAvatarUrl', tempAvatarImageUrl);
-            window.dispatchEvent(new CustomEvent('profileImageChanged'));
         }
+        
+        window.dispatchEvent(new CustomEvent('profileImageChanged'));
         setIsEditing(false);
     };
 
   return (
-    <div className="flex min-h-screen w-full flex-col bg-muted/40">
-      <DashboardSidebar>
-        <main className="flex-1 p-4">
-          <div className="mx-auto max-w-2xl mt-8">
+    <div className="flex min-h-screen w-full flex-col">
+      <DashboardLayout>
+        <main className="flex-1 p-6 bg-muted/40">
+          <div className="mx-auto max-w-2xl">
+             <div className="mb-6">
+                <h1 className="text-3xl font-bold font-headline">Hồ sơ người dùng</h1>
+                <p className="text-muted-foreground">Xem và chỉnh sửa thông tin cá nhân của bạn.</p>
+            </div>
             <Card className="overflow-hidden">
                 <div className="relative">
                     {tempCoverImageUrl && (
@@ -238,31 +239,23 @@ export default function ProfilePage() {
                     </div>
                 </div>
 
-                <div className="mt-10 flex justify-center gap-4">
-                    {isEditing ? (
-                        <>
-                            <Button onClick={handleSave}>
-                                <Save className="mr-2 h-4 w-4"/>
-                                Lưu
-                            </Button>
-                            <Button variant="outline" onClick={handleCancel}>
-                                <X className="mr-2 h-4 w-4"/>
-                                Hủy
-                            </Button>
-                        </>
-                    ) : (
-                        <Button onClick={handleEdit}>
-                            <Pencil className="mr-2 h-4 w-4"/>
-                            Cập nhật
+                {isEditing && (
+                    <div className="mt-10 flex justify-center gap-4">
+                        <Button onClick={handleSave}>
+                            <Save className="mr-2 h-4 w-4"/>
+                            Lưu
                         </Button>
-                    )}
-                </div>
-
+                        <Button variant="outline" onClick={handleCancel}>
+                            <X className="mr-2 h-4 w-4"/>
+                            Hủy
+                        </Button>
+                    </div>
+                )}
               </CardContent>
             </Card>
           </div>
         </main>
-      </DashboardSidebar>
+      </DashboardLayout>
     </div>
   );
 }

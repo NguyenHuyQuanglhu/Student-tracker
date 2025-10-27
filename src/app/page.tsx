@@ -1,6 +1,6 @@
 'use client';
 
-import { DashboardSidebar } from "@/components/dashboard/sidebar";
+import { DashboardLayout } from "@/components/dashboard/sidebar";
 import { AcademicWarnings } from "@/components/dashboard/academic-warnings";
 import { ProgressOverview } from "@/components/dashboard/progress-overview";
 import { SoftSkillsDashboard } from "@/components/dashboard/soft-skills";
@@ -9,8 +9,8 @@ import { YourCourses } from "@/components/dashboard/your-courses";
 
 export default function Home() {
   return (
-      <DashboardSidebar>
-        <main className="flex-1 p-4">
+      <DashboardLayout>
+        <main className="flex-1 p-6 bg-muted/40">
           <div className="space-y-6">
             <YourCourses />
             <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
@@ -29,6 +29,6 @@ export default function Home() {
             </div>
           </div>
         </main>
-      </DashboardSidebar>
+      </DashboardLayout>
   );
 }

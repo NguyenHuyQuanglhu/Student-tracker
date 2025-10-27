@@ -1,7 +1,7 @@
 
 'use client';
 
-import { DashboardSidebar } from "@/components/dashboard/sidebar";
+import { DashboardLayout } from "@/components/dashboard/sidebar";
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import {
@@ -69,12 +69,16 @@ export default function SettingsPage() {
 
   return (
     <div className="flex min-h-screen w-full flex-col">
-      <DashboardSidebar>
-        <main className="flex-1 p-4">
+      <DashboardLayout>
+        <main className="flex-1 p-6 bg-muted/40">
           <div className="mx-auto max-w-2xl space-y-6">
+            <div className="mb-6">
+                <h1 className="text-3xl font-bold font-headline">Cài Đặt</h1>
+                <p className="text-muted-foreground">Quản lý cài đặt tài khoản và ứng dụng của bạn.</p>
+            </div>
             <Card>
               <CardHeader>
-                <CardTitle className="font-headline">Cài đặt</CardTitle>
+                <CardTitle className="font-headline">Tùy chọn</CardTitle>
                 <CardDescription>Định cấu hình tùy chọn ứng dụng của bạn.</CardDescription>
               </CardHeader>
               <CardContent className="space-y-8">
@@ -124,7 +128,7 @@ export default function SettingsPage() {
             </Card>
           </div>
         </main>
-      </DashboardSidebar>
+      </DashboardLayout>
     </div>
   );
 }

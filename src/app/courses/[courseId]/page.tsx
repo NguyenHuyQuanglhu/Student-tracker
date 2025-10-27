@@ -2,7 +2,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { DashboardSidebar } from "@/components/dashboard/sidebar";
+import { DashboardLayout } from "@/components/dashboard/sidebar";
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/ui/card";
 import { courseData, mockDataVersion } from "@/app/lib/mock-data";
 import { notFound, useParams, useRouter } from "next/navigation";
@@ -156,7 +156,7 @@ export default function CourseDetailPage() {
 
   return (
     <div className="flex min-h-screen w-full flex-col">
-      <DashboardSidebar>
+      <DashboardLayout>
         <main className="flex-1 p-4">
             <div className="mb-6">
                 <Button variant="outline" size="sm" className="mb-4" onClick={() => router.back()}>
@@ -201,7 +201,7 @@ export default function CourseDetailPage() {
             </Card>
           </div>
         </main>
-      </DashboardSidebar>
+      </DashboardLayout>
     </div>
   );
 }

@@ -203,7 +203,7 @@ const Sidebar = React.forwardRef<
           <SheetContent
             data-sidebar="sidebar"
             data-mobile="true"
-            className="w-[--sidebar-width] bg-sidebar p-0 text-sidebar-foreground [&>button]:hidden"
+            className="w-[--sidebar-width] bg-background p-0 text-foreground [&>button]:hidden"
             style={
               {
                 "--sidebar-width": SIDEBAR_WIDTH_MOBILE,
@@ -216,6 +216,37 @@ const Sidebar = React.forwardRef<
         </Sheet>
       )
     }
+
+    const mainContent = (
+      <div
+        data-sidebar="sidebar"
+        className={cn("flex h-full w-full flex-col",
+          variant === "floating" ? "rounded-lg border border-border shadow" : "",
+          variant === "sidebar" ? "bg-background" : "",
+        )}
+      >
+        {children}
+      </div>
+    );
+    
+    if (variant === "sidebar") {
+        return (
+          <div
+            ref={ref}
+            data-testid="sidebar-desktop"
+            className={cn(
+              "fixed inset-y-0 z-40 h-full w-64 transform transition-transform duration-300 ease-in-out",
+              "lg:translate-x-0",
+              state === 'collapsed' ? '-translate-x-full' : 'translate-x-0',
+              className
+            )}
+            {...props}
+          >
+             {mainContent}
+          </div>
+        );
+    }
+
 
     return (
       <div
@@ -251,12 +282,7 @@ const Sidebar = React.forwardRef<
           )}
           {...props}
         >
-          <div
-            data-sidebar="sidebar"
-            className="flex h-full w-full flex-col bg-sidebar group-data-[variant=floating]:rounded-lg group-data-[variant=floating]:border group-data-[variant=floating]:border-sidebar-border group-data-[variant=floating]:shadow"
-          >
-            {children}
-          </div>
+          {mainContent}
         </div>
       </div>
     )

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { DashboardSidebar } from "@/components/dashboard/sidebar";
+import { DashboardLayout } from "@/components/dashboard/sidebar";
 import { Card, CardHeader, CardTitle, CardContent, CardDescription, CardFooter } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -158,10 +158,10 @@ export default function ExercisesPage() {
 
   return (
     <div className="flex min-h-screen w-full flex-col">
-      <DashboardSidebar>
-        <main className="flex-1 p-4">
+      <DashboardLayout>
+        <main className="flex-1 p-6 bg-muted/40">
           <div className="mb-6">
-              <h1 className="text-3xl font-bold font-headline">Bài tập</h1>
+              <h1 className="text-3xl font-bold font-headline">Quản Lý Bài Tập</h1>
               <p className="text-muted-foreground">Xem và quản lý các bài tập của bạn.</p>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -227,7 +227,7 @@ export default function ExercisesPage() {
             ))}
           </div>
         </main>
-      </DashboardSidebar>
+      </DashboardLayout>
     </div>
   );
 }

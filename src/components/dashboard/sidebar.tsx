@@ -9,11 +9,9 @@ import {
 } from '@/components/ui/sidebar';
 import {
   Home,
-  Users,
   BookOpen,
   Settings,
   LogOut,
-  GraduationCap,
   FileText,
   BarChart3,
   X
@@ -50,10 +48,7 @@ function DashboardSidebar({ children }: { children: React.ReactNode }) {
   const navigation = [
     { name: 'Trang Chủ', href: '/', icon: Home },
     { name: 'Quản Lý Khóa Học', href: '/courses', icon: BookOpen },
-    { name: 'Quản Lý Lớp Học', href: '/classes', icon: GraduationCap },
     { name: 'Quản Lý Bài Tập', href: '/exercises', icon: FileText },
-    { name: 'Theo Dõi Sinh Viên', href: '/students', icon: Users },
-    { name: 'Báo Cáo', href: '/reports', icon: BarChart3 },
     { name: 'Cài Đặt', href: '/settings', icon: Settings },
   ];
 
